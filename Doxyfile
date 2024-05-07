@@ -1,9 +1,8 @@
 PROJECT_NAME           = network_pokemon
 OUTPUT_DIRECTORY       = docs
-INPUT                  = ./include
+INPUT                  = ./src/hpp
 EXTRACT_ALL            = YES
 RECURSIVE              = YES
 SHOW_NAMESPACES        = YES
 GENERATE_LATEX         = NO
 OUTPUT_LANGUAGE        = English
-
