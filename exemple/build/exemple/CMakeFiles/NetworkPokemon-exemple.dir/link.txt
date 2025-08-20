@@ -1,0 +1,1 @@
+/usr/bin/c++  -arch arm64 -Wl,-search_paths_first -Wl,-headerpad_max_install_names "CMakeFiles/NetworkPokemon-exemple.dir/main.cpp.o" -o ../bin/NetworkPokemon-exemple  -Wl,-rpath,/Users/adjysedardesir/Documents/Dev/network_pokemon/exemple/build/lib ../lib/libNetworkPokemon.dylib ../vcpkg_installed/arm64-osx/debug/lib/libsockpp.a

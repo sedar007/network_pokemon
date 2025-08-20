@@ -1,0 +1,9 @@
+arm64-osx/
+arm64-osx/share/
+arm64-osx/share/vcpkg-boost/
+arm64-osx/share/vcpkg-boost/boost-install.cmake
+arm64-osx/share/vcpkg-boost/copyright
+arm64-osx/share/vcpkg-boost/usage.in
+arm64-osx/share/vcpkg-boost/vcpkg-port-config.cmake
+arm64-osx/share/vcpkg-boost/vcpkg.spdx.json
+arm64-osx/share/vcpkg-boost/vcpkg_abi_info.txt
