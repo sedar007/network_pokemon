@@ -1,25 +1,45 @@
-include_directories(${CMAKE_SOURCE_DIR}/src)
+﻿
+set(MSVC_WARNINGS
+	/WX
+	/W4
+)
 
-set(sockpp_hpp sockpp/acceptor.h sockpp/connector.h sockpp/inet_address.h sockpp/sock_address.h sockpp/tcp6_connector.h sockpp/tcp_socket.h sockpp/unix_acceptor.h sockpp/unix_stream_socket.h
-        sockpp/can_address.h sockpp/datagram_socket.h sockpp/platform.h sockpp/socket.h sockpp/tcp6_socket.h sockpp/types.h sockpp/unix_address.h
-        sockpp/can_frame.h sockpp/error.h sockpp/raw_socket.h sockpp/stream_socket.h sockpp/tcp_acceptor.h sockpp/udp6_socket.h sockpp/unix_connector.h
-        sockpp/can_socket.h sockpp/inet6_address.h sockpp/result.h sockpp/tcp6_acceptor.h sockpp/tcp_connector.h sockpp/udp_socket.h sockpp/unix_dgram_socket.h)
+set(MSVC_RELEASE_OPTIMISATION
+	/O2								# Optimisation maximale de code en Release (favorise la vitesse)
+)
 
-set(sockpp_cpp sockpp/acceptor.cpp sockpp/connector.cpp sockpp/datagram_socket.cpp sockpp/error.cpp sockpp/inet6_address.cpp
-        sockpp/inet_address.cpp sockpp/socket.cpp sockpp/stream_socket.cpp  sockpp/unix/unix_address.cpp)
+set(MSVC_DEBUG_OPTIMISATION
+	/Zi								# Génère les informations de débogage dans un fichier PDB
+	/Od								# Désactive les optimisations, utile pour déboguer
+)
 
-set(pokemon_hpp hpp/client.hpp hpp/main.hpp hpp/listen.hpp hpp/node.hpp hpp/resourceManager.hpp hpp/server.hpp hpp/trace.hpp hpp/helper.hpp hpp/const.hpp)
+set(GCC_WARNINGS
+	-Werror							# Traite tous les warnings comme des erreurs
+	-Wall							# Active un ensemble standard d’avertissements courants
+	-Wextra							# Active des avertissements supplémentaires non inclus dans -Wall
+	-Wpedantic						# Respect strict du standard C++ (avertit sur les extensions non standard)
+	-Wconversion					# Avertit sur les conversions implicites (ex: float → int)
+	-Wshadow						# Avertit si une variable masque une autre (ex: variable locale cache un champ membre)
+	-Wnon-virtual-dtor				# Avertit si une classe polymorphe n’a pas de destructeur virtual
+    -Wcast-align					# Avertit sur des casts mal alignés (ex: pointer une structure mal alignée)
+    -Wunused						# Avertit pour les variables, fonctions, paramètres non utilisés
+    -Woverloaded-virtual			# Avertit si une méthode masque une autre avec le même nom mais signature différente
+    -Wsign-conversion				# Avertit sur les conversions de signed ↔ unsigned
+    -Wdouble-promotion				# Avertit si float est promu en double inutilement
+    -Wformat=2						# Avertit sur mauvais formats dans printf/scanf (plus strict que -Wformat)
+    -Wimplicit-fallthrough			# Avertit si un case de switch tombe dans un autre sans break
+    -Wsuggest-override				# Suggère override pour les fonctions virtuelles redéfinies
+    -Wnull-dereference				# Avertit sur les déréférencements potentiels de pointeurs nuls
+    -Wold-style-cast				# Avertit si tu utilises un cast C-style ((int)x) au lieu de static_cast, etc
+	-Wmissing-field-initializers	# Une structure ou classe agrégée est partiellement initialisée via une initialisation entre accolades ({})
+)
 
-set(pokemon_cpp cpp/client.cpp cpp/main.cpp cpp/listen.cpp cpp/node.cpp cpp/resourceManager.cpp cpp/server.cpp cpp/trace.cpp cpp/helper.cpp)
+set(GCC_RELEASE_OPTIMISATION
+	-O3								# Optimisation agressive pour la performance maximale
+)
 
-add_library(pokemon ${pokemon_hpp} ${pokemon_cpp})
+set(GCC_DEBUG_OPTIMISATION
+	-g								# Génère des informations de débogage (DWARF) utilisables par gdb/lldb
+)
 
-target_link_libraries(pokemon)
-
-
-add_executable(main main.cpp ${sockpp_hpp} ${sockpp_cpp})
-
-target_link_libraries(main Threads::Threads pokemon)
-
-
-
+add_subdirectory(networkPokemon)

@@ -1,0 +1,14 @@
+arm64-osx/
+arm64-osx/include/
+arm64-osx/include/boost/
+arm64-osx/include/boost/headers/
+arm64-osx/include/boost/headers/.gitkeep
+arm64-osx/share/
+arm64-osx/share/boost-headers/
+arm64-osx/share/boost-headers/copyright
+arm64-osx/share/boost-headers/vcpkg.spdx.json
+arm64-osx/share/boost-headers/vcpkg_abi_info.txt
+arm64-osx/share/boost_headers/
+arm64-osx/share/boost_headers/boost_headers-config-version.cmake
+arm64-osx/share/boost_headers/boost_headers-config.cmake
+arm64-osx/share/boost_headers/boost_headers-targets.cmake

@@ -1,0 +1,74 @@
+Detecting compiler hash for triplet arm64-osx...
+Compiler found: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++
+The following packages are already installed:
+  * boost-algorithm:arm64-osx@1.88.0 -- git+https://github.com/microsoft/vcpkg@ad439228ad08c78b1db8a59d33f36a53cb2da963
+  * boost-array:arm64-osx@1.88.0 -- git+https://github.com/microsoft/vcpkg@ac9d6b735393768df04f6dafaf12d503cb133e6d
+  * boost-assert:arm64-osx@1.88.0 -- git+https://github.com/microsoft/vcpkg@d6e23ac8a35da1fa74839bde3a863d279a6059a3
+  * boost-bind:arm64-osx@1.88.0 -- git+https://github.com/microsoft/vcpkg@a15c751451e95db5247d6cfb51087fdc9d4c358d
+  * boost-cmake:arm64-osx@1.88.0 -- git+https://github.com/microsoft/vcpkg@1a36be4443ec1c0be66984a1e82914a5181b37b1
+  * boost-concept-check:arm64-osx@1.88.0 -- git+https://github.com/microsoft/vcpkg@c0ca6d1964dab6ed90d303669d4b7f793984c51f
+  * boost-config:arm64-osx@1.88.0 -- git+https://github.com/microsoft/vcpkg@08220601e68293ce84acafc748856e45db90b6e0
+  * boost-container-hash:arm64-osx@1.88.0 -- git+https://github.com/microsoft/vcpkg@ea1718341f6ab05a1e8de70803f2217501121b22
+  * boost-conversion:arm64-osx@1.88.0 -- git+https://github.com/microsoft/vcpkg@c42652f6df8bd8617a314dfe5fe4c2faf1a7dedd
+  * boost-core:arm64-osx@1.88.0 -- git+https://github.com/microsoft/vcpkg@4c65d7305461035adb983409910487493fbc3c17
+  * boost-describe:arm64-osx@1.88.0 -- git+https://github.com/microsoft/vcpkg@c8f7e17ade0012c59a0f0a4fd2eed310e46a62a2
+  * boost-detail:arm64-osx@1.88.0 -- git+https://github.com/microsoft/vcpkg@98a332b03b6cea4761f88e91583365d6541a363a
+  * boost-exception:arm64-osx@1.88.0 -- git+https://github.com/microsoft/vcpkg@a9ea525002cadc70c3ea9bdf08c12d09772b8856
+  * boost-function:arm64-osx@1.88.0 -- git+https://github.com/microsoft/vcpkg@dd9ac4db4f4b66a229827fe980cf6383a5e7d3a6
+  * boost-function-types:arm64-osx@1.88.0 -- git+https://github.com/microsoft/vcpkg@89350648b176e8b7fa29c581eacb759399beb1a4
+  * boost-functional:arm64-osx@1.88.0 -- git+https://github.com/microsoft/vcpkg@2ff2af6a3352bb8fbf08b0c8d0ee09be73db31d4
+  * boost-fusion:arm64-osx@1.88.0 -- git+https://github.com/microsoft/vcpkg@bd409c100d97251c34028434e9229dbdc2a9b6ab
+  * boost-headers:arm64-osx@1.88.0 -- git+https://github.com/microsoft/vcpkg@89fca00b9db236eb0cb0ea97b9db246c2db7b3e1
+  * boost-integer:arm64-osx@1.88.0 -- git+https://github.com/microsoft/vcpkg@74fcf2f7483b0b82c14d59e9feaa006a75403e3d
+  * boost-io:arm64-osx@1.88.0 -- git+https://github.com/microsoft/vcpkg@bf0040fba4e0e01974090341efb3a14e69226ff4
+  * boost-iterator:arm64-osx@1.88.0 -- git+https://github.com/microsoft/vcpkg@8c9d7242f99b48a2179719640bc47c4a8a2f8f70
+  * boost-mp11:arm64-osx@1.88.0 -- git+https://github.com/microsoft/vcpkg@2f04ead9077fd5a1906dde8aaedbbae09c5cab8c
+  * boost-mpl:arm64-osx@1.88.0 -- git+https://github.com/microsoft/vcpkg@6cdd95078ed4dc9bd700884cfc132dca24a99013
+  * boost-numeric-conversion:arm64-osx@1.88.0 -- git+https://github.com/microsoft/vcpkg@79af9270e64b3948e4fe3c0c911614c090450bae
+  * boost-optional:arm64-osx@1.88.0 -- git+https://github.com/microsoft/vcpkg@1c8c7aa2e1a750a5faf818b3bc8e0491f415b489
+  * boost-predef:arm64-osx@1.88.0 -- git+https://github.com/microsoft/vcpkg@9800c52c1d92d169572ff2f2ed5fb936eb818c68
+  * boost-preprocessor:arm64-osx@1.88.0 -- git+https://github.com/microsoft/vcpkg@499a4341d1d58ed648cc36f9634e6eed3972bf9d
+  * boost-range:arm64-osx@1.88.0 -- git+https://github.com/microsoft/vcpkg@81d6d0d0180e3c891f8b9de796b017ab7c0f5659
+  * boost-regex:arm64-osx@1.88.0 -- git+https://github.com/microsoft/vcpkg@dd6a6b9acf08471a6fae62bf01f6d31d813674ec
+  * boost-smart-ptr:arm64-osx@1.88.0 -- git+https://github.com/microsoft/vcpkg@e65d7713ee5deba4953e849c2d8a370d65ae964e
+  * boost-static-assert:arm64-osx@1.88.0 -- git+https://github.com/microsoft/vcpkg@2cb92121f4df9c9b122c4837cb8e41ac1f4800b6
+    boost-test:arm64-osx@1.88.0 -- git+https://github.com/microsoft/vcpkg@836cf9db1b6df94db3f1ea530b57d73409fd5ec2
+  * boost-throw-exception:arm64-osx@1.88.0 -- git+https://github.com/microsoft/vcpkg@cce052773fa40ae37c9497cf38739945720cf104
+  * boost-tuple:arm64-osx@1.88.0 -- git+https://github.com/microsoft/vcpkg@55ab535f246ac9b26b4a76d5182fc593914bd691
+  * boost-type-traits:arm64-osx@1.88.0 -- git+https://github.com/microsoft/vcpkg@5c25a4ff2c1fd4d4eb993dfed7cba2b32fd020a6
+  * boost-typeof:arm64-osx@1.88.0 -- git+https://github.com/microsoft/vcpkg@75c8940f03c4002bb502d869a77288d59081d026
+  * boost-uninstall:arm64-osx@1.88.0 -- git+https://github.com/microsoft/vcpkg@3b2f9f82076f2d15124a4e449700848c25bcadcc
+  * boost-unordered:arm64-osx@1.88.0 -- git+https://github.com/microsoft/vcpkg@0c41c1a7f1cbf9fa1c6f2c88050fc5a4100fc0de
+  * boost-utility:arm64-osx@1.88.0 -- git+https://github.com/microsoft/vcpkg@9600bd33e0b671744e96c3d032170cf4ee1d1be5
+    sockpp:arm64-osx@1.0.0#2 -- git+https://github.com/microsoft/vcpkg@66ad1fa2ec2342ff88b2272a6f18a656effbd50a
+  * vcpkg-boost:arm64-osx@2025-03-29 -- git+https://github.com/microsoft/vcpkg@858b0333b773b5650c3f19ef271e3205542d7ceb
+  * vcpkg-cmake:arm64-osx@2024-04-23 -- git+https://github.com/microsoft/vcpkg@e74aa1e8f93278a8e71372f1fa08c3df420eb840
+  * vcpkg-cmake-config:arm64-osx@2024-05-23 -- git+https://github.com/microsoft/vcpkg@97a63e4bc1a17422ffe4eff71da53b4b561a7841
+boost-test provides CMake targets:
+
+  # this is heuristically generated, and may not be correct
+  find_package(boost_included_prg_exec_monitor CONFIG REQUIRED)
+  target_link_libraries(main PRIVATE Boost::included_prg_exec_monitor)
+
+  find_package(boost_included_test_exec_monitor CONFIG REQUIRED)
+  target_link_libraries(main PRIVATE Boost::included_test_exec_monitor)
+
+  find_package(boost_included_unit_test_framework CONFIG REQUIRED)
+  target_link_libraries(main PRIVATE Boost::included_unit_test_framework)
+
+  find_package(boost_prg_exec_monitor CONFIG REQUIRED)
+  target_link_libraries(main PRIVATE Boost::prg_exec_monitor)
+
+  find_package(boost_test_exec_monitor CONFIG REQUIRED)
+  target_link_libraries(main PRIVATE Boost::test_exec_monitor)
+
+  find_package(boost_unit_test_framework CONFIG REQUIRED)
+  target_link_libraries(main PRIVATE Boost::unit_test_framework)
+
+sockpp provides CMake targets:
+
+  # this is heuristically generated, and may not be correct
+  find_package(sockpp CONFIG REQUIRED)
+  target_link_libraries(main PRIVATE Sockpp::sockpp-static)
+
+All requested installations completed successfully in: 281 us

@@ -1,0 +1,15 @@
+arm64-osx/
+arm64-osx/include/
+arm64-osx/include/boost/
+arm64-osx/include/boost/exception/
+arm64-osx/include/boost/exception/exception.hpp
+arm64-osx/include/boost/throw_exception.hpp
+arm64-osx/share/
+arm64-osx/share/boost-throw-exception/
+arm64-osx/share/boost-throw-exception/copyright
+arm64-osx/share/boost-throw-exception/vcpkg.spdx.json
+arm64-osx/share/boost-throw-exception/vcpkg_abi_info.txt
+arm64-osx/share/boost_throw_exception/
+arm64-osx/share/boost_throw_exception/boost_throw_exception-config-version.cmake
+arm64-osx/share/boost_throw_exception/boost_throw_exception-config.cmake
+arm64-osx/share/boost_throw_exception/boost_throw_exception-targets.cmake
