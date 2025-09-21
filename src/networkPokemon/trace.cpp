@@ -24,11 +24,4 @@ namespace pokemon {
             os << codeAnsi << msg << "\\e[0m" << std::endl;
 
     }
-
-
-    void Trace::On() {
-        affiche = true;
-    }
-
-
 }

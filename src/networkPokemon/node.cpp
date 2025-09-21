@@ -3,8 +3,9 @@
 using namespace std::chrono_literals;
 
 namespace pokemon {
-    Node::Node(const std::string &picturePath, const std::string &nodeFile) {
+    Node::Node() noexcept {}
 
+    void Node::initialized(const std::string &picturePath, const std::string &nodeFile) noexcept{
         std::string fileNameNode = picturePath + nodeFile;
         addNodesList(fileNameNode);
         std::string fileNameImages = picturePath + "pokemons.txt";
@@ -16,10 +17,7 @@ namespace pokemon {
 
         listen = std::make_unique<Listen>(port_s);
         client = std::make_unique<Client>(ip_s, port_s);
-
-
     }
-
 
     void Node::addNodesList(const std::string &fileName) {
         std::ifstream file(fileName);
@@ -69,14 +67,10 @@ namespace pokemon {
         if (!node.resourceManager.empty(nodesList))
             os << "Liste Nodes connus: " << std::endl;
 
-        for (auto &n: nodesList)
+        for (const auto& n: nodesList)
             os << n << std::endl;
 
         return os;
-    }
-
-    void Node::getPic(const std::string &picName) {
-        client->getPic(picName);
     }
 
 }

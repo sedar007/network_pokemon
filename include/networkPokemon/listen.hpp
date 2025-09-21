@@ -1,10 +1,10 @@
+#pragma once
 /**
  * @file listen.hpp
  * @brief Définition de la classe Listen.
  */
-#pragma once
 
-#include "thread"
+
 namespace pokemon {
 
     /**
@@ -16,20 +16,20 @@ namespace pokemon {
          * @brief Constructeur de la classe Listen.
          * @param port Port sur lequel écouter les connexions.
          */
-        Listen(const in_port_t port);
+        Listen(const in_port_t port) noexcept;
 
         /**
          * @brief Lance l'écoute des connexions sur un port spécifique dans un thread séparé.
          * @return Un objet std::thread représentant le thread d'écoute.
          */
-        std::thread connect();
+        [[nodiscard]] std::thread connect();
 
     private:
         /**
          * @brief Méthode interne pour écouter les connexions entrantes.
-         * @return 1 en cas d'erreur, sinon 0.
+         *
          */
-        int listening();
+        void listening();
 
         in_port_t port; ///< Port sur lequel écouter les connexions.
         ResourceManager &resourceManager = ResourceManager::getInstance(); ///< Singleton pour gerer les ressoures.

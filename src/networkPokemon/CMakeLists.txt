@@ -17,10 +17,8 @@ set(SRC
 	"${SRCROOT}/node.cpp"
 
 
-	        "${INCROOT}/modbus_master.h"
 
 	"${SRCROOT}/pch.cpp"
-	"${SRCROOT}/modbus_master.cpp"
 
 	#"${SRCROOT}/main.cpp"
 	"${SRCROOT}/client.cpp"

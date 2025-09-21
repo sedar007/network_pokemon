@@ -3,12 +3,10 @@
  * @brief Définition de la classe Helper et de l'énumération PROTOCOLE.
  */
 #pragma once
-#include "random"
 
-using namespace std::chrono_literals;
 
 namespace pokemon {
-    enum class PROTOCOLE {
+    enum class PROTOCOL {
         GET_IPS, GET_PICS, GET_PIC
     };
 
@@ -26,8 +24,8 @@ namespace pokemon {
         /**
          * @brief Constructeur par défaut de la classe Helper.
          */
-        Helper();
-        static bool isValidIPAddress(const std::string &str);
+        Helper() noexcept;
+        [[nodiscard]] static bool isValidIPAddress(const std::string &str);
 
 
         /**
@@ -43,14 +41,18 @@ namespace pokemon {
          * @param number Le nombre à formater.
          * @return Chaîne de caractères représentant le nombre formaté selon le protocole.
          */
-        std::string generateFormattedNumber(const int number) const;
+        [[nodiscard]] inline std::string generateFormattedNumber(const size_t number) const noexcept {
+            std::ostringstream oss;
+            oss << std::setw(FORMATTED_NUMBER_SIZE) << std::setfill('0') << number;
+            return oss.str();
+        }
 
         /**
          * @brief Retourne une chaîne de caractères représentant un protocole donné.
          * @param q Le protocole à convertir en chaîne de caractères.
          * @return Chaîne de caractères représentant le protocole.
          */
-        std::string protocolToString(const PROTOCOLE q) const;
+        std::string protocolToString(const PROTOCOL q) const;
 
         /**
          * @brief Extrait l'adresse IP et le port d'une chaîne d'adresse au format "IP:port".
@@ -70,13 +72,6 @@ namespace pokemon {
         std::string getAdress(const std::string &ip, const in_port_t port) const;
 
         /**
-         * @brief Retourne le nombre de charactere de la taille des messages.
-         * @return nombre de charactere.
-         */
-        size_t getFormattedNumberSize() const;
-
-
-        /**
          * @brief Retourne le nombre de charactere de la taille des requetes.
          * @return Taille du charactere.
          */
@@ -85,7 +80,6 @@ namespace pokemon {
     private:
         std::random_device rd_; ///< Générateur de nombres aléatoires.
         std::mt19937 rng_{rd_()}; ///< Générateur de nombres aléatoires.
-        size_t formattedNumberSize; ///< nombre de charactere de la taille des messages.
         size_t protocol_size; ///< nombre de charactere de la taille des requetes.
 
 

@@ -2,12 +2,12 @@
 
 namespace pokemon {
 
-    Main::Main(const bool traceLog) {
+    Main::Main(const bool traceLog) noexcept {
         if (traceLog)
             trace.On();
     }
 
-    Main::Main() {}
+    Main::Main() noexcept {}
 
     void Main::addNode(std::unique_ptr<Node> &node) {
         node_uptr = std::move(node);

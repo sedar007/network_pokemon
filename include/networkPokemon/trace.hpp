@@ -1,5 +1,5 @@
 #pragma once
-#include "iostream"
+
 namespace pokemon {
     /**
      * @brief Classe pour gérer les traces (logs) dans l'application.
@@ -21,7 +21,7 @@ namespace pokemon {
         /**
          * @brief Active les traces.
          */
-        void On();
+        inline void On() { affiche = true; }
 
         /**
          * @brief Affiche un message dans les traces.

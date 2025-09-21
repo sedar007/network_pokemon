@@ -2,7 +2,7 @@
 
 namespace pokemon {
 
-    Listen::Listen(const in_port_t port) : port(port) {
+    Listen::Listen(const in_port_t port) noexcept : port(port)  {
         auto listenThread = connect();
         listenThread.detach();
     }
@@ -11,60 +11,30 @@ namespace pokemon {
         return std::thread([this] { listening(); });
     }
 
-    int Listen::listening() {
-        std::string id_str("[node - " + std::to_string(port) + "] - Listen");
-
-        trace.print(std::clog, id_str + " - listening server started on port" + std::to_string(port));
+    void Listen::listening() {
+        trace.print(std::clog, std::format(MSG_LISTENING_START, std::format(MSG_NODE_ID, port, LISTEN)));
 
         // Create acceptor
         sockpp::tcp_acceptor acc(port);
         if (!acc) {
-            trace.print(std::cerr, id_str + " - listening server - Error creating the acceptor");
-            //report_error(acc.last_error_str());
-            return 1;
+            trace.print(std::cerr, std::format(MSG_LISTENING_ERROR_CREATING_ACCEPTOR, std::format(MSG_NODE_ID, port, LISTEN)));
+            throw std::runtime_error(MSG_ERROR_CREATING_ACCEPTOR);
         }
 
-        trace.print(std::clog,
-                    id_str + " - listening server - Awaiting connections on port " + std::to_string(port) + "...");
-      /*  while (true) {
-            sockpp::inet_address address;
-            if (auto res = acc.accept(&address); !res) {
-
-            } else {
-                trace.print(std::clog, id_str + " - listening Server started on port " + std::to_string(port));
-                sockpp::tcp_socket socket = res.release();
-                Server server(port);
-                auto serverThread = server.run(socket);
-                serverThread.join();
-            }
-        }
-*/
         while (true) {
-            // Accept a new client connection
-            sockpp::tcp_socket sock = acc.accept();
+            trace.print(std::cerr, std::format(MSG_LISTENING_AWAITING_CONNECTION, std::format(MSG_NODE_ID, port, LISTEN), acc.last_error_str()));
+            std::unique_ptr<sockpp::tcp_socket> sock = std::make_unique<sockpp::tcp_socket>(acc.accept()) ;
 
             if (!sock) {
-                trace.print(std::cerr, id_str + "- Error accepting incoming connection: " + acc.last_error_str());
-                std::this_thread::sleep_for(threadSleep_s(1000, 2000));
+                trace.print(std::cerr, std::format(MSG_LISTENING_ERROR_ACCEPTING_ACCEPTOR, std::format(MSG_NODE_ID, port, LISTEN), acc.last_error_str()));
+                std::this_thread::sleep_for(threadSleep_s(LISTEN_ERROR_CONNECTION_SLEEP_RANGE_BEGIN, LISTEN_ERROR_CONNECTION_SLEEP_RANGE_END));
             }
             else {
-               std::cout<<"Listening on port: "<<port<<std::endl;
-                trace.print(std::clog, id_str + " - listening Server started on port " + std::to_string(port));
-
+                trace.print(std::clog, std::format(MSG_LISTENING_ACCEPTING_CONNECTION, std::format(MSG_NODE_ID, port, LISTEN)));
                 Server server(port);
-                auto serverThread = server.run(sock);
-                serverThread.join();
-
-
-                // Create a thread and transfer the new stream to it.
-              //  thread thr(run_echo, std::move(sock));
-                //thr.detach();
+                auto serverThread = server.run(std::move(sock));
+                serverThread.detach();
             }
         }
-
-
-
-
-
     }
 }

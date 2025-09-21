@@ -1,8 +1,5 @@
 #pragma once
 
-#include "trace.hpp"
-#include "iostream"
-
 namespace pokemon {
     /// @brief Classe pour gérer les ressources, y compris les images et les nœuds.
     class ResourceManager {
