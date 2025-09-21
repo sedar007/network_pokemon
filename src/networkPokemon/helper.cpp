@@ -3,7 +3,7 @@
 using namespace std::chrono_literals;
 namespace pokemon {
 
-    Helper::Helper() :protocol_size(8), formattedNumberSize(6) {}
+    Helper::Helper() noexcept :protocol_size(8) {}
 
     bool Helper::isValidIPAddress(const std::string &str)  {
         // Expression régulière pour valider le format de l'adresse IP
@@ -21,19 +21,13 @@ namespace pokemon {
         return std::chrono::milliseconds(static_cast<int>(duration_distrib(rng_)));
     }
 
-    std::string Helper::generateFormattedNumber(const int number) const {
-        std::ostringstream oss;
-        oss << std::setw(formattedNumberSize) << std::setfill('0') << number;
-        return oss.str();
-    }
-
-    std::string Helper::protocolToString(const PROTOCOLE q) const {
+    std::string Helper::protocolToString(const PROTOCOL q) const {
         switch (q) {
-            case PROTOCOLE::GET_IPS:
+            case PROTOCOL::GET_IPS:
                 return "GET_IPS_";
-            case PROTOCOLE::GET_PICS:
+            case PROTOCOL::GET_PICS:
                 return "GET_PICS";
-            case PROTOCOLE::GET_PIC:
+            case PROTOCOL::GET_PIC:
                 return "GET_PIC_";
             default:
                 return "UNKNOWN_";
@@ -57,10 +51,6 @@ namespace pokemon {
 
     std::string Helper::getAdress(const std::string &ip, const in_port_t port) const {
         return ip + ":" + std::to_string(port);
-    }
-
-    size_t Helper::getFormattedNumberSize() const {
-        return formattedNumberSize;
     }
 
     size_t Helper::protocolSize() const {

@@ -1,10 +1,8 @@
+#pragma once
 /**
  * @file Client.hpp
  * @brief Définition de la classe Client.
  */
-
-#pragma once
-
 
 namespace pokemon {
 

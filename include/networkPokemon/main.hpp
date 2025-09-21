@@ -1,13 +1,8 @@
+#pragma once
 /**
  * @file Main.hpp
  * @brief Définition de la classe Main.
  */
-
-#pragma once
-
-#include "thread"
-#include "node.hpp"
-
 
 namespace pokemon {
 
@@ -19,13 +14,13 @@ namespace pokemon {
         /**
          * @brief Constructeur par défaut de la classe Main.
          */
-        Main();
+        Main() noexcept;
 
         /**
          * @brief Constructeur de la classe Main avec option de log.
          * @param traceLog Indique si log est activée.
          */
-        Main(const bool traceLog);
+        Main(const bool traceLog) noexcept;
 
         /**
          * @brief Ajoute un nœud au programme.

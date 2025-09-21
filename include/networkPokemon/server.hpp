@@ -1,8 +1,5 @@
 #pragma once
 
-#include "sockpp/tcp_socket.h"
-#include "thread"
-
 namespace pokemon {
 
     /**
@@ -14,14 +11,17 @@ namespace pokemon {
          * @brief Constructeur pour initialiser le serveur avec le port spécifié.
          * @param port Le numéro de port sur lequel écouter.
          */
-        Server(in_port_t port);
+        Server(in_port_t port) noexcept;
 
         /**
          * @brief Démarre le serveur et gère les connexions entrantes.
          * @param socket La socket connectée.
          * @return Un thread qui exécute le serveur.
          */
-        std::thread run(sockpp::tcp_socket &socket);
+        std::thread run(std::unique_ptr<sockpp::tcp_socket> socket) noexcept;
+
+        [[nodiscard]] int send_msg(std::unique_ptr<sockpp::tcp_socket> socket, const std::string_view& msg, const std::string_view& protocol ) const noexcept;
+
 
     private:
         /**
@@ -29,11 +29,11 @@ namespace pokemon {
          * @param socket La socket connectée.
          * @return Un entier représentant le résultat du traitement.
          */
-        int process(sockpp::tcp_socket &socket);
+        int process(std::unique_ptr<sockpp::tcp_socket> socket);
 
         ResourceManager &resourceManager = ResourceManager::getInstance();
         Trace &trace = Trace::getInstance();
-        in_port_t port_i;
+        const in_port_t port_i;
 
         /**
          * @brief Obtient une liste d'adresses IP à envoyer.

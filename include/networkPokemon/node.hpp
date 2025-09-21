@@ -1,12 +1,8 @@
+#pragma once
 /**
  * @file Node.hpp
  * @brief Définition de la classe Node.
  */
-
-#pragma once
-
-#include "sockpp/tcp_connector.h"
-#include "client.hpp"
 
 namespace pokemon {
 
@@ -17,10 +13,15 @@ namespace pokemon {
     public:
         /**
          * @brief Constructeur de la classe Node.
+         */
+        Node() noexcept;
+
+        /**
+         * @brief intitialized the node.
          * @param picturePath Chemin vers les images.
          * @param nodeFile Fichier du nœud.
          */
-        Node(const std::string &picturePath, const std::string &nodeFile);
+        void initialized(const std::string &picturePath, const std::string &nodeFile) noexcept;
 
         /**
          * @brief Surcharge de l'opérateur de flux de sortie pour afficher le nœud.
@@ -45,7 +46,7 @@ namespace pokemon {
          * @brief Obtient une image à partir d'un nom de fichier.
          * @param picName Nom du fichier image.
          */
-        void getPic(const std::string &picName);
+        inline void getPic(const std::string &picName) noexcept { client->getPic(picName);}
 
     private:
         in_port_t port_s; ///< Port du nœud.

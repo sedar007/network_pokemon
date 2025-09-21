@@ -31,7 +31,10 @@ int main(int argc, char* argv[]) {
 
     pokemon::Main main(traceLog);
 
-   auto node = std::make_unique<pokemon::Node>(picturePath, nodeFile); // Create a Node
+   auto node = std::make_unique<pokemon::Node>(); // Create a Node
+
+
+    node->initialized(picturePath, nodeFile);
 
    main.addNode(node);
 
