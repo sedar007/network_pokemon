@@ -6,6 +6,6 @@ add_executable(${PROJECT_NAME}-exemple
 
 target_link_libraries(${PROJECT_NAME}-exemple
         PRIVATE
-        ${PROJECT_NAME}
+        ${PROJECT_NAME}-network-pokemon
 
 )
