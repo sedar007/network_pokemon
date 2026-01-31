@@ -19,7 +19,6 @@ if(IOS)
 
     set_target_properties(${PROJECT_NAME}-ui PROPERTIES
         MACOSX_BUNDLE TRUE
-        MACOSX_BUNDLE_GUI_IDENTIFIER "com.adjysedar.networkpokemon"
         MACOSX_BUNDLE_BUNDLE_NAME "Network Pokémon"
         MACOSX_BUNDLE_ICON_FILE "AppIcon" # Le nom du dossier dans .appiconset
         XCODE_ATTRIBUTE_ASSETCATALOG_COMPILER_APPICON_NAME "AppIcon"
@@ -41,6 +40,9 @@ qt_add_qml_module(${PROJECT_NAME}-ui
         QML_FILES components/PokemonDelegate.qml
         QML_FILES components/StatCard.qml
         QML_FILES components/ActionButton.qml
+        QML_FILES components/ConfigInput.qml
+        QML_FILES components/ConfigSwitch.qml
+        QML_FILES components/SettingsPopup.qml
         QML_FILES Data/PokemonModel.qml
         QML_FILES pages/PeersPage.qml
         QML_FILES pages/SearchPage.qml
@@ -51,6 +53,7 @@ qt_add_qml_module(${PROJECT_NAME}-ui
 # If you are developing for iOS or macOS you should consider setting an
 # explicit, fixed bundle identifier manually though.
 set_target_properties(${PROJECT_NAME}-ui PROPERTIES
+    MACOSX_BUNDLE_GUI_IDENTIFIER "com.adjysedar.networkpokemon"
     MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
     MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
     MACOSX_BUNDLE TRUE

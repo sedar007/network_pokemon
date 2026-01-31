@@ -1,6 +1,7 @@
 {
   "dependencies": [
     "boost-test",
-    "sockpp"
+    "sockpp",
+    "nlohmann-json"
   ]
 }

@@ -1,12 +1,14 @@
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(sockpp CONFIG REQUIRED)
 find_package(Threads REQUIRED)
+find_package(nlohmann_json CONFIG REQUIRED)
 
 set(INCROOT "${PROJECT_SOURCE_DIR}/include/networkPokemon")
 set(SRCROOT "${PROJECT_SOURCE_DIR}/src/networkPokemon")
 
 set(SRC
 	"${SRCROOT}/pch.h"
+    "${SRCROOT}/json.cpp"
 	#"${SRCROOT}/helper.cpp"
         #"${SRCROOT}/networkNode.cpp"
         #"${SRCROOT}/server.cpp"
@@ -14,6 +16,7 @@ set(SRC
         #"${SRCROOT}/trace.cpp"
         #"${SRCROOT}/listen.cpp"
     "${SRCROOT}/test.cpp"
+
         #"${SRCROOT}/main.cpp"
 
 	#"${SRCROOT}/client.cpp"
@@ -47,6 +50,7 @@ target_link_libraries(${PROJECT_NAME}-network-pokemon
 		Sockpp::sockpp-static
 	PRIVATE
 		Threads::Threads
+        nlohmann_json::nlohmann_json
 )
 
 target_compile_options(${PROJECT_NAME}-network-pokemon

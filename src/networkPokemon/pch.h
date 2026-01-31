@@ -13,6 +13,9 @@
 #include <sstream>
 
 
+#include <nlohmann/json.hpp>
+
+#include  "json.hpp"
 #include "sockpp/tcp_acceptor.h"
 #include "sockpp/tcp_connector.h"
 #include "sockpp/tcp_socket.h"
