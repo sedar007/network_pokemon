@@ -42,6 +42,4 @@ set(GCC_DEBUG_OPTIMISATION
 	-g								# Génère des informations de débogage (DWARF) utilisables par gdb/lldb
 )
 
-add_subdirectory(models)
-add_subdirectory(networkPokemon)
-add_subdirectory(console)
+add_subdirectory(NetworkPokemonUi)

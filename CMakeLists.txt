@@ -22,4 +22,5 @@ enable_testing()
 #endif()
 
 add_subdirectory(src)
+add_subdirectory(ui)
 #add_subdirectory(exemple)
