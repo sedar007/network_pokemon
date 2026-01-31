@@ -4,7 +4,6 @@
  */
 #pragma once
 
-
 namespace pokemon {
     enum class PROTOCOL {
         GET_IPS, GET_PICS, GET_PIC
@@ -13,7 +12,7 @@ namespace pokemon {
     /**
      * @brief Classe utilitaire contenant des méthodes pour manipuler les protocoles et les adresses IP.
      */
-    class Helper {
+    class NETWORK_POKEMON_API Helper {
         /**
          * @brief Vérifie si une chaîne de caractères représente une adresse IP valide au format "XXX.XXX.XXX.XXX:port".
          * @param str Chaîne de caractères à vérifier.
@@ -77,7 +76,7 @@ namespace pokemon {
          */
         size_t protocolSize() const;
 
-    private:
+    public:
         std::random_device rd_; ///< Générateur de nombres aléatoires.
         std::mt19937 rng_{rd_()}; ///< Générateur de nombres aléatoires.
         size_t protocol_size; ///< nombre de charactere de la taille des requetes.

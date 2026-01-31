@@ -5,7 +5,7 @@ namespace pokemon {
     /**
      * @brief Représente un serveur pour gérer les connexions entrantes.
      */
-    class Server : public Helper {
+    class NETWORK_POKEMON_API  Server : public NetworkNode {
     public:
         /**
          * @brief Constructeur pour initialiser le serveur avec le port spécifié.
@@ -31,9 +31,6 @@ namespace pokemon {
          */
         int process(std::unique_ptr<sockpp::tcp_socket> socket);
 
-        ResourceManager &resourceManager = ResourceManager::getInstance();
-        Trace &trace = Trace::getInstance();
-        const in_port_t port_i;
 
         /**
          * @brief Obtient une liste d'adresses IP à envoyer.

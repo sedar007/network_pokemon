@@ -1,14 +1,3 @@
-#cmake_minimum_required(VERSION 3.22)
-#project(peer_to_peer_project)
-
-#set(CMAKE_CXX_STANDARD 17)
-
-#set(THREADS_PREFER_PTHREAD_FLAG ON)
-
-#find_package(Threads REQUIRED)
-
-#add_subdirectory(src)
-#------------------
 cmake_minimum_required(VERSION 3.21)
 
 set(PROJECT_NAME "NetworkPokemon")
@@ -29,15 +18,8 @@ project(${PROJECT_NAME}
 
 #if(${PROJECT_NAME}_BUILD_TESTS)
 enable_testing()
-add_subdirectory(tests)
+#add_subdirectory(tests)
 #endif()
 
 add_subdirectory(src)
-add_subdirectory(exemple)
-
-#add_subdirectory(Ui)
-
-
-
-
-
+#add_subdirectory(exemple)

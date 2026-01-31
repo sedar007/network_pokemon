@@ -9,7 +9,7 @@ namespace pokemon {
     /**
      * @brief Classe pour gérer un nœud.
      */
-    class Node : public Helper {
+    class NETWORK_POKEMON_API Node : public Helper {
     public:
         /**
          * @brief Constructeur de la classe Node.

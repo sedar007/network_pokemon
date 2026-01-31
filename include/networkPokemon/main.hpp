@@ -9,7 +9,7 @@ namespace pokemon {
     /**
      * @brief Classe principale pour gérer les nœuds.
      */
-    class Main {
+    class NETWORK_POKEMON_API Main {
     public:
         /**
          * @brief Constructeur par défaut de la classe Main.

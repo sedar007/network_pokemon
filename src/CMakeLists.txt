@@ -43,3 +43,5 @@ set(GCC_DEBUG_OPTIMISATION
 )
 
 add_subdirectory(networkPokemon)
+add_subdirectory(console)
+add_subdirectory(NetworkPokemonUi)

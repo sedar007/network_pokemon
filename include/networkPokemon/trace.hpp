@@ -4,7 +4,7 @@ namespace pokemon {
     /**
      * @brief Classe pour gérer les traces (logs) dans l'application.
      */
-    class Trace {
+    class NETWORK_POKEMON_API Trace {
     public:
         /**
          * @brief Obtient l'instance unique du singleton.

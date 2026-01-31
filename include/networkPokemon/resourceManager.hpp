@@ -2,7 +2,7 @@
 
 namespace pokemon {
     /// @brief Classe pour gérer les ressources, y compris les images et les nœuds.
-    class ResourceManager {
+    class NETWORK_POKEMON_API ResourceManager {
     public:
         /// @brief Méthode statique pour obtenir l'instance unique du singleton
         static ResourceManager &getInstance();

@@ -4,7 +4,7 @@
 using namespace std::chrono_literals;
 namespace pokemon {
 
-    Server::Server(in_port_t port) noexcept : port_i(port) {}
+    Server::Server(in_port_t port) noexcept : NetworkNode(port){}
 
     std::thread Server::run(std::unique_ptr<sockpp::tcp_socket> socket) noexcept {
         return std::thread([this, socket = std::move(socket)]() mutable {
@@ -39,8 +39,8 @@ namespace pokemon {
 
         char buf[SERVER_BUF_SIZE];
 
-        trace.print(std::clog, std::format(MSG_SERVER_RECEIVED_CONNECTION, std::format(MSG_NODE_ID, port_i, SERVER),
-                                          socket->address().to_string(), port_i));
+        getTrace().print(std::clog, std::format(MSG_SERVER_RECEIVED_CONNECTION, std::format(MSG_NODE_ID, getPort(), SERVER),
+                                          socket->address().to_string(), getPort()));
 
         if (const auto res = socket->read(buf, sizeof(buf)); !res || res <= 0) {
             return -1;
@@ -49,7 +49,7 @@ namespace pokemon {
         std::string buf_str(buf, SERVER_BUF_SIZE);
         std::string protocol_str(buf, protocolSize()); // get protocole
 
-        trace.print(std::clog, std::format(MSG_SERVER_RECEIVED_QUERY, std::format(MSG_NODE_ID, port_i, SERVER),
+        getTrace().print(std::clog, std::format(MSG_SERVER_RECEIVED_QUERY, std::format(MSG_NODE_ID, getPort(), SERVER),
                                               protocol_str));
 
         if (protocol_str == protocolToString(PROTOCOL::GET_IPS)) {
@@ -83,16 +83,16 @@ namespace pokemon {
         socket->write(&std_send[0], std_send.size());
 
         if (protocol == protocolToString(PROTOCOL::GET_IPS)) {
-            trace.print(std::clog, std::format(MSG_SERVER_SENT_IPS_LIST, std::format(MSG_NODE_ID, port_i, SERVER),
+            getTrace().print(std::clog, std::format(MSG_SERVER_SENT_IPS_LIST, std::format(MSG_NODE_ID, getPort(), SERVER),
                                               socket->address().to_string()));
         }
 
         else if (protocol == protocolToString(PROTOCOL::GET_PICS)) {
-            trace.print(std::clog, std::format(MSG_SERVER_SENT_PICTURES_LIST, std::format(MSG_NODE_ID, port_i, SERVER),
+            getTrace().print(std::clog, std::format(MSG_SERVER_SENT_PICTURES_LIST, std::format(MSG_NODE_ID, getPort(), SERVER),
                                               socket->address().to_string()));
         }
         else if (protocol == protocolToString(PROTOCOL::GET_PIC)) {
-            trace.print(std::clog, std::format(MSG_SERVER_SENT_PICTURE, std::format(MSG_NODE_ID, port_i, SERVER),
+            getTrace().print(std::clog, std::format(MSG_SERVER_SENT_PICTURE, std::format(MSG_NODE_ID, getPort(), SERVER),
                                               socket->address().to_string()));
         }
 
@@ -104,7 +104,7 @@ namespace pokemon {
 
 #if 0
     int Server::process(sockpp::tcp_socket &socket) {
-        std::string id_str("[node - " + std::to_string(port_i) + "] - Server");
+        std::string id_str("[node - " + std::to_string(getPort()) + "] - Server");
 
         size_t sizeBuf = 512;
         char buf[sizeBuf];
@@ -152,14 +152,14 @@ namespace pokemon {
 
     std::string Server::getIpsToSend() const {
         std::string str("");
-        for (auto &msg: resourceManager.getNodesList())
+        for (auto &msg: getRessource().getNodesList())
             str += msg + ";";
         return str;
     }
 
     std::string Server:: getPicsToSend() const {
         std::string str("");
-        for (auto &msg: resourceManager.getPicturesList())
+        for (auto &msg: getRessource().getPicturesList())
             str += msg.first + "," + std::get<0>(msg.second) + ","
                    + std::get<1>(msg.second) + ","
                    + std::get<2>(msg.second) + ";";
@@ -173,13 +173,13 @@ namespace pokemon {
 
         std::string sizeHash_str = buf_str.substr(pos, FORMATTED_NUMBER_SIZE);  // sizePictureHash : str
         pos += FORMATTED_NUMBER_SIZE;
-        trace.print(std::clog, sizeHash_str);
+        getTrace().print(std::clog, sizeHash_str);
         size_t sizeHash;
         try {
             sizeHash = std::stoi(sizeHash_str); // sizePictureHash : size_t
             std::string pic_hash = buf_str.substr(pos, sizeHash); // pictureHash : str
             pos += sizeHash;
-            trace.print(std::clog, pic_hash);
+            getTrace().print(std::clog, pic_hash);
 
             size_t a = pos;
             std::string sizePicName_str = buf_str.substr(pos, FORMATTED_NUMBER_SIZE); // sizePictureName : str
@@ -194,7 +194,7 @@ namespace pokemon {
 
             std::string nameAndExtension(buf, a, pos); //
 
-            return nameAndExtension + resourceManager.getPic_str(pic_hash);
+            return nameAndExtension + getRessource().getPic_str(pic_hash);
         }
         catch (const std::exception &e) {
             return "";

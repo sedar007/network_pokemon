@@ -14,7 +14,28 @@
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug",
         "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+        "VCPKG_TARGET_TRIPLET": "arm64-osx",
+        "CMAKE_OSX_ARCHITECTURES": "arm64",
+        "CMAKE_PREFIX_PATH": "$env{QT_ROOT}/6.10.1/macos",
+        "CMAKE_FIND_ROOT_PATH_MODE_PACKAGE": "BOTH",
         "VCPKG_FEATURE_FLAGS": "manifests"
+      }
+    },
+    {
+      "name": "ios-dev",
+      "displayName": "iOS Device",
+      "binaryDir": "${sourceDir}/build-ios-clion",
+      "generator": "Xcode",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+        "VCPKG_TARGET_TRIPLET": "arm64-ios",
+        "CMAKE_SYSTEM_NAME": "iOS",
+        "CMAKE_OSX_ARCHITECTURES": "arm64",
+        "CMAKE_OSX_SYSROOT": "iphoneos",
+        "CMAKE_OSX_DEPLOYMENT_TARGET": "15.0",
+        "CMAKE_PREFIX_PATH": "$env{QT_ROOT}/6.10.1/ios",
+        "CMAKE_FIND_ROOT_PATH_MODE_PACKAGE": "BOTH"
       }
     }
   ]

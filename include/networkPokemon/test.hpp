@@ -1,26 +1,27 @@
 #pragma once
+
 /**
- * @file Client.hpp
- * @brief Définition de la classe Client.
+ * @file listen.hpp
+ * @brief Définition de la classe Listen.
  */
+
 
 namespace pokemon {
 
-    class Test {
+    /**
+     * @brief Classe responsable de l'écoute des connexions sur un port spécifique.
+     */
+    class NETWORK_POKEMON_API Test {
     public:
+        /**
+         * @brief Constructeur de la classe Listen.
+         * @param port Port sur lequel écouter les connexions.
+         */
+        Test() noexcept;
 
-        Test();
-
-        inline std::string getName(){return name;};
-        inline void setName(const std::string &name){this->name = name;};
-
-        int getAge();
-        void setAge(int age);
-        std::string getLocalIp();
+        std::string getIp() const noexcept;
 
     private:
 
-        std::string name;
-        int age;
     };
 }

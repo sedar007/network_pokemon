@@ -2,7 +2,7 @@
 
 namespace pokemon {
 
-    Listen::Listen(const in_port_t port) noexcept : port(port)  {
+    Listen::Listen(const in_port_t port) noexcept : NetworkNode(port)  {
         auto listenThread = connect();
         listenThread.detach();
     }
@@ -12,26 +12,26 @@ namespace pokemon {
     }
 
     void Listen::listening() {
-        trace.print(std::clog, std::format(MSG_LISTENING_START, std::format(MSG_NODE_ID, port, LISTEN)));
+        getTrace().print(std::clog, std::format(MSG_LISTENING_START, std::format(MSG_NODE_ID, getPort(), LISTEN)));
 
         // Create acceptor
-        sockpp::tcp_acceptor acc(port);
+        sockpp::tcp_acceptor acc(getPort());
         if (!acc) {
-            trace.print(std::cerr, std::format(MSG_LISTENING_ERROR_CREATING_ACCEPTOR, std::format(MSG_NODE_ID, port, LISTEN)));
+            getTrace().print(std::cerr, std::format(MSG_LISTENING_ERROR_CREATING_ACCEPTOR, std::format(MSG_NODE_ID, getPort(), LISTEN)));
             throw std::runtime_error(MSG_ERROR_CREATING_ACCEPTOR);
         }
 
         while (true) {
-            trace.print(std::cerr, std::format(MSG_LISTENING_AWAITING_CONNECTION, std::format(MSG_NODE_ID, port, LISTEN), acc.last_error_str()));
+            getTrace().print(std::cerr, std::format(MSG_LISTENING_AWAITING_CONNECTION, std::format(MSG_NODE_ID, getPort(), LISTEN), acc.last_error_str()));
             std::unique_ptr<sockpp::tcp_socket> sock = std::make_unique<sockpp::tcp_socket>(acc.accept()) ;
 
             if (!sock) {
-                trace.print(std::cerr, std::format(MSG_LISTENING_ERROR_ACCEPTING_ACCEPTOR, std::format(MSG_NODE_ID, port, LISTEN), acc.last_error_str()));
+                getTrace().print(std::cerr, std::format(MSG_LISTENING_ERROR_ACCEPTING_ACCEPTOR, std::format(MSG_NODE_ID, getPort(), LISTEN), acc.last_error_str()));
                 std::this_thread::sleep_for(threadSleep_s(LISTEN_ERROR_CONNECTION_SLEEP_RANGE_BEGIN, LISTEN_ERROR_CONNECTION_SLEEP_RANGE_END));
             }
             else {
-                trace.print(std::clog, std::format(MSG_LISTENING_ACCEPTING_CONNECTION, std::format(MSG_NODE_ID, port, LISTEN)));
-                Server server(port);
+                getTrace().print(std::clog, std::format(MSG_LISTENING_ACCEPTING_CONNECTION, std::format(MSG_NODE_ID, getPort(), LISTEN)));
+                Server server(getPort());
                 auto serverThread = server.run(std::move(sock));
                 serverThread.detach();
             }

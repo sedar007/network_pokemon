@@ -10,7 +10,7 @@ namespace pokemon {
     /**
      * @brief Classe Client pour gérer les connexions.
      */
-    class Client : public Helper {
+    class NETWORK_POKEMON_API Client : public Helper {
     public:
         /**
          * @brief Constructeur de la classe Client.
@@ -43,7 +43,7 @@ namespace pokemon {
          * @param msg Message à envoyer.
          * @return 0 si tout s'est bien passé, -1 sinon.
          */
-        int start(const std::string &neighbour_host, const in_port_t neighbour_port, const std::string &msg) noexcept;
+        int start(std::string neighbour_host, const in_port_t neighbour_port, const std::string& msg) noexcept;
 
         in_port_t port_s; ///< Port du client.
         std::string ip_s; ///< Adresse IP du client.

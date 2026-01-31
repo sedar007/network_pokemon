@@ -28,10 +28,10 @@ namespace pokemon {
 
                 auto clientThread = run(neighbour_ip, neighbour_port, msg);
                 clientThread.detach();
-                std::this_thread::sleep_for(threadSleep_s(500, 1500));
+                std::this_thread::sleep_for(threadSleep_s(1500, 3500));
             }
             getIp = !getIp;
-            std::this_thread::sleep_for(threadSleep_s(1000, 3000));
+            std::this_thread::sleep_for(threadSleep_s(5000, 7000));
         }
     }
 
@@ -83,7 +83,7 @@ namespace pokemon {
         }
     }
 
-    int Client::start(const std::string &neighbour_ip, in_port_t neighbour_port, const std::string &msg) noexcept {
+    int Client::start(std::string neighbour_ip, in_port_t neighbour_port, const std::string &msg) noexcept {
 
         if (port_s == neighbour_port) {
             return -1;
@@ -94,7 +94,7 @@ namespace pokemon {
 
         trace.print(std::clog, std::format(MSG_CLIENT_TRYING_TO_CONNECT, std::format(MSG_NODE_ID, port_s, CLIENT), knowPortStr));
 
-        std::this_thread::sleep_for(threadSleep_s(500, 1000));
+        std::this_thread::sleep_for(threadSleep_s(1500, 3000));
 
 
         if (!connector.connect(sockpp::inet_address(neighbour_ip, neighbour_port))){
