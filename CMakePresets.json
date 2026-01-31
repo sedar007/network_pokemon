@@ -24,7 +24,7 @@
     {
       "name": "ios-dev",
       "displayName": "iOS Device",
-      "binaryDir": "${sourceDir}/build-ios-clion",
+      "binaryDir": "${sourceDir}/build-ios",
       "generator": "Xcode",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug",
