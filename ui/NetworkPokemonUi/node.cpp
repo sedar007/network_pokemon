@@ -51,3 +51,11 @@ QVariantMap Node::get_node_infos()
 
     return map;
 }
+
+
+QString Node::get_ip()
+{
+    return QString::fromStdString(m_node.get_ip());
+}
+
+

@@ -57,7 +57,7 @@ Item {
                         Column {
                             Layout.fillWidth: true
                             Text { text: root.currentConfig.nodeName; font.bold: true; font.pixelSize: 18 }
-                            Text { text: myBackend.getDeviceIp(); color: "#7F8C8D" }
+                            Text { text: node_cpp.get_ip(); color: "#7F8C8D" }
                         }
 
                         Rectangle {

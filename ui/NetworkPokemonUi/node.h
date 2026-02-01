@@ -18,6 +18,8 @@ class Node  : public QObject{
         explicit Node(QObject *parent = nullptr);
         Q_INVOKABLE void save_node_infos(QString name, QString port, QString maxConn, bool share, bool download);
         Q_INVOKABLE QVariantMap get_node_infos();
+        Q_INVOKABLE QString get_ip();
+
 
     private:
         pokemon::Node m_node;

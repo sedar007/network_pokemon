@@ -1,4 +1,10 @@
 #include "pch.h"
+#include <sys/types.h>
+#include <ifaddrs.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <cstring>
+#include <iostream>
 
 using namespace std::chrono_literals;
 
@@ -26,6 +32,8 @@ namespace pokemon {
             Json::saveJson<Node_Info>(storagePath_s, NODE_INFO_FILE, *m_node_info);
         }
 
+        ip_s = get_network_ip();
+
        /* std::string fileNameNode = picturePath + nodeFile;
         addNodesList(fileNameNode);
         std::string fileNameImages = picturePath + "pokemons.txt";
@@ -47,7 +55,37 @@ namespace pokemon {
         Json::saveJson<Node_Info>(storagePath_s, NODE_INFO_FILE, *m_node_info);
     }
 
-   /* void Node::addNodesList(const std::string &fileName) {
+    std::string Node::get_network_ip() const {
+        struct ifaddrs *interfaces = nullptr;
+        struct ifaddrs *temp_addr = nullptr;
+        std::string ipAddress = LOCALHOST_IP.data();
+        int success = 0;
+
+        success = getifaddrs(&interfaces);
+
+        if (success == 0) {
+            temp_addr = interfaces;
+            while (temp_addr != nullptr) {
+                if (temp_addr->ifa_addr->sa_family == AF_INET) {
+                    std::string interfaceName = temp_addr->ifa_name;
+                    if (interfaceName == EN0_INTERFACE || (interfaceName != Lo_0_INTERFACE && ipAddress == LOCALHOST_IP)) {
+                        char addressBuffer[INET_ADDRSTRLEN];
+                        void* addrPtr = &((struct sockaddr_in*)temp_addr->ifa_addr)->sin_addr;
+                        inet_ntop(AF_INET, addrPtr, addressBuffer, INET_ADDRSTRLEN);
+                        ipAddress = addressBuffer;
+                        if (interfaceName == EN0_INTERFACE) {
+                            break;
+                        }
+                    }
+                }
+                temp_addr = temp_addr->ifa_next;
+            }
+        }
+        freeifaddrs(interfaces);
+        return ipAddress;
+    }
+
+     /* void Node::addNodesList(const std::string &fileName) {
         std::ifstream file(fileName);
 
         if (file.is_open()) {

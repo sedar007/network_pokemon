@@ -17,6 +17,9 @@ namespace pokemon {
         Node() noexcept;
 
         static constexpr std::string_view NODE_INFO_FILE = "node_info.json";
+        static constexpr std::string_view EN0_INTERFACE = "en0";
+        static constexpr std::string_view LOCALHOST_IP = "127.0.0.1";
+        static constexpr std::string_view Lo_0_INTERFACE = "lo0";
 
         void set_node_info(std::string_view node_name) noexcept;
 
@@ -61,6 +64,15 @@ namespace pokemon {
          */
         //inline void getPic(const std::string &picName) noexcept { client->getPic(picName);}
 
+
+        /**
+         * @brief Obtient l'adresse IP du nœud.
+         * @return L'adresse IP du nœud.
+         */
+        [[nodiscard]] std::string get_ip() const noexcept {
+            return ip_s;
+        }
+
     private:
         in_port_t port_s; ///< Port du nœud.
         std::string ip_s; ///< Adresse IP du nœud.
@@ -89,6 +101,12 @@ namespace pokemon {
          * @brief Démarre l'écoute du nœud.
          */
         //void startListening();
+
+        /**
+         *@brief Get the node ip
+         *@return std::string
+         */
+        std::string get_network_ip() const;
     };
 
 }
