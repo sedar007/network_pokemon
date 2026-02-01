@@ -9,7 +9,8 @@ set(SRCROOT "${PROJECT_SOURCE_DIR}/src/networkPokemon")
 set(SRC
 	"${SRCROOT}/pch.h"
     "${SRCROOT}/json.cpp"
-	#"${SRCROOT}/helper.cpp"
+    "${SRCROOT}/node.cpp"
+	"${SRCROOT}/helper.cpp"
         #"${SRCROOT}/networkNode.cpp"
         #"${SRCROOT}/server.cpp"
         #"${SRCROOT}/resourceManager.cpp"
@@ -20,7 +21,7 @@ set(SRC
         #"${SRCROOT}/main.cpp"
 
 	#"${SRCROOT}/client.cpp"
-        #"${SRCROOT}/node.cpp"
+
 
 
 
@@ -51,6 +52,7 @@ target_link_libraries(${PROJECT_NAME}-network-pokemon
 	PRIVATE
 		Threads::Threads
         nlohmann_json::nlohmann_json
+        ${PROJECT_NAME}-model
 )
 
 target_compile_options(${PROJECT_NAME}-network-pokemon

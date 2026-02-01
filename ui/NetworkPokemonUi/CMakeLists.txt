@@ -32,6 +32,8 @@ qt_add_qml_module(${PROJECT_NAME}-ui
         Main.qml
         SOURCES Backend.h
         SOURCES Backend.cpp
+        SOURCES node.h
+        SOURCES node.cpp
         QML_FILES AppHeader.qml
         QML_FILES NavBar.qml
         QML_FILES

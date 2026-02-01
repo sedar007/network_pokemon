@@ -3,7 +3,6 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import QtQuick.Effects
 
-// Import de ton Backend C++
 import NetworkPokemonUi
 
 // Import du dossier components
@@ -13,13 +12,13 @@ Item {
     id: root
     anchors.fill: parent
 
-    // --- LOGIQUE BACKEND ---
     Backend { id: myBackend }
+    Node { id: node_cpp}
 
     property var currentConfig: { "nodeName": "Chargement...", "port": "..." }
 
     function refreshConfig() {
-        var data = myBackend.getConfig();
+        var data = node_cpp.get_node_infos();
         if (data && Object.keys(data).length > 0) root.currentConfig = data;
     }
 
@@ -105,7 +104,7 @@ Item {
         onRequestSave: (name, port, maxConn, share, download) => {
             console.log("Sauvegarde demandée depuis le composant Popup")
 
-            myBackend.saveSettings(name, port, maxConn, share, download)
+            node_cpp.save_node_infos(name, port, maxConn, share, download)
 
             // On rafraichit l'interface
             root.refreshConfig()

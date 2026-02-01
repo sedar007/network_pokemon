@@ -1,7 +1,7 @@
 #pragma once
 
 namespace pokemon {
-    class json {
+    class Json {
     public:template<typename T>
     static inline void saveJson(std::string_view storagePath, std::string_view filename, const T& data) {
         if (storagePath.empty()) return;

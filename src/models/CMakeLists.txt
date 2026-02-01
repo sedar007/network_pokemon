@@ -4,17 +4,18 @@ set(SRCROOT "${PROJECT_SOURCE_DIR}/src/models")
 set(SRC
 	"${SRCROOT}/pch.h"
     "${SRCROOT}/pch.cpp"
+    "${SRCROOT}/node_info.cpp"
+
  )
 
 add_library(${PROJECT_NAME}-model
-	SHARED
+        STATIC
 	        ${SRC}
 )
 
 target_include_directories(${PROJECT_NAME}-model
 	PUBLIC
         ${PROJECT_SOURCE_DIR}/include
-		${sockpp_INCLUDE_DIRS}
 )
 
 target_link_libraries(${PROJECT_NAME}-model

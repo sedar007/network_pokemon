@@ -3,10 +3,30 @@
 using namespace std::chrono_literals;
 
 namespace pokemon {
-    Node::Node() noexcept {}
+    Node::Node() noexcept : m_node_info(std::make_unique<Node_Info>()) {
+       /*
+        if (nodei.has_value()) {
+            node_info = std::make_unique<Node_Info>();
+        }*/
 
-    void Node::initialized(const std::string &picturePath, const std::string &nodeFile) noexcept{
-        std::string fileNameNode = picturePath + nodeFile;
+    }
+
+    void Node::initialized(std::string path, [[maybe_unused]] const std::string &picturePath, [[maybe_unused]] const std::string &nodeFile) noexcept{
+
+        storagePath_s = path;
+        auto node_info_data = Json::loadJson<Node_Info>(storagePath_s, NODE_INFO_FILE);
+
+        if (node_info_data.has_value()) {
+            m_node_info = std::make_unique<Node_Info>(node_info_data.value());
+        }
+        else {
+            Node_Info default_node_info;
+            default_node_info.set_name(Node_Info::DEFAULT_NODE_NAME);
+            m_node_info = std::make_unique<Node_Info>(default_node_info);
+            Json::saveJson<Node_Info>(storagePath_s, NODE_INFO_FILE, *m_node_info);
+        }
+
+       /* std::string fileNameNode = picturePath + nodeFile;
         addNodesList(fileNameNode);
         std::string fileNameImages = picturePath + "pokemons.txt";
         addImagesList(fileNameImages);
@@ -16,10 +36,18 @@ namespace pokemon {
         sockpp::initialize();
 
         listen = std::make_unique<Listen>(port_s);
-        client = std::make_unique<Client>(ip_s, port_s);
+        client = std::make_unique<Client>(ip_s, port_s);*/
     }
 
-    void Node::addNodesList(const std::string &fileName) {
+     void Node::set_node_info(std::string_view node_name) noexcept {
+        if (m_node_info == nullptr)
+            m_node_info =  std::make_unique<Node_Info>();
+
+        m_node_info->set_name(node_name);
+        Json::saveJson<Node_Info>(storagePath_s, NODE_INFO_FILE, *m_node_info);
+    }
+
+   /* void Node::addNodesList(const std::string &fileName) {
         std::ifstream file(fileName);
 
         if (file.is_open()) {
@@ -72,5 +100,15 @@ namespace pokemon {
 
         return os;
     }
+*/
 
+    inline void to_json(nlohmann::json& j, const Node_Info& n) {
+        j = nlohmann::json{
+            {"nodeName", n.get_name()},
+        };
+    }
+
+    inline void from_json(const nlohmann::json& j, Node_Info& n) {
+        n.set_name(j.at("nodeName").get<std::string>());
+    }
 }
