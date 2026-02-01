@@ -28,6 +28,7 @@ namespace pokemon {
         else {
             Node_Info default_node_info;
             default_node_info.set_name(Node_Info::DEFAULT_NODE_NAME);
+            default_node_info.set_port(find_available_port(DEFAULT_PREFERRED_PORT));
             m_node_info = std::make_unique<Node_Info>(default_node_info);
             Json::saveJson<Node_Info>(storagePath_s, NODE_INFO_FILE, *m_node_info);
         }
@@ -83,6 +84,39 @@ namespace pokemon {
         }
         freeifaddrs(interfaces);
         return ipAddress;
+    }
+
+    int Node::find_available_port(int preferred_port) {
+        int sock = socket(AF_INET, SOCK_STREAM, 0);
+        if (sock < 0) return 0; // Erreur création socket
+
+        struct sockaddr_in sin;
+        std::memset(&sin, 0, sizeof(sin));
+        sin.sin_family = AF_INET;
+        sin.sin_addr.s_addr = INADDR_ANY;
+        sin.sin_port = htons(preferred_port);
+
+        // Tenter de "réserver" le port (Bind)
+        if (bind(sock, (struct sockaddr *)&sin, sizeof(sin)) == 0) {
+            // Ça a marché ! On vérifie quel port on a eu (utile si on a demandé 0)
+            socklen_t len = sizeof(sin);
+            if (getsockname(sock, (struct sockaddr *)&sin, &len) == 0) {
+                preferred_port = ntohs(sin.sin_port);
+            }
+
+            // On ferme le socket pour le libérer immédiatement
+            // (Ton serveur P2P réel le réouvrira juste après)
+            close(sock);
+            return preferred_port;
+        }
+        else {
+            // Le port est pris ! On réessaie avec 0 (laisser l'OS choisir)
+            close(sock);
+            if (preferred_port != 0) {
+                return find_available_port(0);
+            }
+        }
+        return 0; // Échec total
     }
 
      /* void Node::addNodesList(const std::string &fileName) {
@@ -142,11 +176,13 @@ namespace pokemon {
 
     inline void to_json(nlohmann::json& j, const Node_Info& n) {
         j = nlohmann::json{
-            {"nodeName", n.get_name()},
+            {Node_Info::NODE_NAME_KEY, n.get_name()},
+            {Node_Info::NODE_PORT_KEY, n.get_port()}
         };
     }
 
     inline void from_json(const nlohmann::json& j, Node_Info& n) {
-        n.set_name(j.at("nodeName").get<std::string>());
+        n.set_name(j.at(Node_Info::NODE_NAME_KEY).get<std::string>());
+        n.set_port(j.at(Node_Info::NODE_PORT_KEY).get<int>());
     }
 }

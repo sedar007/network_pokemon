@@ -20,6 +20,7 @@ namespace pokemon {
         static constexpr std::string_view EN0_INTERFACE = "en0";
         static constexpr std::string_view LOCALHOST_IP = "127.0.0.1";
         static constexpr std::string_view Lo_0_INTERFACE = "lo0";
+        static constexpr int DEFAULT_PREFERRED_PORT = 5000;
 
         void set_node_info(std::string_view node_name) noexcept;
 
@@ -107,6 +108,9 @@ namespace pokemon {
          *@return std::string
          */
         std::string get_network_ip() const;
+
+
+        int find_available_port(int preferred_port);
     };
 
 }

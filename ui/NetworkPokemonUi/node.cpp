@@ -41,7 +41,7 @@ QVariantMap Node::get_node_infos()
 
     auto config = m_node.get_node_info();
     map["nodeName"] = QString::fromStdString(config.get_name().data());
-    map["port"] = 2000; //QString::number(config.port);
+    map["port"] = QString::number(config.get_port());
     map["maxConnections"] = 10;//QString::number(config.maxConnections);
     map["autoShare"] = 0;//config.autoShare;
     map["autoDownload"] = 0;//config.autoDownload;
