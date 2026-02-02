@@ -11,16 +11,18 @@ set(SRC
     "${SRCROOT}/json.cpp"
     "${SRCROOT}/node.cpp"
 	"${SRCROOT}/helper.cpp"
-        #"${SRCROOT}/networkNode.cpp"
-        #"${SRCROOT}/server.cpp"
-        #"${SRCROOT}/resourceManager.cpp"
-        #"${SRCROOT}/trace.cpp"
-        #"${SRCROOT}/listen.cpp"
+    "${SRCROOT}/networkNode.cpp"
+    "${SRCROOT}/server.cpp"
+    "${SRCROOT}/resourceManager.cpp"
+    "${SRCROOT}/trace.cpp"
+    "${SRCROOT}/listen.cpp"
     "${SRCROOT}/test.cpp"
+    "${SRCROOT}/thread_pool.cpp"
+    "${SRCROOT}/server.cpp"
 
         #"${SRCROOT}/main.cpp"
 
-	#"${SRCROOT}/client.cpp"
+	"${SRCROOT}/client.cpp"
 
 
 

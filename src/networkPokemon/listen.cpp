@@ -31,9 +31,13 @@ namespace pokemon {
             }
             else {
                 getTrace().print(std::clog, std::format(MSG_LISTENING_ACCEPTING_CONNECTION, std::format(MSG_NODE_ID, getPort(), LISTEN)));
-                Server server(getPort());
-                auto serverThread = server.run(std::move(sock));
-                serverThread.detach();
+
+                std::shared_ptr<sockpp::tcp_socket> sharedSock = std::move(sock);
+                auto runServerTask = [this, s = sharedSock]() {
+                    Server server(getPort());
+                    server.process(s);
+                };
+                enqueue_thread(std::move(runServerTask));
             }
         }
     }

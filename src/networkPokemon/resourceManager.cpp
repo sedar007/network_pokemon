@@ -66,9 +66,39 @@ namespace pokemon {
         }
     }
 
+    void ResourceManager::addNode(Node_Info nodeInfo) {
+        std::lock_guard<std::mutex> lock(mutex);
+        auto it = std::find_if(nodesInfoList_v.begin(), nodesInfoList_v.end(),
+            [&nodeInfo](const Node_Info& n) {
+                return n.get_name() == nodeInfo.get_name() &&
+                       n.get_port() == nodeInfo.get_port();
+            });
+
+        if (it == nodesInfoList_v.end()) {
+            nodesInfoList_v.push_back(nodeInfo);
+        }
+    }
+
+
     std::vector<std::string> ResourceManager::getNodesList() const {
         std::lock_guard<std::mutex> lock(mutex);
         return nodesList_v;
+    }
+
+    void ResourceManager::set_node_a_live(std::string_view ip, const int port, bool isOnline) {
+        std::lock_guard<std::mutex> lock(mutex);
+        auto node = std::find_if(nodesInfoList_v.begin(), nodesInfoList_v.end(),
+           [&ip, &port](const Node_Info& n) {
+                return n.get_ip() == ip && n.get_port() == port;
+            });
+        if (node != nodesInfoList_v.end()) {
+             node->set_isConnected(isOnline);
+        }
+    }
+
+    std::vector<Node_Info> ResourceManager::getNodesInfoList() const {
+        std::lock_guard<std::mutex> lock(mutex);
+        return nodesInfoList_v;
     }
 
     int ResourceManager::savedPictureToDisk(const std::string &location,  const std::string &pictureName, std::string &extension, const std::string &pic_str) {

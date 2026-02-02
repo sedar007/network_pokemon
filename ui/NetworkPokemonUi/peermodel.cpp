@@ -1,23 +1,19 @@
-#include "peerModel.h"
+#include "peermodel.h"
+#include "node.h" // On inclut le header complet ici pour avoir accès aux méthodes
 
-PeerModel::PeerModel(QObject *parent)
-    : QAbstractListModel(parent)
+// MODIFICATION : On initialise le pointeur m_node
+PeerModel::PeerModel(Node* node, QObject *parent)
+    : QAbstractListModel(parent), m_node(node)
 {
-    // Ajout de fausses données pour tester l'interface
-    m_peers = {
-        {"Ash-Nodeeeeee", "192.168.1.102", "online", "156 Pokémon", "12ms", "Vu à l'instant"},
-        {"Misty-Server", "192.168.1.105", "online", "89 Pokémon", "8ms", "Vu à l'instant"},
-        {"Brock-Node", "192.168.1.110", "sync", "234 Pokémon", "45ms", "Vu il y a 22h"},
-        {"Gary-Server", "192.168.1.115", "offline", "178 Pokémon", "-", "Vu il y a 23h"},
-        {"Prof-Oak", "192.168.1.120", "online", "721 Pokémon", "15ms", "Vu à l'instant"}
-    };
+    // On charge les données réelles dès le démarrage
+    refreshPeers();
 }
 
 int PeerModel::rowCount(const QModelIndex &parent) const
 {
     if (parent.isValid())
         return 0;
-    return static_cast<int>(m_peers.size());
+    return m_peers.size();
 }
 
 QVariant PeerModel::data(const QModelIndex &index, int role) const
@@ -38,42 +34,9 @@ QVariant PeerModel::data(const QModelIndex &index, int role) const
     }
 }
 
-void PeerModel::refreshPeers()
-{
-    // 1. On prévient la vue qu'on va tout changer
-    beginResetModel();
-
-    // 2. On vide la liste actuelle
-    m_peers.clear();
-
-    // 3. Simulation : On génère un nombre aléatoire de peers (entre 2 et 8)
-    int count = QRandomGenerator::global()->bounded(2, 9);
-
-    // Quelques noms pour la démo
-    QStringList names = {"Ash-Node", "Misty-Server", "Brock-Node", "Gary-Server", "Jessie-PC", "James-Mac", "Oak-Lab", "Giovanni-Base"};
-
-    for (int i = 0; i < count; ++i) {
-        // Choix aléatoire des propriétés
-        QString name = names[QRandomGenerator::global()->bounded(names.size())];
-        QString ip = QString("192.168.1.%1").arg(QRandomGenerator::global()->bounded(100, 200));
-
-        int statusRand = QRandomGenerator::global()->bounded(3);
-        QString status = (statusRand == 0) ? "online" : (statusRand == 1) ? "sync" : "offline";
-
-        QString ping = (status == "offline") ? "-" : QString("%1ms").arg(QRandomGenerator::global()->bounded(5, 150));
-        QString pokemonCount = QString("%1 Pokémon").arg(QRandomGenerator::global()->bounded(50, 900));
-
-        m_peers.push_back({name, ip, status, pokemonCount, ping, "Vu à l'instant"});
-    }
-
-    // 4. On prévient la vue que c'est fini
-    endResetModel();
-}
-
 QHash<int, QByteArray> PeerModel::roleNames() const
 {
     QHash<int, QByteArray> roles;
-    // C'est ici qu'on définit les noms utilisables dans le QML (ex: model.name)
     roles[NameRole] = "name";
     roles[IpRole] = "ip";
     roles[StatusRole] = "status";
@@ -83,9 +46,33 @@ QHash<int, QByteArray> PeerModel::roleNames() const
     return roles;
 }
 
-void PeerModel::addPeer(const QString &name, const QString &ip, const QString &status)
+void PeerModel::refreshPeers()
 {
-    beginInsertRows(QModelIndex(), m_peers.size(), m_peers.size());
-    m_peers.push_back({name, ip, status, "0 Pokémon", "-", "Nouveau"});
-    endInsertRows();
+    if (!m_node) return; // Sécurité si m_node est null
+
+    beginResetModel();
+    m_peers.clear();
+
+    // 1. Récupérer la liste brute depuis Node
+    // Node retourne une QVariantList, chaque élément est supposé être une QVariantMap
+    QVariantList rawList = m_node->get_node_list();
+
+    // 2. Convertir les données
+    for (const QVariant &item : rawList) {
+        QVariantMap map = item.toMap();
+
+        // On crée un objet Peer en extrayant les clés de la map
+        // (Assurez-vous que les clés correspondent à ce que Node::get_node_list renvoie)
+        Peer newPeer;
+        newPeer.name = map.value("name", "Inconnu").toString();
+        newPeer.ip = map.value("ip", "0.0.0.0").toString();
+        newPeer.status = map.value("status").toInt() == 1 ? "online" : "Hors ligne";
+        newPeer.count = map.value("count", "0 Pokémon").toString();
+        newPeer.ping = map.value("ping", "-").toString();
+        newPeer.lastSeen = "À l'instant";
+
+        m_peers.append(newPeer);
+    }
+
+    endResetModel();
 }

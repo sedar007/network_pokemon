@@ -18,18 +18,20 @@ namespace pokemon {
          * @param socket La socket connectée.
          * @return Un thread qui exécute le serveur.
          */
-        std::thread run(std::unique_ptr<sockpp::tcp_socket> socket) noexcept;
+        //std::thread run(std::unique_ptr<sockpp::tcp_socket> socket) noexcept;
 
-        [[nodiscard]] int send_msg(std::unique_ptr<sockpp::tcp_socket> socket, const std::string_view& msg, const std::string_view& protocol ) const noexcept;
+        [[nodiscard]] int send_msg(std::shared_ptr<sockpp::tcp_socket> socket, const std::string_view& msg, const std::string_view& protocol ) const noexcept;
 
 
-    private:
         /**
          * @brief Traite les données reçues du client.
          * @param socket La socket connectée.
          * @return Un entier représentant le résultat du traitement.
          */
-        int process(std::unique_ptr<sockpp::tcp_socket> socket);
+        int process(std::shared_ptr<sockpp::tcp_socket> socket);
+
+    private:
+
 
 
         /**

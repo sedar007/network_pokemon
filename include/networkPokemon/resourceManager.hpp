@@ -1,4 +1,5 @@
 #pragma once
+#include <vector>
 
 namespace pokemon {
     /// @brief Classe pour gérer les ressources, y compris les images et les nœuds.
@@ -69,9 +70,18 @@ namespace pokemon {
         /// @param ip L'adresse IP du nœud à ajouter.
         void addNode(const std::string &ip);
 
+        /// @brief Ajoute un nœud à la liste des ressources.
+        /// @param nodeInfo Les informations du nœud à ajouter.
+        void addNode(Node_Info nodeInfo);
+
         /// @brief Récupère la liste des nœuds.
         /// @return Un vecteur contenant les adresses IP des nœuds.
         std::vector<std::string> getNodesList() const;
+
+
+        /// @brief Récupère la liste des informations des nœuds.
+        /// @return Un vecteur contenant les informations des nœuds.
+        std::vector<Node_Info> getNodesInfoList() const;
 
         /// @brief Affiche la liste des nœuds.
         /// @param os Flux de sortie où afficher la liste.
@@ -81,6 +91,9 @@ namespace pokemon {
         /// @param ip L'adresse IP du nœud à rechercher.
         /// @return L'adresse IP du nœud s'il est trouvé, sinon std::nullopt.
         std::optional<std::string> findNode(const std::string &ip) const;
+
+
+        void set_node_a_live(std::string_view ip, const int port, bool isOnline) ;
 
         /// @brief Vérifie si un conteneur est vide.
         /// @tparam T Type du conteneur.
@@ -102,6 +115,7 @@ namespace pokemon {
         // <nomImage, {ipOwner, extention, pictureHash} >
         std::unordered_map<std::string, std::tuple<std::string, std::string, std::string>> pictureList_mp; // Liste des pictures
         std::vector<std::string> nodesList_v; // Liste des nœuds.
+        std::vector<Node_Info> nodesInfoList_v; // Liste des infos des nœuds.
         Trace &trace = Trace::getInstance();  // Instance unique de trace.
         std::string picturePath_s; // Chemin d'accès des pictures.
     };

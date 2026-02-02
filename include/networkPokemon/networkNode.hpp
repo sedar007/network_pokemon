@@ -37,6 +37,13 @@ namespace pokemon {
             return trace;
         }
 
+        template<class F>
+         void enqueue_thread(F&& f) noexcept {
+            thread_pool.enqueue(std::forward<F>(f));
+        }
+
+
+
 
 
     private:
@@ -56,6 +63,8 @@ namespace pokemon {
         * Used for logging debug information and network events.
         */
         Trace &trace = Trace::getInstance();
+
+        Thread_pool thread_pool;
 
 
     };

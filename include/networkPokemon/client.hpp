@@ -10,7 +10,7 @@ namespace pokemon {
     /**
      * @brief Classe Client pour gérer les connexions.
      */
-    class NETWORK_POKEMON_API Client : public Helper {
+    class NETWORK_POKEMON_API Client : public NetworkNode {
     public:
         /**
          * @brief Constructeur de la classe Client.
@@ -18,7 +18,7 @@ namespace pokemon {
          * @param port Port du client.
          * @param connector Connecteur TCP partagé.
          */
-        Client(const std::string &ip, const in_port_t port) noexcept;
+        Client(std::string_view ip, const in_port_t port) noexcept;
 
         /**
          * @brief Exécute le client avec une adresse IP voisine et un message.
@@ -27,7 +27,7 @@ namespace pokemon {
          * @param msg Message à envoyer.
          * @return Un thread pour l'exécution.
          */
-        std::thread run(const std::string &nodeToConnectIp, const in_port_t nodeToConnectPort, const std::string &msg) noexcept;
+        std::thread run(std::string_view nodeToConnectIp, const in_port_t nodeToConnectPort, const std::string &msg) noexcept;
 
         /**
          * @brief permet de gérer la recherche de l'image et pour le télécharger .
@@ -43,13 +43,9 @@ namespace pokemon {
          * @param msg Message à envoyer.
          * @return 0 si tout s'est bien passé, -1 sinon.
          */
-        int start(std::string neighbour_host, const in_port_t neighbour_port, const std::string& msg) noexcept;
+        int start(std::string_view neighbour_host, const in_port_t neighbour_port, std::string_view msg) noexcept;
 
-        in_port_t port_s; ///< Port du client.
         std::string ip_s; ///< Adresse IP du client.
-
-        ResourceManager &resourceManager = ResourceManager::getInstance(); ///< Gestionnaire de ressources.
-        Trace &trace = Trace::getInstance(); ///< Traceur.
 
         /**
          * @brief Exécute la récupération des adresses IP.

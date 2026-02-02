@@ -87,7 +87,7 @@ Item {
 
             // Actions
             Text { text: "Actions rapides"; font.pixelSize: 20; font.weight: Font.DemiBold; Layout.topMargin: 10 }
-            ActionButton { btnIcon: "➕"; btnText: "Ajouter un peer manuellement" }
+            ActionButton { btnIcon: "➕"; btnText: "Ajouter un peer manuellement"; onClicked: addPeerPopup.open() }
             ActionButton { btnIcon: "📜"; btnText: "Voir les journaux (Logs)" }
         }
     }
@@ -108,6 +108,119 @@ Item {
 
             // On rafraichit l'interface
             root.refreshConfig()
+        }
+    }
+
+    Popup {
+        id: addPeerPopup
+        anchors.centerIn: parent
+        width: parent.width - 48
+        height: 320
+        modal: true
+        focus: true
+        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
+
+        background: Rectangle {
+            color: "white"
+            radius: 20
+            clip: true
+        }
+
+        Overlay.modal: Rectangle {
+            color: "#80000000"
+        }
+
+        ColumnLayout {
+            anchors.fill: parent
+            anchors.margins: 20
+            spacing: 15
+
+            // Header Popup
+            RowLayout {
+                Layout.fillWidth: true
+                Text {
+                    text: "Ajouter un peer"; font.pixelSize: 22; font.bold: true
+                }
+                Item {
+                    Layout.fillWidth: true
+                }
+                Text {
+                    text: "✕"; font.pixelSize: 20; color: "#999"; TapHandler {
+                        onTapped: addPeerPopup.close()
+                    }
+                }
+            }
+            Text {
+                text: "Entrez les informations du nœud distant"; color: "#7F8C8D"; font.pixelSize: 14
+            }
+
+            // Champs de saisie
+            ColumnLayout {
+                Layout.fillWidth: true; spacing: 5
+                Text {
+                    text: "Nom du nœud (Optionnel)"; font.bold: true; font.pixelSize: 14
+                }
+                TextField {
+                    id: peerNameInput
+                    placeholderText: "Ex: TeamRocket-Server"
+                    Layout.fillWidth: true; Layout.preferredHeight: 50
+                    font.pixelSize: 16; color: "black"
+                    background: Rectangle {
+                        color: "#F8F9FA"; radius: 12
+                    }
+                }
+            }
+
+            ColumnLayout {
+                Layout.fillWidth: true; spacing: 5
+                Text {
+                    text: "Adresse IP"; font.bold: true; font.pixelSize: 14
+                }
+                TextField {
+                    id: peerIpInput
+                    placeholderText: "Ex: 192.168.1.15"
+                    Layout.fillWidth: true; Layout.preferredHeight: 50
+                    font.pixelSize: 16; color: "black"
+                    background: Rectangle {
+                        color: "#F8F9FA"; radius: 12
+                    }
+                }
+            }
+
+            Item {
+                Layout.fillHeight: true
+            }
+
+            // Boutons
+            RowLayout {
+                Layout.fillWidth: true; spacing: 15
+                Button {
+                    Layout.fillWidth: true; Layout.preferredHeight: 50
+                    background: Rectangle {
+                        color: "white"; border.color: "#E1E4E8"; radius: 12
+                    }
+                    contentItem: Text {
+                        text: "Annuler"; font.bold: true; horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter
+                    }
+                    onClicked: addPeerPopup.close()
+                }
+                Button {
+                    Layout.fillWidth: true; Layout.preferredHeight: 50
+                    background: Rectangle {
+                        color: "#050510"; radius: 12
+                    }
+                    contentItem: Text {
+                        text: "Connecter"; color: "white"; font.bold: true; horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter
+                    }
+                    onClicked: {
+                        console.log("Connexion à : " + peerNameInput.text + " [" + peerIpInput.text + "]")
+
+                        node_cpp.add_peer(peerNameInput.text, peerIpInput.text)
+
+                        addPeerPopup.close()
+                    }
+                }
+            }
         }
     }
 }

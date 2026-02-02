@@ -9,12 +9,7 @@
 using namespace std::chrono_literals;
 
 namespace pokemon {
-    Node::Node() noexcept : m_node_info(std::make_unique<Node_Info>()) {
-       /*
-        if (nodei.has_value()) {
-            node_info = std::make_unique<Node_Info>();
-        }*/
-
+    Node::Node() noexcept {
     }
 
     void Node::initialized(std::string path, [[maybe_unused]] const std::string &picturePath, [[maybe_unused]] const std::string &nodeFile) noexcept{
@@ -26,26 +21,24 @@ namespace pokemon {
             m_node_info = std::make_unique<Node_Info>(node_info_data.value());
         }
         else {
-            Node_Info default_node_info;
-            default_node_info.set_name(Node_Info::DEFAULT_NODE_NAME);
-            default_node_info.set_port(find_available_port(DEFAULT_PREFERRED_PORT));
+            Node_Info default_node_info(Node_Info::DEFAULT_NODE_NAME, get_network_ip(), find_available_port(DEFAULT_PREFERRED_PORT));
             m_node_info = std::make_unique<Node_Info>(default_node_info);
             Json::saveJson<Node_Info>(storagePath_s, NODE_INFO_FILE, *m_node_info);
         }
 
-        ip_s = get_network_ip();
 
+        addNodesList();
        /* std::string fileNameNode = picturePath + nodeFile;
-        addNodesList(fileNameNode);
+
         std::string fileNameImages = picturePath + "pokemons.txt";
         addImagesList(fileNameImages);
 
-        resourceManager.addPicturePath(picturePath);
+        resourceManager.addPicturePath(picturePath); */
 
         sockpp::initialize();
 
-        listen = std::make_unique<Listen>(port_s);
-        client = std::make_unique<Client>(ip_s, port_s);*/
+        listen = std::make_unique<Listen>(m_node_info->get_port());
+        client = std::make_unique<Client>(m_node_info->get_ip(), m_node_info->get_port());
     }
 
      void Node::set_node_info(std::string_view node_name) noexcept {
@@ -87,8 +80,8 @@ namespace pokemon {
     }
 
     int Node::find_available_port(int preferred_port) {
-        int sock = socket(AF_INET, SOCK_STREAM, 0);
-        if (sock < 0) return 0; // Erreur création socket
+       /* int sock = socket(AF_INET, SOCK_STREAM, 0);
+        if (sock < 0) return 0;
 
         struct sockaddr_in sin;
         std::memset(&sin, 0, sizeof(sin));
@@ -96,50 +89,47 @@ namespace pokemon {
         sin.sin_addr.s_addr = INADDR_ANY;
         sin.sin_port = htons(preferred_port);
 
-        // Tenter de "réserver" le port (Bind)
         if (bind(sock, (struct sockaddr *)&sin, sizeof(sin)) == 0) {
-            // Ça a marché ! On vérifie quel port on a eu (utile si on a demandé 0)
             socklen_t len = sizeof(sin);
             if (getsockname(sock, (struct sockaddr *)&sin, &len) == 0) {
                 preferred_port = ntohs(sin.sin_port);
             }
-
-            // On ferme le socket pour le libérer immédiatement
-            // (Ton serveur P2P réel le réouvrira juste après)
             close(sock);
             return preferred_port;
         }
-        else {
-            // Le port est pris ! On réessaie avec 0 (laisser l'OS choisir)
-            close(sock);
-            if (preferred_port != 0) {
-                return find_available_port(0);
-            }
+        close(sock);
+        if (preferred_port != 0) {
+            return find_available_port(0);
         }
-        return 0; // Échec total
+        return 0;*/
+        return preferred_port;
     }
 
-     /* void Node::addNodesList(const std::string &fileName) {
-        std::ifstream file(fileName);
-
-        if (file.is_open()) {
-            std::string line;
-            std::getline(file, line);
-            size_t pos = line.find(':');
-            if (pos != std::string::npos) {
-                ip_s = line.substr(0, pos);
-                port_s = std::stoi(line.substr(pos + 1));
+    void Node::addNodesList() {
+        auto node_List = Json::loadJson<std::vector<Node_Info>>(storagePath_s, NODE_LIST_FILE);
+        if (node_List.has_value()) {
+            for (const auto& nodeInfo : node_List.value()) {
+                resourceManager.addNode(nodeInfo);
             }
-            while (std::getline(file, line))
-                if (isValidIPAddress(line))
-                    resourceManager.addNode(line);
-            file.close();
+        }
+    }
+
+    void Node::add_peer(std::string peer_name, std::string peer_ip) noexcept {
+        Node_Info node_info(peer_name, peer_ip, find_available_port(DEFAULT_PREFERRED_PORT));
+        resourceManager.addNode(node_info);
+        auto node_List = Json::loadJson<std::vector<Node_Info>>(storagePath_s, NODE_LIST_FILE);
+        if (node_List.has_value()) {
+            auto nodes = node_List.value();
+            nodes.push_back(node_info);
+            Json::saveJson<std::vector<Node_Info>>(storagePath_s, NODE_LIST_FILE, nodes);
         } else {
-            trace.print(std::cerr, "Impossible d'ouvrir le fichier.");
-            return;
+            std::vector<Node_Info> nodes;
+            nodes.push_back(node_info);
+            Json::saveJson<std::vector<Node_Info>>(storagePath_s, NODE_LIST_FILE, nodes);
         }
     }
 
+    /*
     void Node::addImagesList(const std::string &fileName) {
         std::ifstream file(fileName);
         char separateur = ' ';
@@ -177,12 +167,14 @@ namespace pokemon {
     inline void to_json(nlohmann::json& j, const Node_Info& n) {
         j = nlohmann::json{
             {Node_Info::NODE_NAME_KEY, n.get_name()},
-            {Node_Info::NODE_PORT_KEY, n.get_port()}
+            {Node_Info::NODE_PORT_KEY, n.get_port()},
+            {Node_Info::NODE_IP_KEY, n.get_ip()}
         };
     }
 
     inline void from_json(const nlohmann::json& j, Node_Info& n) {
         n.set_name(j.at(Node_Info::NODE_NAME_KEY).get<std::string>());
         n.set_port(j.at(Node_Info::NODE_PORT_KEY).get<int>());
+        n.set_ip(j.at(Node_Info::NODE_IP_KEY).get<std::string>());
     }
 }

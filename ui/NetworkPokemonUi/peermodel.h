@@ -2,39 +2,25 @@
 #define PEERMODEL_H
 
 #include <QAbstractListModel>
-#include <QtQml/qqml.h>
-#include <vector>
-#include <QRandomGenerator>
+#include <QObject>
+// Il est préférable d'utiliser une déclaration anticipée (forward declaration) ici
+// pour éviter les inclusions circulaires.
+class Node;
 
-// Structure simple pour stocker les données
 struct Peer {
     QString name;
     QString ip;
-    QString status;   // "online", "sync", "offline"
-    QString count;    // ex: "156 Pokémon"
-    QString ping;     // ex: "12ms"
-    QString lastSeen; // ex: "Vu à l'instant"
+    QString status;
+    QString count;
+    QString ping;
+    QString lastSeen;
 };
 
 class PeerModel : public QAbstractListModel
 {
     Q_OBJECT
-    QML_ELEMENT // Rend la classe utilisable directement dans le QML
 
 public:
-    explicit PeerModel(QObject *parent = nullptr);
-
-    // Méthodes obligatoires pour QAbstractListModel
-    int rowCount(const QModelIndex &parent = QModelIndex()) const override;
-    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
-    QHash<int, QByteArray> roleNames() const override;
-
-    // Méthode pour ajouter un peer depuis le C++ (utile pour ton réseau P2P)
-    Q_INVOKABLE void addPeer(const QString &name, const QString &ip, const QString &status);
-
-    Q_INVOKABLE void refreshPeers();
-
-    // Enum pour mapper les champs C++ vers le QML
     enum PeerRoles {
         NameRole = Qt::UserRole + 1,
         IpRole,
@@ -44,9 +30,19 @@ public:
         LastSeenRole
     };
 
+    // MODIFICATION : Le constructeur prend maintenant un pointeur vers Node
+    explicit PeerModel(Node* node, QObject *parent = nullptr);
+
+    int rowCount(const QModelIndex &parent = QModelIndex()) const override;
+    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+    QHash<int, QByteArray> roleNames() const override;
+
+    // Cette fonction ira chercher les vraies données
+    Q_INVOKABLE void refreshPeers();
+
 private:
-    std::vector<Peer> m_peers;
-    QString getRandomIp();
+    QList<Peer> m_peers;
+    Node* m_node; // Pointeur vers l'instance de Node
 };
 
 #endif // PEERMODEL_H

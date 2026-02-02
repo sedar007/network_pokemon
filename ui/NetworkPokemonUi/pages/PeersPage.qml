@@ -7,25 +7,18 @@ import NetworkPokemonUi
 Item {
     id: root
 
-    // 2. Instanciation du modèle C++
-        PeerModel {
-            id: myPeerModel
-        }
-
-    // Contenu Principal
     ColumnLayout {
         anchors.fill: parent
         anchors.margins: 15
         spacing: 20
 
-        // 1. Barre de résumé (Top Bar)
+        // Top Bar - Nombre de peers
         Rectangle {
             Layout.fillWidth: true
             Layout.preferredHeight: 50
             Layout.topMargin: 10
             radius: 8
             color: "white"
-            // Bordure légère
             border.color: "#E1E4E8"
             border.width: 1
 
@@ -34,59 +27,53 @@ Item {
                 anchors.margins: 15
                 spacing: 10
                 Text { text: "⚖️"; font.pixelSize: 16 }
-                Text { text: "3 peers en ligne sur 5"; color: "#666"; font.pixelSize: 14 }
+                Text {
+                    text: myPeerModel.rowCount() + " peers listés"
+                    color: "#666"; font.pixelSize: 14
+                }
             }
         }
 
-        // 2. Titre + Bouton Actualiser
+        // Header with Refresh Button
         RowLayout {
-                    Layout.fillWidth: true
+            Layout.fillWidth: true
+            Text {
+                text: "Serveurs connectés"
+                font.pixelSize: 18; font.bold: true
+            }
+            Item { Layout.fillWidth: true }
+
+            Rectangle {
+                width: 110; height: 36
+                radius: 18
+                color: "white"
+                border.color: "#E1E4E8"
+                border.width: 1
+
+                Row {
+                    anchors.centerIn: parent
+                    spacing: 5
                     Text {
-                        text: "Serveurs connectés"
-                        font.pixelSize: 18; font.bold: true
-                    }
-                    Item { Layout.fillWidth: true }
-
-                    // --- BOUTON ACTUALISER MODIFIÉ ---
-                    Rectangle {
-                        width: 110; height: 36
-                        radius: 18
-                        color: "white"
-                        border.color: "#E1E4E8"
-                        border.width: 1
-
-                        Row {
-                            anchors.centerIn: parent
-                            spacing: 5
-
-                            // L'icône qui va tourner
-                            Text {
-                                id: refreshIcon
-                                text: "🔄"
-                                font.pixelSize: 12
-
-                                // Animation de rotation
-                                Behavior on rotation {
-                                    NumberAnimation { duration: 500; easing.type: Easing.OutCubic }
-                                }
-                            }
-
-                            Text { text: "Actualiser"; font.bold: true; font.pixelSize: 13 }
-                        }
-
-                        TapHandler {
-                            onTapped: {
-                                // 1. Animation visuelle (tourne de 360 degrés à chaque clic)
-                                refreshIcon.rotation += 360
-
-                                // 2. Appel au Backend C++
-                                myPeerModel.refreshPeers()
-                            }
+                        id: refreshIcon
+                        text: "🔄"
+                        font.pixelSize: 12
+                        Behavior on rotation {
+                            NumberAnimation { duration: 500; easing.type: Easing.OutCubic }
                         }
                     }
+                    Text { text: "Actualiser"; font.bold: true; font.pixelSize: 13 }
                 }
 
-        // 3. Liste des Serveurs (ListView)
+                TapHandler {
+                    onTapped: {
+                        refreshIcon.rotation += 360
+                        myPeerModel.refreshPeers()
+                    }
+                }
+            }
+        }
+
+        // Servers List
         ListView {
             id: peerList
             Layout.fillWidth: true
@@ -95,6 +82,7 @@ Item {
             spacing: 15
 
             model: myPeerModel
+
             delegate: peerDelegate
         }
     }
@@ -104,14 +92,12 @@ Item {
         id: peerDelegate
         Item {
             width: peerList.width
-            height: 90 // Hauteur de la carte
+            height: 90
 
             Rectangle {
                 anchors.fill: parent
                 color: "white"
                 radius: 12
-
-                // Ombre portée
                 layer.enabled: true
                 layer.effect: MultiEffect {
                     shadowEnabled: true; shadowColor: "#10000000"; shadowBlur: 10; shadowVerticalOffset: 2
@@ -122,14 +108,12 @@ Item {
                     anchors.margins: 15
                     spacing: 15
 
-                    // 1. Icône Serveur (Couleur dynamique)
                     Rectangle {
                         width: 44; height: 44; radius: 22
-                        // Couleur de fond selon le status
                         color: {
-                            if (status === "online") return "#E8F5E9" // Vert clair
-                            if (status === "sync") return "#E3F2FD"   // Bleu clair
-                            return "#F5F5F5"                          // Gris clair
+                            if (status === "online") return "#E8F5E9"
+                            if (status === "sync") return "#E3F2FD"
+                            return "#F5F5F5"
                         }
 
                         Text {
@@ -139,15 +123,11 @@ Item {
                         }
                     }
 
-                    // 2. Infos principales
                     ColumnLayout {
                         Layout.fillWidth: true
                         spacing: 4
-
                         Text { text: name; font.bold: true; font.pixelSize: 16 }
                         Text { text: ip; color: "#7F8C8D"; font.pixelSize: 13 }
-
-                        // Ligne Stats
                         RowLayout {
                             spacing: 10
                             Text { text: count; color: "#7F8C8D"; font.pixelSize: 11 }
@@ -156,17 +136,14 @@ Item {
                         }
                     }
 
-                    // 3. Badge de Status (Design dynamique)
                     Rectangle {
                         Layout.preferredHeight: 24
                         Layout.preferredWidth: statusLabel.width + 24
                         radius: 12
-
-                        // Couleur du badge
                         color: {
                             if (status === "online") return "black"
                             if (status === "sync") return "white"
-                            return "#F0F2F5" // Gris
+                            return "#F0F2F5"
                         }
                         border.color: status === "sync" ? "#E1E4E8" : "transparent"
                         border.width: status === "sync" ? 1 : 0
@@ -174,8 +151,6 @@ Item {
                         Row {
                             anchors.centerIn: parent
                             spacing: 5
-
-                            // Icône status
                             Text {
                                 text: {
                                     if (status === "online") return "📶"
@@ -185,8 +160,6 @@ Item {
                                 font.pixelSize: 10
                                 color: status === "online" ? "white" : "black"
                             }
-
-                            // Texte status
                             Text {
                                 id: statusLabel
                                 text: {

@@ -6,11 +6,11 @@ namespace pokemon {
 
     Server::Server(in_port_t port) noexcept : NetworkNode(port){}
 
-    std::thread Server::run(std::unique_ptr<sockpp::tcp_socket> socket) noexcept {
+    /*std::thread Server::run(std::unique_ptr<sockpp::tcp_socket> socket) noexcept {
         return std::thread([this, socket = std::move(socket)]() mutable {
             process(std::move(socket));
         });
-    }
+    }*/
 #if 0
     int Server::process(std::unique_ptr<sockpp::tcp_socket> socket) {
 
@@ -31,7 +31,7 @@ namespace pokemon {
     }
 #endif
 
-    int Server::process(std::unique_ptr<sockpp::tcp_socket> socket) {
+    int Server::process(std::shared_ptr<sockpp::tcp_socket> socket) {
 
         if (!socket || !(*socket)) {
            return -1;
@@ -70,7 +70,7 @@ namespace pokemon {
     }
 
 
-    int Server::send_msg(std::unique_ptr<sockpp::tcp_socket> socket, const std::string_view &msg, const std::string_view &protocol ) const noexcept {
+    int Server::send_msg(std::shared_ptr<sockpp::tcp_socket> socket, const std::string_view &msg, const std::string_view &protocol ) const noexcept {
 
         if (!socket || !(*socket)) {
             return -1;

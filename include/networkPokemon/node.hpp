@@ -16,11 +16,12 @@ namespace pokemon {
          */
         Node() noexcept;
 
-        static constexpr std::string_view NODE_INFO_FILE = "node_info.json";
+        static constexpr std::string_view NODE_INFO_FILE = "node_infoazdzad.json";
+        static constexpr std::string_view NODE_LIST_FILE = "node_listdazdzadz.json";
         static constexpr std::string_view EN0_INTERFACE = "en0";
         static constexpr std::string_view LOCALHOST_IP = "127.0.0.1";
         static constexpr std::string_view Lo_0_INTERFACE = "lo0";
-        static constexpr int DEFAULT_PREFERRED_PORT = 5000;
+        static constexpr int DEFAULT_PREFERRED_PORT = 49152;
 
         void set_node_info(std::string_view node_name) noexcept;
 
@@ -31,6 +32,8 @@ namespace pokemon {
         [[nodiscard]] inline  Node_Info get_node_info() const noexcept {
             return *m_node_info;
         }
+
+        void add_peer(std::string peer_name, std::string peer_port) noexcept;
 
 
         /**
@@ -71,26 +74,30 @@ namespace pokemon {
          * @return L'adresse IP du nœud.
          */
         [[nodiscard]] std::string get_ip() const noexcept {
-            return ip_s;
+            return m_node_info->get_ip().data();
+        }
+
+        [[nodiscard]] std::vector<Node_Info> get_node_list() const noexcept {
+            return resourceManager.getNodesInfoList();
         }
 
     private:
-        in_port_t port_s; ///< Port du nœud.
-        std::string ip_s; ///< Adresse IP du nœud.
+      //  in_port_t port_s; ///< Port du nœud.
+       // std::string ip_s; ///< Adresse IP du nœud.
         std::unique_ptr<Node_Info> m_node_info;
         std::string storagePath_s;
-      /*  ResourceManager &resourceManager = ResourceManager::getInstance(); ///< Gestionnaire de ressources.
+        ResourceManager &resourceManager = ResourceManager::getInstance(); ///< Gestionnaire de ressources.
         Trace &trace = Trace::getInstance(); ///< Traceur.
         std::shared_ptr<sockpp::tcp_connector> connector; ///< Connecteur TCP partagé.
         std::unique_ptr<Listen> listen; ///< Écouteur.
         std::unique_ptr<Client> client; ///< Client.
-        std::mutex mutex; ///< Mutex pour la synchronisation. */
+        std::mutex mutex; ///< Mutex pour la synchronisation.
 
         /**
          * @brief Ajoute les nœuds à la liste.
          * @param fileName Nom du fichier contenant les nœuds.
          */
-      //  void addNodesList(const std::string &fileName);
+        void addNodesList();
 
         /**
          * @brief Ajoute les images à la liste.
@@ -108,9 +115,8 @@ namespace pokemon {
          *@return std::string
          */
         std::string get_network_ip() const;
-
-
         int find_available_port(int preferred_port);
+        bool is_node_online(std::string_view ip) const noexcept;
     };
 
 }

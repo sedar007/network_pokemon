@@ -8,22 +8,32 @@
 #include <iomanip>
 #include <sys/_types/_in_port_t.h>
 
-//#include "sockpp/tcp_connector.h"
-//#include "sockpp/tcp_socket.h"
+#include "sockpp/tcp_connector.h"
+#include "sockpp/tcp_socket.h"
 #include "thread"
 #include "iostream"
+#include <vector>
+#include <queue>
+#include <thread>
+#include <mutex>
+#include <condition_variable>
+#include <functional>
+#include <atomic>
 
 #include "models.hpp"
 #include "networkPokemon/export.hpp"
+#include "networkPokemon/thread_pool.hpp"
 #include "networkPokemon/const.hpp"
 #include "networkPokemon/helper.hpp"
-/*#include "networkPokemon/trace.hpp"
+#include "networkPokemon/trace.hpp"
 #include "networkPokemon/resourceManager.hpp"
 #include "networkPokemon/networkNode.hpp"
+#include "networkPokemon/client.hpp"
 #include "networkPokemon/server.hpp"
-#include "networkPokemon/listen.hpp" */
+#include "networkPokemon/listen.hpp"
 #include "networkPokemon/test.hpp"
 #include "networkPokemon/node.hpp"
+
 /*
 
 #include "networkPokemon/trace.hpp"
@@ -32,7 +42,7 @@
 #include "networkPokemon/helper.hpp"
 #include "networkPokemon/server.hpp"
 #include "networkPokemon/listen.hpp"
-#include "networkPokemon/client.hpp"
+
 
 
 #include "networkPokemon/main.hpp"

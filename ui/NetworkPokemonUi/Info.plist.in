@@ -9,6 +9,12 @@
     <string>AppIcon</string>
 
 
+    <key>NSLocalNetworkUsageDescription</key>
+    <string>Nous utilisons le réseau local pour trouver d'autres joueurs Pokémon à proximité.</string>
+    <key>NSBonjourServices</key>
+    <array>
+        <string>_tcp</string>
+    </array>
     <key>CFBundleExecutable</key>
     <string>$(EXECUTABLE_NAME)</string>
     <key>CFBundleIdentifier</key>
