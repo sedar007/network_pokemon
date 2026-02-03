@@ -107,9 +107,6 @@ namespace pokemon {
     private:
         // Constructeur privé pour empêcher l'instanciation en dehors de la classe
         ResourceManager() { picturePath_s = ""; }
-
-        // Instance unique de resourceManager
-        static ResourceManager *resourceManager;
         // Mutex pour la synchronisation
         static std::mutex mutex;
         // <nomImage, {ipOwner, extention, pictureHash} >

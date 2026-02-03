@@ -34,6 +34,19 @@ namespace pokemon {
         }
     }
 
+    bool Helper::read_exact(sockpp::tcp_connector& socket, char* buffer, size_t length) {
+        size_t total_read = 0;
+        while (total_read < length) {
+            ssize_t n = socket.read(buffer + total_read, length - total_read);
+
+            if (n <= 0) {
+                return false;
+            }
+            total_read += n;
+        }
+        return true;
+    }
+
     int Helper::getPort_Ip(const std::string &str, std::string &ip, in_port_t &port) {
         char separateur = ':';
         std::string portString;

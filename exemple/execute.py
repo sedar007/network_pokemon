@@ -9,9 +9,9 @@ if not os.path.exists("build"):
 # Changement de répertoire vers le dossier "build"
 os.chdir("build")
 
-traceLog = '0'
+traceLog = '1'
 # Définition du nombre de noeuds
-NB_NODES = 31
+NB_NODES = 30
 if len(sys.argv) > 1:
     for i in range (1, len(sys.argv)):
         arg = sys.argv[i]
@@ -21,9 +21,11 @@ if len(sys.argv) > 1:
             traceLog = '1'
             
 # Définition des commandes restantes
+qt_path = "/Users/adjysedardesir/Qt/6.10.1/macos"
+
 commands = [
-    "cmake ../.. -DCMAKE_TOOLCHAIN_FILE=/Users/adjysedardesir/Documents/Dev/vcpkg/scripts/buildsystems/vcpkg.cmake",
-    "make",
+    f"cmake ../.. -DCMAKE_TOOLCHAIN_FILE=/Users/adjysedardesir/Documents/Dev/vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_PREFIX_PATH={qt_path} -DCMAKE_FIND_ROOT_PATH_MODE_PACKAGE=BOTH",
+    "make"
 ]
 
 # Exécution des commandes

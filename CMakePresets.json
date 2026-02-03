@@ -6,6 +6,7 @@
     "patch": 0
   },
   "configurePresets": [
+
     {
       "name": "macos-dev",
       "binaryDir": "${sourceDir}/build-macos",

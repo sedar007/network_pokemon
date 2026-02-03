@@ -19,9 +19,7 @@ set(SRC
     "${SRCROOT}/test.cpp"
     "${SRCROOT}/thread_pool.cpp"
     "${SRCROOT}/server.cpp"
-
-        #"${SRCROOT}/main.cpp"
-
+    "${SRCROOT}/main.cpp"
 	"${SRCROOT}/client.cpp"
 
 

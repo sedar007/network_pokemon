@@ -18,7 +18,7 @@ Node::Node(QObject *parent)
     }
 
     QString fullPath = writablePath + QDir::separator();
-    m_node.initialized(fullPath.toStdString(), "", "");
+    m_node.initialized(fullPath.toStdString());
 }
 
 void Node::save_node_infos(QString name, QString port, QString maxConn, bool share, bool download)

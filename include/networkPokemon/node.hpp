@@ -35,13 +35,16 @@ namespace pokemon {
 
         void add_peer(std::string peer_name, std::string peer_port) noexcept;
 
+        void addNodesList(const std::string &fileName);
+
 
         /**
          * @brief intitialized the node.
          * @param picturePath Chemin vers les images.
          * @param nodeFile Fichier du nœud.
          */
-        void initialized(std::string path, const std::string &picturePath, const std::string &nodeFile) noexcept;
+        void initialized(std::string path) noexcept;
+        void initialized(const std::string &picturePath, const std::string &nodeFile) noexcept;
 
         /**
          * @brief Surcharge de l'opérateur de flux de sortie pour afficher le nœud.
@@ -49,24 +52,24 @@ namespace pokemon {
          * @param node Nœud à afficher.
          * @return Le flux de sortie modifié.
          */
-    //    friend std::ostream &operator<<(std::ostream &os, const Node &node);
+        friend std::ostream &operator<<(std::ostream &os, const Node &node);
 
         /**
          * @brief Obtient l'identifiant du nœud.
          * @return L'identifiant du nœud.
          */
-   //     std::string getId() const;
+        std::string getId() const;
 
         /**
          * @brief Exécute le nœud.
          */
-      //  void run();
+        void run();
 
         /**
          * @brief Obtient une image à partir d'un nom de fichier.
          * @param picName Nom du fichier image.
          */
-        //inline void getPic(const std::string &picName) noexcept { client->getPic(picName);}
+        inline void getPic(const std::string &picName) noexcept { client->getPic(picName);}
 
 
         /**
@@ -82,8 +85,8 @@ namespace pokemon {
         }
 
     private:
-      //  in_port_t port_s; ///< Port du nœud.
-       // std::string ip_s; ///< Adresse IP du nœud.
+        in_port_t port_s; ///< Port du nœud.
+        std::string ip_s; ///< Adresse IP du nœud.
         std::unique_ptr<Node_Info> m_node_info;
         std::string storagePath_s;
         ResourceManager &resourceManager = ResourceManager::getInstance(); ///< Gestionnaire de ressources.
@@ -103,12 +106,12 @@ namespace pokemon {
          * @brief Ajoute les images à la liste.
          * @param fileName Nom du fichier contenant les images.
          */
-       // void addImagesList(const std::string &fileName);
+        void addImagesList(const std::string &fileName);
 
         /**
          * @brief Démarre l'écoute du nœud.
          */
-        //void startListening();
+        void startListening();
 
         /**
          *@brief Get the node ip

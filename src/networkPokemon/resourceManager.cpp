@@ -1,16 +1,12 @@
 #include "pch.h"
 
 namespace pokemon {
-    ResourceManager *ResourceManager::resourceManager = nullptr;
     std::mutex ResourceManager::mutex;
 
-    ResourceManager &ResourceManager::getInstance() {
-        std::lock_guard<std::mutex> lock(mutex);
-
-        if (!resourceManager)
-            resourceManager = new ResourceManager();
-        return *resourceManager;
-    }
+ ResourceManager &ResourceManager::getInstance() {
+    static ResourceManager instance;
+    return instance;
+}
 
     void ResourceManager::addPicture(const std::string &pictureName, const std::string &extention, const std::string &pictureHash,
                               const std::string &owner) {

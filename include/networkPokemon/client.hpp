@@ -19,6 +19,7 @@ namespace pokemon {
          * @param connector Connecteur TCP partagé.
          */
         Client(std::string_view ip, const in_port_t port) noexcept;
+        ~Client() noexcept;
 
         /**
          * @brief Exécute le client avec une adresse IP voisine et un message.
@@ -46,6 +47,11 @@ namespace pokemon {
         int start(std::string_view neighbour_host, const in_port_t neighbour_port, std::string_view msg) noexcept;
 
         std::string ip_s; ///< Adresse IP du client.
+
+        bool m_running = true;
+        std::vector<std::thread> m_threads;
+        std::mutex m_thread_mutex;
+
 
         /**
          * @brief Exécute la récupération des adresses IP.
@@ -77,5 +83,7 @@ namespace pokemon {
          * @param nodeIdStr Identifiant du nœud.
          */
         void addPicture(const std::string &str) const noexcept;
+
+        int check_connected(std::string_view neighbour_ip, in_port_t neighbour_port) noexcept;
     };
 }

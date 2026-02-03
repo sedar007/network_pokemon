@@ -9,15 +9,41 @@ namespace pokemon {
         run.detach();
     }
 
-    std::thread Client::run(std::string_view neighbour_ip, const in_port_t neighbour_port, const std::string &msg) noexcept {
+    Client::~Client() {
+        m_running = false;
+
+        // On attend que tous les threads se terminent
+        std::lock_guard<std::mutex> lock(m_thread_mutex);
+        for (auto& t : m_threads) {
+            if (t.joinable()) {
+                t.join();
+            }
+        }
+    }
+
+   /* std::thread Client::run(std::string_view neighbour_ip, const in_port_t neighbour_port, const std::string &msg) noexcept {
         return std::thread([this, neighbour_ip, neighbour_port, &msg] { start(neighbour_ip, neighbour_port, msg); });
+    }*/
+
+    std::thread Client::run(std::string_view neighbour_ip, const in_port_t neighbour_port, const std::string &msg) noexcept {
+        std::thread t([this, neighbour_ip, neighbour_port, msg] {
+            start(neighbour_ip, neighbour_port, msg);
+        });
+
+        // Option A : Si tu veux gérer ce thread toi-même dans l'appelant, tu le retournes (comme avant).
+        // Option B (Recommandée pour P2P) : Le Client gère ses propres threads.
+        {
+            std::lock_guard<std::mutex> lock(m_thread_mutex);
+            m_threads.push_back(std::move(t));
+        }
+        return std::thread(); // Retourne un thread vide si on le garde en interne
     }
 
     void Client::run_getIp() noexcept {
         bool getIp = true;
         while (true) {
             std::string msg;
-            for (auto &node: getRessource().getNodesInfoList()) {
+            /*for (auto &node: getRessource().getNodesInfoList()) {
 
                 if (getIp)
                     msg = protocolToString(PROTOCOL::GET_IPS);
@@ -27,8 +53,32 @@ namespace pokemon {
                 auto task = [this, ip = node.get_ip(), port = node.get_port(), msg]() {
                     this->start(ip, port, msg);
                 };
-                enqueue_thread(task);
+
+                auto check_connected_task = [this, ip = node.get_ip(), port = node.get_port()]() {
+                    this->check_connected(ip, port);
+                };
+                enqueue_thread(check_connected_task);
+                //enqueue_thread(task);
+
                 std::this_thread::sleep_for(threadSleep_s(1500, 3500));
+            }*/
+
+            for (auto &node: getRessource().getNodesList()) {
+                std::string neighbour_ip;
+                in_port_t neighbour_port;
+                if(getPort_Ip(node, neighbour_ip, neighbour_port) == -1)
+                    continue;
+                if (getIp)
+                    msg = protocolToString(PROTOCOL::GET_IPS);
+                else
+                    msg = protocolToString(PROTOCOL::GET_PICS);
+
+                auto task = [this, ip = neighbour_ip, port = neighbour_port, msg]() {
+                    this->start(ip, port, msg);
+                };
+
+                enqueue_thread(task);
+                std::this_thread::sleep_for(threadSleep_s(500, 1500));
             }
             getIp = !getIp;
             std::this_thread::sleep_for(threadSleep_s(5000, 7000));
@@ -84,11 +134,140 @@ namespace pokemon {
     }
 
     int Client::start(std::string_view neighbour_ip, in_port_t neighbour_port, std::string_view msg) noexcept {
+    try {
+       /* if (ip_s == neighbour_ip) {
+            return -1;
+        }*/
+
+        std::string ip_str(neighbour_ip);
+        // Conversion explicite pour les logs
+        std::string knowPortStr = std::to_string(neighbour_port);
+
+        sockpp::tcp_connector connector;
+
+        // ---------------------------------------------------------
+        // 1. Connexion
+        // ---------------------------------------------------------
+        getTrace().print(std::clog, std::format(MSG_CLIENT_TRYING_TO_CONNECT,
+                                    std::format(MSG_NODE_ID, getPort(), CLIENT), knowPortStr));
+
+        // Simulation de latence (si nécessaire)
+        std::this_thread::sleep_for(threadSleep_s(1500, 3000));
+
+        getRessource().set_node_a_live(ip_str, neighbour_port, false);
+
+        if (!connector.connect(sockpp::inet_address(ip_str, neighbour_port))) {
+            getTrace().print(std::cerr, std::format(MSG_CLIENT_ERROR_CONNECTING,
+                                        std::format(MSG_NODE_ID, getPort(), CLIENT), neighbour_ip, neighbour_port));
+            return -1; // Pas besoin de shutdown si connect a échoué
+        }
+
+        getTrace().print(std::clog, std::format(MSG_CLIENT_CONNECTED,
+                                    std::format(MSG_NODE_ID, getPort(), CLIENT), neighbour_ip, neighbour_port));
+
+        getRessource().set_node_a_live(ip_str, neighbour_port, true);
+
+        // ---------------------------------------------------------
+        // 2. Écriture (Envoi de la requête)
+        // ---------------------------------------------------------
+        if (auto res = connector.write(msg.data(), msg.size()); res != msg.size()) {
+            getTrace().print(std::cerr, std::format(MSG_CLIENT_ERROR_WRITING_TCP_STREAM,
+                                        std::format(MSG_NODE_ID, getPort(), CLIENT), connector.last_error_str()));
+            connector.shutdown(SHUT_RDWR);
+            return 1;
+        }
+
+        // ---------------------------------------------------------
+        // 3. Lecture (Réception de la réponse)
+        // ---------------------------------------------------------
+
+        // Lambda pour lire exactement N octets (évite la fragmentation TCP)
+        auto read_exact = [&](char* buffer, size_t length) -> bool {
+            size_t total_read = 0;
+            while (total_read < length) {
+                ssize_t n = connector.read(buffer + total_read, length - total_read);
+                if (n <= 0) return false; // Erreur ou déconnexion
+                total_read += n;
+            }
+            return true;
+        };
+
+        // A. Lecture de la taille du message (Header)
+        char sizeMsg[FORMATTED_NUMBER_SIZE];
+        if (!read_exact(sizeMsg, FORMATTED_NUMBER_SIZE)) {
+            getTrace().print(std::cerr, std::format(MSG_CLIENT_ERROR_READING_TCP_STREAM,
+                                        std::format(MSG_NODE_ID, getPort(), CLIENT), "Read Size Failed"));
+            connector.shutdown(SHUT_RDWR);
+            return 1;
+        }
+
+        // B. Lecture du protocole
+        size_t pSize = protocolSize();
+        // Utilisation d'un vector pour garantir la sécurité mémoire, ou buffer fixe si pSize est constant petite
+        std::vector<char> protocolBuf(pSize);
+        if (!read_exact(protocolBuf.data(), pSize)) {
+            getTrace().print(std::cerr, std::format(MSG_CLIENT_ERROR_READING_TCP_STREAM,
+                                        std::format(MSG_NODE_ID, getPort(), CLIENT), "Read Protocol Failed"));
+            connector.shutdown(SHUT_RDWR);
+            return 1;
+        }
+        std::string protocole(protocolBuf.begin(), protocolBuf.end());
+
+        // C. Conversion de la taille
+        size_t t = 0;
+        try {
+            // std::string(sizeMsg, len) est important car sizeMsg n'est pas forcément null-terminated
+            t = std::stoi(std::string(sizeMsg, FORMATTED_NUMBER_SIZE));
+        }
+        catch (const std::exception& e) {
+            getTrace().print(std::cerr, std::format(MSG_CLIENT_ERROR_CONVERTING_SIZE,
+                                        std::format(MSG_NODE_ID, getPort(), CLIENT), std::string(sizeMsg, FORMATTED_NUMBER_SIZE)));
+            connector.shutdown(SHUT_RDWR);
+            return 1;
+        }
+
+        // D. Lecture du corps du message
+        // Utilisation de vector au lieu de VLA (char msg_buf[t]) pour éviter Stack Overflow
+        std::vector<char> msg_buf(t);
+        if (!read_exact(msg_buf.data(), t)) {
+            getTrace().print(std::cerr, std::format(MSG_CLIENT_ERROR_READING_TCP_STREAM,
+                                        std::format(MSG_NODE_ID, getPort(), CLIENT), "Read Body Failed"));
+            connector.shutdown(SHUT_RDWR);
+            return 1;
+        }
+
+        std::string msg_str(msg_buf.begin(), msg_buf.end());
+
+        // ---------------------------------------------------------
+        // 4. Traitement
+        // ---------------------------------------------------------
+        if (protocole == protocolToString(PROTOCOL::GET_IPS)) {
+            addIps(msg_str);
+        }
+        else if (protocole == protocolToString(PROTOCOL::GET_PICS)) {
+            addPictures(msg_str);
+        }
+        else if (protocole == protocolToString(PROTOCOL::GET_PIC)) {
+            addPicture(msg_str);
+        }
+
+        // Fermeture propre
+        connector.shutdown(SHUT_RDWR);
+        return 0;
+
+    } catch (const std::exception& e) {
+        // Catch-all pour éviter que le thread ne fasse crasher l'appli entière
+        getTrace().print(std::cerr, std::format("Exception in Client::start: {}", e.what()));
+        return -1;
+    }
+}
+#if 0
+   /* int Client::start(std::string_view neighbour_ip, in_port_t neighbour_port, std::string_view msg) noexcept {
 
         try {
 
 
-        if (getPort() == neighbour_port) {
+        if (ip_s == neighbour_ip) {
             return -1;
         }
 
@@ -121,20 +300,31 @@ namespace pokemon {
 
         // read
         char sizeMsg[FORMATTED_NUMBER_SIZE]; // Recupere la taille du buffer
-        if (auto res = connector.read(sizeMsg, FORMATTED_NUMBER_SIZE); !res) {
+       /* if (auto res = connector.read(sizeMsg, FORMATTED_NUMBER_SIZE); !res) {
             getTrace().print(std::cerr, std::format(MSG_CLIENT_ERROR_READING_TCP_STREAM, std::format(MSG_NODE_ID, getPort(), CLIENT), connector.last_error()));
             connector.shutdown(SHUT_RDWR);
             return 1;
-        }
+        }*/
+            if (!read_exact(connector, sizeMsg, FORMATTED_NUMBER_SIZE)) {
+    getTrace().print(std::cerr, "Erreur lecture taille");
+    connector.shutdown(SHUT_RDWR);
+    return 1;
+}
 
 
         // Le type de requete
         char queryBuf[protocolSize()]; // Recupere le protocol
-        if (auto res = connector.read(queryBuf, protocolSize()); !res) {
+       /* if (auto res = connector.read(queryBuf, protocolSize()); !res) {
             getTrace().print(std::cerr, std::format(MSG_CLIENT_ERROR_READING_TCP_STREAM, std::format(MSG_NODE_ID, getPort(), CLIENT), connector.last_error()));
             connector.shutdown(SHUT_RDWR);
             return 1;
-        }
+        }*/
+
+            if (!read_exact(connector, queryBuf, protocolSize())) {
+                getTrace().print(std::cerr, "Erreur lecture protocole");
+                connector.shutdown(SHUT_RDWR);
+                return 1;
+            }
 
         std::string protocole(queryBuf, protocolSize());
         memset(queryBuf,0, protocolSize());
@@ -149,13 +339,19 @@ namespace pokemon {
             return 1;
         }
 
-        char msg_buf[t];
+        /*char msg_buf[t];
 
         if (auto res = connector.read(msg_buf, t); !res) { // Recupere le message envoyer
             getTrace().print(std::cerr, std::format(MSG_CLIENT_ERROR_READING_TCP_STREAM, std::format(MSG_NODE_ID, getPort(), CLIENT), connector.last_error()));
             connector.shutdown(SHUT_RDWR);
             return 1;
-        }
+        }*/
+            std::vector<char> msg_buf(t);
+if (!read_exact(connector, msg_buf.data(), t)) {
+    getTrace().print(std::cerr, "Erreur lecture message");
+    connector.shutdown(SHUT_RDWR);
+    return 1;
+}
 
         std::string msg_str(msg_buf, t);
         memset(msg_buf,0, protocolSize());
@@ -182,6 +378,38 @@ namespace pokemon {
             return -1;
         }
 
+    }*/
+#endif
+    int Client::check_connected(std::string_view neighbour_ip, in_port_t neighbour_port) noexcept {
+
+        try {
+            if (ip_s == neighbour_ip) {
+                return 0;
+            }
+            std::string ip_str(neighbour_ip);
+            std::string knowPortStr(std::to_string(neighbour_port));
+
+            sockpp::tcp_connector connector;
+
+            getTrace().print(std::clog, std::format(MSG_CLIENT_TRYING_TO_CONNECT, std::format(MSG_NODE_ID, getPort(), CLIENT), knowPortStr));
+
+            //std::this_thread::sleep_for(threadSleep_s(1500, 3000));
+
+            getRessource().set_node_a_live(ip_str, neighbour_port, false);
+            if (!connector.connect(sockpp::inet_address(ip_str, neighbour_port))){
+                getTrace().print(std::cerr, std::format(MSG_CLIENT_ERROR_CONNECTING, std::format(MSG_NODE_ID, getPort(), CLIENT), neighbour_ip, neighbour_port));
+                connector.shutdown(SHUT_RDWR);
+            }
+
+            getTrace().print(std::clog, std::format(MSG_CLIENT_CONNECTED, std::format(MSG_NODE_ID, getPort(), CLIENT), neighbour_ip, neighbour_port));
+
+            getRessource().set_node_a_live(ip_str, neighbour_port, true);
+
+            connector.shutdown(SHUT_RDWR);
+            return (!connector) ? -1 : 0;
+        }
+        catch (std::exception){}
+        return -1;
     }
 
 

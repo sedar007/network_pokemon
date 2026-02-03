@@ -51,7 +51,7 @@ namespace pokemon {
 
         std::cout << MENU_HEADER<< std::endl;
         do {
-           /* std::cout << MENU_OPTIONS << std::endl;
+           std::cout << MENU_OPTIONS << std::endl;
             std::cout << MENU_OPTION_1 << std::endl;
             std::cout << MENU_OPTION_2 << std::endl;
             std::cout << MENU_OPTION_3 << std::endl;
@@ -77,7 +77,7 @@ namespace pokemon {
             else{
                 std::cout << INVALID_COMMAND_MESSAGE << std::endl;
             }
-            std::cout<<std::endl;*/
+            std::cout<<std::endl;
         } while (true);
     }
 }

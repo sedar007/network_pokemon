@@ -26,6 +26,7 @@ namespace pokemon {
         Helper() noexcept;
         [[nodiscard]] static bool isValidIPAddress(const std::string &str);
 
+        bool read_exact(sockpp::tcp_connector& socket, char* buffer, size_t length);
 
         /**
          * @brief Génère un délai aléatoire entre a et b.

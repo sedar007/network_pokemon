@@ -33,7 +33,7 @@
 #include "networkPokemon/listen.hpp"
 #include "networkPokemon/test.hpp"
 #include "networkPokemon/node.hpp"
-
+#include "networkPokemon/main.hpp"
 /*
 
 #include "networkPokemon/trace.hpp"
@@ -45,5 +45,5 @@
 
 
 
-#include "networkPokemon/main.hpp"
+
 */
