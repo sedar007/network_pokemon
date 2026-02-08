@@ -11,26 +11,20 @@ namespace pokemon {
             workers.emplace_back([this] {
                 while (true) {
                     std::function<void()> task;
-
                     {
-                        // On verrouille pour accéder à la queue
                         std::unique_lock<std::mutex> lock(queueMutex);
 
-                        // On attend qu'une tâche arrive ou qu'on nous dise d'arrêter
                         condition.wait(lock, [this] {
                             return stop || !tasks.empty();
                         });
 
-                        // Si on doit arrêter et qu'il n'y a plus de tâches, on sort
                         if (stop && tasks.empty())
                             return;
 
-                        // On prend la tâche
                         task = std::move(tasks.front());
                         tasks.pop();
                     }
 
-                    // On exécute la tâche hors du verrou (pour ne pas bloquer les autres)
                     task();
                 }
             });
