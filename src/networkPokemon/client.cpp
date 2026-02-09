@@ -5,14 +5,16 @@ namespace pokemon {
     Client::Client(std::string_view ip, const in_port_t port) noexcept
             : NetworkNode(port)
             ,  ip_s(ip) {
-        auto run = getIps();
-        run.detach();
+      //  auto run = getIps();
+      //  run.detach();
+
+        auto get_ips_thread = std::thread([this] { get_client_ip(); });
+        get_ips_thread.detach();
     }
 
     Client::~Client() {
         m_running = false;
 
-        // On attend que tous les threads se terminent
         std::lock_guard<std::mutex> lock(m_thread_mutex);
         for (auto& t : m_threads) {
             if (t.joinable()) {
@@ -30,13 +32,11 @@ namespace pokemon {
             start(neighbour_ip, neighbour_port, msg);
         });
 
-        // Option A : Si tu veux gérer ce thread toi-même dans l'appelant, tu le retournes (comme avant).
-        // Option B (Recommandée pour P2P) : Le Client gère ses propres threads.
         {
             std::lock_guard<std::mutex> lock(m_thread_mutex);
             m_threads.push_back(std::move(t));
         }
-        return std::thread(); // Retourne un thread vide si on le garde en interne
+        return std::thread();
     }
 
     void Client::run_getIp() noexcept {
@@ -70,9 +70,9 @@ namespace pokemon {
                     continue;
                 if (getIp)
                     msg = protocolToString(PROTOCOL::GET_IPS);
-                else
+              /*  else
                     msg = protocolToString(PROTOCOL::GET_PICS);
-
+                */
                 auto task = [this, ip = neighbour_ip, port = neighbour_port, msg]() {
                     this->start(ip, port, msg);
                 };
@@ -82,6 +82,22 @@ namespace pokemon {
             }
             getIp = !getIp;
             std::this_thread::sleep_for(threadSleep_s(5000, 7000));
+        }
+    }
+
+
+    void Client::get_client_ip() noexcept {
+        while (true) {
+            for (auto &node: getRessource().getNodesInfoList()) {
+                std::string_view msg = protocolToString(PROTOCOL::GET_IPS);
+
+                auto task = [this, ip = node.get_ip(), port = node.get_port(), msg]() {
+                    this->start(ip, port, msg);
+                };
+                enqueue_thread(task);
+                std::this_thread::sleep_for(threadSleep_seconde(std::chrono::seconds(5), std::chrono::seconds(30)));
+            }
+            std::this_thread::sleep_for(threadSleep_seconde(std::chrono::seconds(2), std::chrono::seconds(5)));
         }
     }
 
@@ -177,11 +193,6 @@ namespace pokemon {
             return 1;
         }
 
-        // ---------------------------------------------------------
-        // 3. Lecture (Réception de la réponse)
-        // ---------------------------------------------------------
-
-        // Lambda pour lire exactement N octets (évite la fragmentation TCP)
         auto read_exact = [&](char* buffer, size_t length) -> bool {
             size_t total_read = 0;
             while (total_read < length) {
@@ -192,7 +203,6 @@ namespace pokemon {
             return true;
         };
 
-        // A. Lecture de la taille du message (Header)
         char sizeMsg[FORMATTED_NUMBER_SIZE];
         if (!read_exact(sizeMsg, FORMATTED_NUMBER_SIZE)) {
             getTrace().print(std::cerr, std::format(MSG_CLIENT_ERROR_READING_TCP_STREAM,

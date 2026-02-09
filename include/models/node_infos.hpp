@@ -41,6 +41,15 @@ namespace pokemon {
                 isConnected_b = isConnected;
             }
 
+        friend std::ostream &operator<<(std::ostream &os, const Node_Info &node) {
+                os << "Node Information:\n"
+                   << "  Name: " << node.get_name() << "\n"
+                   << "  IP: " << node.get_ip() << "\n"
+                   << "  Port: " << node.get_port() << "\n";
+                   //<< "  Peer Count: " << resourceManager.getNodesInfoList().size();
+                return os;
+            }
+
     private:
         std::string nodeName_s;
         std::string ip_s;

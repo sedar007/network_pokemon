@@ -119,9 +119,9 @@ namespace pokemon {
         std::lock_guard<std::mutex> lock(mutex);
         os <<std::endl;
         os << " -- Liste des nodes -- " << std::endl;
-        for (auto &node: nodesList_v)
+        for (auto &node: nodesInfoList_v)
             os << node << std::endl;
-        os << "nombres totals: " + std::to_string(nodesList_v.size()) << std::endl <<std::endl;
+        os << "nombres totals: " + std::to_string(nodesInfoList_v.size()) << std::endl <<std::endl;
     }
 
     std::optional<std::string> ResourceManager::findNode(const std::string &ip) const {

@@ -36,6 +36,7 @@ namespace pokemon {
          */
         void getPic(const std::string &picName) noexcept;
 
+
     private:
         /**
          * @brief Démarrage du client avec une adresse IP voisine et un message.
@@ -85,5 +86,7 @@ namespace pokemon {
         void addPicture(const std::string &str) const noexcept;
 
         int check_connected(std::string_view neighbour_ip, in_port_t neighbour_port) noexcept;
+
+        void get_client_ip() noexcept;
     };
 }

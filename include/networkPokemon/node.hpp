@@ -34,6 +34,7 @@ namespace pokemon {
         }
 
         void add_peer(std::string peer_name, std::string peer_port) noexcept;
+        void add_peer(std::string peer_name, std::string peer_ip, int port) noexcept;
 
         void addNodesList(const std::string &fileName);
 
@@ -83,6 +84,7 @@ namespace pokemon {
         [[nodiscard]] std::vector<Node_Info> get_node_list() const noexcept {
             return resourceManager.getNodesInfoList();
         }
+
 
     private:
         in_port_t port_s; ///< Port du nœud.

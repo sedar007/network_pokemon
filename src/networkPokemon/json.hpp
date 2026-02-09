@@ -8,6 +8,9 @@ namespace pokemon {
 
         try {
             nlohmann::json j = data;
+            if (storagePath.at(storagePath.size() - 1) == '/')
+                storagePath.remove_suffix(1);
+
             std::string fullPath = std::string(storagePath) + "/" + std::string(filename);
             std::ofstream file(fullPath);
             if (file.is_open()) {

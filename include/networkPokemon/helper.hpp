@@ -35,6 +35,7 @@ namespace pokemon {
          * @return Durée aléatoire entre a et b.
          */
         std::chrono::milliseconds threadSleep_s(unsigned int a, unsigned int b);
+        std::chrono::seconds threadSleep_seconde(std::chrono::seconds first, std::chrono::seconds seconds);
 
         /**
          * @brief Génère une chaîne de caractères représentant un nombre formaté selon un protocole spécifique.

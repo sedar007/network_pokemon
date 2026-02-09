@@ -21,6 +21,17 @@ namespace pokemon {
         return std::chrono::milliseconds(static_cast<int>(duration_distrib(rng_)));
     }
 
+    std::chrono::seconds Helper::threadSleep_seconde(std::chrono::seconds first, std::chrono::seconds seconds) {
+        if (first > seconds) {
+            auto tmp = first;
+            first = seconds;
+            seconds = tmp;
+        }
+        std::uniform_real_distribution<double> duration_distrib(first.count(), seconds.count());
+        return std::chrono::seconds(static_cast<int>(duration_distrib(rng_)));
+    }
+
+
     std::string Helper::protocolToString(const PROTOCOL q) const {
         switch (q) {
             case PROTOCOL::GET_IPS:

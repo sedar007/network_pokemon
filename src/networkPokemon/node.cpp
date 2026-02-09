@@ -12,18 +12,32 @@ namespace pokemon {
     Node::Node() noexcept {
     }
 
-    void Node::initialized(const std::string &picturePath, const std::string &nodeFile) noexcept{
-        std::string fileNameNode = picturePath + nodeFile;
-        addNodesList(fileNameNode);
-        std::string fileNameImages = picturePath + "pokemons.txt";
+    void Node::initialized(const std::string &path, const std::string &nodeFile) noexcept{
+        storagePath_s = path;
+
+         auto node_info_data = Json::loadJson<Node_Info>(storagePath_s, NODE_INFO_FILE);
+
+         if (node_info_data.has_value()) {
+             m_node_info = std::make_unique<Node_Info>();
+             m_node_info->set_ip(get_network_ip());
+             m_node_info = std::make_unique<Node_Info>(node_info_data.value());
+         }
+        else
+            return;
+
+        addNodesList();
+
+        /*std::string fileNameNode = path + nodeFile;
+        addNodesList(fileNameNode);*/
+        std::string fileNameImages = path + "pokemons.txt";
         addImagesList(fileNameImages);
 
-        resourceManager.addPicturePath(picturePath);
+        resourceManager.addPicturePath(path);
 
         sockpp::initialize();
 
-        listen = std::make_unique<Listen>(port_s);
-        client = std::make_unique<Client>(ip_s, port_s);
+        listen = std::make_unique<Listen>(m_node_info->get_port());
+        client = std::make_unique<Client>(m_node_info->get_ip(), m_node_info->get_port());
     }
 
     void Node::initialized(std::string path) noexcept{
@@ -153,7 +167,11 @@ namespace pokemon {
     }
 
     void Node::add_peer(std::string peer_name, std::string peer_ip) noexcept {
-        Node_Info node_info(peer_name, peer_ip, find_available_port(DEFAULT_PREFERRED_PORT));
+       add_peer(peer_name, peer_ip, find_available_port(DEFAULT_PREFERRED_PORT));
+    }
+
+    void Node::add_peer(std::string peer_name, std::string peer_ip, int port) noexcept {
+        Node_Info node_info(peer_name, peer_ip, port);
         resourceManager.addNode(node_info);
         auto node_List = Json::loadJson<std::vector<Node_Info>>(storagePath_s, NODE_LIST_FILE);
         if (node_List.has_value()) {
@@ -166,7 +184,6 @@ namespace pokemon {
             Json::saveJson<std::vector<Node_Info>>(storagePath_s, NODE_LIST_FILE, nodes);
         }
     }
-
 
     void Node::addImagesList(const std::string &fileName) {
         std::ifstream file(fileName);
@@ -191,12 +208,12 @@ namespace pokemon {
 
     std::ostream &operator<<(std::ostream &os, const Node &node) {
         os << "[ Node " << " ] : " << "Ip: " << node.ip_s << " port: " << node.port_s << std::endl;
-        auto nodesList = node.resourceManager.getNodesList();
+        auto nodesList = node.resourceManager.getNodesInfoList();
         if (!node.resourceManager.empty(nodesList))
             os << "Liste Nodes connus: " << std::endl;
 
-        for (const auto& n: nodesList)
-            os << n << std::endl;
+      /* for (const auto& n: nodesList)
+            os << n << std::endl;*/
 
         return os;
     }
