@@ -60,7 +60,7 @@ namespace pokemon {
         getTrace().print(std::clog, std::format(MSG_SERVER_RECEIVED_QUERY, std::format(MSG_NODE_ID, getPort(), SERVER),
                                               protocol_str));
 
-        m_dispatcher.dispatch_write(*this, PROTOCOL::GET_ALIVE, std::move(socket));
+        m_dispatcher.dispatch_write(*this, string_to_protocol(protocol_str), std::move(socket));
        // m_dispatcher.dispatch_write(*this, protocolToString(PROTOCOL::GET_IPS), std::move(socket));
 
         /*if (protocol_str == protocolToString(PROTOCOL::GET_IPS)) {
@@ -165,12 +165,6 @@ namespace pokemon {
     }
 #endif
 
-    std::string Server::getIpsToSend() const {
-        std::string str;
-        for (const auto &node: getRessource().getNodesInfoList())
-            str += std::format("{}_{}_{};", node.get_name(), node.get_ip(), node.get_port());
-        return str;
-    }
 
 
 

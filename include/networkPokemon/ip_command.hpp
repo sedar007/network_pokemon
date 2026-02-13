@@ -10,6 +10,8 @@ namespace pokemon {
 
 
     private:
+        std::string getIpsToSend() const;
+        ResourceManager &resourceManager = ResourceManager::getInstance();
 
     };
 }

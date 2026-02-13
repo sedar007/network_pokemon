@@ -8,8 +8,8 @@ namespace pokemon {
       //  auto run = getIps();
       //  run.detach();
 
-      /*  auto get_ips_thread = std::thread([this] { get_client_ip(); });
-        get_ips_thread.detach();*/
+        auto get_ips_thread = std::thread([this] { get_client_ip(); });
+        get_ips_thread.detach();
 
         auto check_connected_thread = std::thread([this] { check_connected_nodes(); });
         check_connected_thread.detach();
