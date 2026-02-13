@@ -53,6 +53,7 @@ namespace pokemon {
          * @return Une chaîne contenant l'image à envoyer.
          */
         std::string getPicToSend(const std::string &buf_str, const char *buf) const;
+
     };
 
 }

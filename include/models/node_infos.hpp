@@ -48,6 +48,12 @@ namespace pokemon {
                    << "  Port: " << node.get_port() << "\n";
                    //<< "  Peer Count: " << resourceManager.getNodesInfoList().size();
                 return os;
+        }
+
+        friend bool operator==(const Node_Info &lhs, const Node_Info &rhs) noexcept {
+            return lhs.get_name() == rhs.get_name() &&
+                   lhs.get_ip() == rhs.get_ip() &&
+                   lhs.get_port() == rhs.get_port();
             }
 
     private:

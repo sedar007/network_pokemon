@@ -31,15 +31,13 @@ int main(int argc, char* argv[]) {
 
     pokemon::Main main(traceLog);
 
-   auto node = std::make_unique<pokemon::Node>(); // Create a Node
+    auto node = std::make_unique<pokemon::Node>(); // Create a Node
 
-
-    node->initialized(picturePath, nodeFile);
+    node->initialized(picturePath);
 
    main.addNode(node);
 
    auto mainThread = main.run();
    mainThread.join();
-
    return 0;
 }

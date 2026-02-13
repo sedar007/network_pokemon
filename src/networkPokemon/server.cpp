@@ -37,7 +37,9 @@ namespace pokemon {
            return -1;
         }
 
+        std::cout << "server:: connection address: " << socket->address().to_string() << std::endl;
         char buf[SERVER_BUF_SIZE];
+        std::string b;
 
         getTrace().print(std::clog, std::format(MSG_SERVER_RECEIVED_CONNECTION, std::format(MSG_NODE_ID, getPort(), SERVER),
                                           socket->address().to_string(), getPort()));
@@ -46,17 +48,30 @@ namespace pokemon {
             return -1;
         }
 
+
         std::string buf_str(buf, SERVER_BUF_SIZE);
+
+        std::cout << "Server:: buffer: " << buf_str << std::endl;
+
         std::string protocol_str(buf, protocolSize()); // get protocole
+
+        std::cout << "Server:: protocol: " << protocol_str << std::endl;
 
         getTrace().print(std::clog, std::format(MSG_SERVER_RECEIVED_QUERY, std::format(MSG_NODE_ID, getPort(), SERVER),
                                               protocol_str));
 
-        if (protocol_str == protocolToString(PROTOCOL::GET_IPS)) {
+        m_dispatcher.dispatch_write(*this, PROTOCOL::GET_ALIVE, std::move(socket));
+       // m_dispatcher.dispatch_write(*this, protocolToString(PROTOCOL::GET_IPS), std::move(socket));
+
+        /*if (protocol_str == protocolToString(PROTOCOL::GET_IPS)) {
             return send_msg(std::move(socket), getIpsToSend(), protocol_str );
         }
         if (protocol_str == protocolToString(PROTOCOL::GET_PICS)) {
             return send_msg(std::move(socket), getPicsToSend(), protocol_str );
+        }
+
+        if (protocol_str == protocolToString(PROTOCOL::GET_ALIVE)) {
+            return send_msg(std::move(socket), std::format("{};{}", "ALIVE", getPort() ), protocol_str );
         }
 
         if (protocol_str == protocolToString(PROTOCOL::GET_PIC)) {
@@ -65,7 +80,7 @@ namespace pokemon {
                 return -1;
             }
             return send_msg(std::move(socket), std_send, protocol_str );
-        }
+        }*/
         return 0;
     }
 
@@ -151,11 +166,13 @@ namespace pokemon {
 #endif
 
     std::string Server::getIpsToSend() const {
-        std::string str("");
-        for (auto &msg: getRessource().getNodesList())
-            str += msg + ";";
+        std::string str;
+        for (const auto &node: getRessource().getNodesInfoList())
+            str += std::format("{}_{}_{};", node.get_name(), node.get_ip(), node.get_port());
         return str;
     }
+
+
 
     std::string Server:: getPicsToSend() const {
         std::string str("");

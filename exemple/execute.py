@@ -9,9 +9,9 @@ if not os.path.exists("build"):
 # Changement de répertoire vers le dossier "build"
 os.chdir("build")
 
-traceLog = '1'
+traceLog = '0'
 # Définition du nombre de noeuds
-NB_NODES = 30
+NB_NODES = 1
 if len(sys.argv) > 1:
     for i in range (1, len(sys.argv)):
         arg = sys.argv[i]
@@ -37,7 +37,7 @@ comm = './bin/NetworkPokemon-exemple'
 commands = list()
 # Exécution des commandes
 for i in range(NB_NODES):
-    commands.append(subprocess.Popen([ comm, '-d', '../data/peer_' + str(i + 1) + '/', '-l', 'nodes.txt', '-t', traceLog]))
+    commands.append(subprocess.Popen([ comm, '-d', '../../data/peer_' + str(i + 1) + '/', '-l', 'nodes.txt', '-t', traceLog]))
 
 for i in range(len(commands)):
     commands[i].wait()

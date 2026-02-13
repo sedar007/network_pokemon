@@ -21,7 +21,7 @@ namespace pokemon {
     // Data
     static constexpr int LISTEN_ERROR_CONNECTION_SLEEP_RANGE_BEGIN = 1000;
     static constexpr int LISTEN_ERROR_CONNECTION_SLEEP_RANGE_END = 2000;
-    static constexpr size_t SERVER_BUF_SIZE = 64;
+    static constexpr size_t SERVER_BUF_SIZE = 10;
     static constexpr size_t FORMATTED_NUMBER_SIZE = 6; ///< nombre de charactere de la taille des messages.
 
     // Exception

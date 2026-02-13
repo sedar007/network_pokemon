@@ -28,7 +28,7 @@ int main(int argc, char* argv[]) {
     auto node = std::make_unique<pokemon::Node>(); // Create a Node
 
 
-    node->initialized(picturePath, nodeFile);
+    node->initialized(picturePath);
 
     main.addNode(node);
 

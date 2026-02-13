@@ -19,6 +19,7 @@
 #include <condition_variable>
 #include <functional>
 #include <atomic>
+#include <map>
 
 #include "models.hpp"
 #include "networkPokemon/export.hpp"
@@ -27,6 +28,11 @@
 #include "networkPokemon/helper.hpp"
 #include "networkPokemon/trace.hpp"
 #include "networkPokemon/resourceManager.hpp"
+
+#include "networkPokemon/INetworkCommand.hpp"
+#include "networkPokemon/ip_command.hpp"
+#include  "networkPokemon/alive_command.hpp"
+#include "networkPokemon/command_dispatcher.h"
 #include "networkPokemon/networkNode.hpp"
 #include "networkPokemon/client.hpp"
 #include "networkPokemon/server.hpp"

@@ -16,12 +16,12 @@ namespace pokemon {
          */
         Node() noexcept;
 
-        static constexpr std::string_view NODE_INFO_FILE = "node_infoazdzad.json";
-        static constexpr std::string_view NODE_LIST_FILE = "node_listdazdzadz.json";
+        static constexpr std::string_view NODE_INFO_FILE = "node_infos.json";
+        static constexpr std::string_view NODE_LIST_FILE = "node_list.json";
         static constexpr std::string_view EN0_INTERFACE = "en0";
         static constexpr std::string_view LOCALHOST_IP = "127.0.0.1";
         static constexpr std::string_view Lo_0_INTERFACE = "lo0";
-        static constexpr int DEFAULT_PREFERRED_PORT = 49152;
+        static constexpr int DEFAULT_PREFERRED_PORT = 49153;
 
         void set_node_info(std::string_view node_name) noexcept;
 
@@ -41,11 +41,9 @@ namespace pokemon {
 
         /**
          * @brief intitialized the node.
-         * @param picturePath Chemin vers les images.
-         * @param nodeFile Fichier du nœud.
+         * @param path the path to the node configuration and data files.
          */
-        void initialized(std::string path) noexcept;
-        void initialized(const std::string &picturePath, const std::string &nodeFile) noexcept;
+        void initialized(std::string_view path) noexcept;
 
         /**
          * @brief Surcharge de l'opérateur de flux de sortie pour afficher le nœud.

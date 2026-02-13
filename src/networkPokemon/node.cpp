@@ -12,9 +12,9 @@ namespace pokemon {
     Node::Node() noexcept {
     }
 
-    void Node::initialized(const std::string &path, const std::string &nodeFile) noexcept{
+    void Node::initialized(std::string_view path) noexcept{
         storagePath_s = path;
-
+        std::cout << "Node::initialized() - Storage path set to: " << storagePath_s << std::endl;
          auto node_info_data = Json::loadJson<Node_Info>(storagePath_s, NODE_INFO_FILE);
 
          if (node_info_data.has_value()) {
@@ -22,49 +22,19 @@ namespace pokemon {
              m_node_info->set_ip(get_network_ip());
              m_node_info = std::make_unique<Node_Info>(node_info_data.value());
          }
-        else
-            return;
+        else {
+            Node_Info default_node_info(Node_Info::DEFAULT_NODE_NAME, get_network_ip(), find_available_port(DEFAULT_PREFERRED_PORT));
+            m_node_info = std::make_unique<Node_Info>(default_node_info);
+        }
 
         addNodesList();
 
         /*std::string fileNameNode = path + nodeFile;
         addNodesList(fileNameNode);*/
-        std::string fileNameImages = path + "pokemons.txt";
+        std::string fileNameImages = std::format("{}{}", path, "pokemons.txt");
         addImagesList(fileNameImages);
 
-        resourceManager.addPicturePath(path);
-
-        sockpp::initialize();
-
-        listen = std::make_unique<Listen>(m_node_info->get_port());
-        client = std::make_unique<Client>(m_node_info->get_ip(), m_node_info->get_port());
-    }
-
-    void Node::initialized(std::string path) noexcept{
-
-        storagePath_s = path;
-        // auto node_info_data = Json::loadJson<Node_Info>(storagePath_s, NODE_INFO_FILE);
-
-        /* if (node_info_data.has_value()) {
-             m_node_info->set_ip(get_network_ip());
-             //find_available_port(DEFAULT_PREFERRED_PORT)
-             m_node_info = std::make_unique<Node_Info>(node_info_data.value());
-
-         }
-         else {*/
-        Node_Info default_node_info(Node_Info::DEFAULT_NODE_NAME, get_network_ip(), find_available_port(DEFAULT_PREFERRED_PORT));
-        m_node_info = std::make_unique<Node_Info>(default_node_info);
-        //  Json::saveJson<Node_Info>(storagePath_s, NODE_INFO_FILE, *m_node_info);
-        // }
-
-
-        addNodesList();
-        /* std::string fileNameNode = picturePath + nodeFile;
-
-         std::string fileNameImages = picturePath + "pokemons.txt";
-         addImagesList(fileNameImages);
-
-         resourceManager.addPicturePath(picturePath); */
+        resourceManager.addPicturePath(path.data());
 
         sockpp::initialize();
 
@@ -148,7 +118,7 @@ namespace pokemon {
                 port_s = std::stoi(line.substr(pos + 1));
             }
             while (std::getline(file, line))
-                if (isValidIPAddress(line))
+                if (isValidIPAddressPort(line))
                     resourceManager.addNode(line);
             file.close();
         } else {

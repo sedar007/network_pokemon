@@ -17,21 +17,26 @@ namespace pokemon {
         // Create acceptor
         sockpp::tcp_acceptor acc(getPort());
         if (!acc) {
-            getTrace().print(std::cerr, std::format(MSG_LISTENING_ERROR_CREATING_ACCEPTOR, std::format(MSG_NODE_ID, getPort(), LISTEN)));
+            std::cerr << "listening:: error creating acceptor : " << getPort() <<std::endl;
+            std::cerr << "Error: " << acc.last_error_str() << std::endl;
+         //   getTrace().print(std::cerr, std::format(MSG_LISTENING_ERROR_CREATING_ACCEPTOR, std::format(MSG_NODE_ID, getPort(), LISTEN)));
             throw std::runtime_error(MSG_ERROR_CREATING_ACCEPTOR);
         }
 
         while (true) {
-            getTrace().print(std::cerr, std::format(MSG_LISTENING_AWAITING_CONNECTION, std::format(MSG_NODE_ID, getPort(), LISTEN), acc.last_error_str()));
+            std::cout << "listening:: listening... port: "<<getPort()<< std::endl;
+        //    getTrace().print(std::cerr, std::format(MSG_LISTENING_AWAITING_CONNECTION, std::format(MSG_NODE_ID, getPort(), LISTEN), acc.last_error_str()));
             std::unique_ptr<sockpp::tcp_socket> sock = std::make_unique<sockpp::tcp_socket>(acc.accept()) ;
 
             if (!sock) {
-                getTrace().print(std::cerr, std::format(MSG_LISTENING_ERROR_ACCEPTING_ACCEPTOR, std::format(MSG_NODE_ID, getPort(), LISTEN), acc.last_error_str()));
+                std::cerr << "listening:: failed to accept new connection : " << getPort() <<std::endl;
+          //      getTrace().print(std::cerr, std::format(MSG_LISTENING_ERROR_ACCEPTING_ACCEPTOR, std::format(MSG_NODE_ID, getPort(), LISTEN), acc.last_error_str()));
                 std::this_thread::sleep_for(threadSleep_s(LISTEN_ERROR_CONNECTION_SLEEP_RANGE_BEGIN, LISTEN_ERROR_CONNECTION_SLEEP_RANGE_END));
             }
             else {
-                getTrace().print(std::clog, std::format(MSG_LISTENING_ACCEPTING_CONNECTION, std::format(MSG_NODE_ID, getPort(), LISTEN)));
+              //  getTrace().print(std::clog, std::format(MSG_LISTENING_ACCEPTING_CONNECTION, std::format(MSG_NODE_ID, getPort(), LISTEN)));
 
+                std::cerr << "listening:: new connection : " << getPort() << " from: " << sock->peer_address() <<std::endl;
                 std::shared_ptr<sockpp::tcp_socket> sharedSock = std::move(sock);
                 auto runServerTask = [this, s = sharedSock]() {
                     Server server(getPort());

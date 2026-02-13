@@ -21,6 +21,10 @@ set(SRC
     "${SRCROOT}/server.cpp"
     "${SRCROOT}/main.cpp"
 	"${SRCROOT}/client.cpp"
+    "${SRCROOT}/ip_command.cpp"
+    "${SRCROOT}/alive_command.cpp"
+
+    "${SRCROOT}/command_dispatcher.cpp"
 
 
 

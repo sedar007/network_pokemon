@@ -6,7 +6,7 @@
 
 namespace pokemon {
     enum class PROTOCOL {
-        GET_IPS, GET_PICS, GET_PIC
+        GET_IPS, GET_PICS, GET_PIC, GET_ALIVE
     };
 
     /**
@@ -24,7 +24,10 @@ namespace pokemon {
          * @brief Constructeur par défaut de la classe Helper.
          */
         Helper() noexcept;
+        [[nodiscard]] static bool isValidIPAddressPort(const std::string &str);
         [[nodiscard]] static bool isValidIPAddress(const std::string &str);
+
+
 
         bool read_exact(sockpp::tcp_connector& socket, char* buffer, size_t length);
 
@@ -54,6 +57,9 @@ namespace pokemon {
          * @return Chaîne de caractères représentant le protocole.
          */
         std::string protocolToString(const PROTOCOL q) const;
+        PROTOCOL string_to_protocol(std::string_view s) const;
+
+
 
         /**
          * @brief Extrait l'adresse IP et le port d'une chaîne d'adresse au format "IP:port".

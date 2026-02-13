@@ -93,7 +93,7 @@ namespace pokemon {
         std::optional<std::string> findNode(const std::string &ip) const;
 
 
-        void set_node_a_live(std::string_view ip, const int port, bool isOnline) ;
+        void set_node_alive(std::string_view ip, const int port, bool isOnline) ;
 
         /// @brief Vérifie si un conteneur est vide.
         /// @tparam T Type du conteneur.

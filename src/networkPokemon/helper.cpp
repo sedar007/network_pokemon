@@ -5,9 +5,13 @@ namespace pokemon {
 
     Helper::Helper() noexcept :protocol_size(8) {}
 
-    bool Helper::isValidIPAddress(const std::string &str)  {
+    bool Helper::isValidIPAddressPort(const std::string &str)  {
         // Expression régulière pour valider le format de l'adresse IP
         std::regex pattern("^\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}:\\d+$");
+        return std::regex_match(str, pattern);
+    }
+    bool Helper::isValidIPAddress(const std::string &str)  {
+        std::regex pattern("^\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}");
         return std::regex_match(str, pattern);
     }
 
@@ -40,10 +44,20 @@ namespace pokemon {
                 return "GET_PICS";
             case PROTOCOL::GET_PIC:
                 return "GET_PIC_";
+            case PROTOCOL::GET_ALIVE:
+                return "GETALIVE";
             default:
                 return "UNKNOWN_";
         }
     }
+
+    PROTOCOL Helper::string_to_protocol(std::string_view s) const {
+        if (s == "GETALIVE")
+            return PROTOCOL::GET_ALIVE;
+
+        return PROTOCOL::GET_IPS; // Valeur par défaut, à adapter selon les besoins
+    }
+
 
     bool Helper::read_exact(sockpp::tcp_connector& socket, char* buffer, size_t length) {
         size_t total_read = 0;

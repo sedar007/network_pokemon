@@ -81,7 +81,7 @@ namespace pokemon {
         return nodesList_v;
     }
 
-    void ResourceManager::set_node_a_live(std::string_view ip, const int port, bool isOnline) {
+    void ResourceManager::set_node_alive(std::string_view ip, const int port, bool isOnline) {
         std::lock_guard<std::mutex> lock(mutex);
         auto node = std::find_if(nodesInfoList_v.begin(), nodesInfoList_v.end(),
            [&ip, &port](const Node_Info& n) {
