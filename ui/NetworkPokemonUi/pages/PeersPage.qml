@@ -7,12 +7,27 @@ import NetworkPokemonUi
 Item {
     id: root
 
+    // CONFIGURATION : Intervalle en secondes (par défaut 2 secondes)
+    property int intervalSeconds: 2
+
+    // --- LE TIMER (Rafraîchissement automatique en arrière-plan) ---
+    Timer {
+        id: autoRefreshTimer
+        interval: root.intervalSeconds * 1000
+        running: true
+        repeat: true
+        onTriggered: {
+            // Met à jour les données silencieusement
+            myPeerModel.refreshPeers()
+        }
+    }
+
     ColumnLayout {
         anchors.fill: parent
         anchors.margins: 15
         spacing: 20
 
-        // Top Bar - Nombre de peers
+        // --- TOP BAR : Infos et Configuration du Timer ---
         Rectangle {
             Layout.fillWidth: true
             Layout.preferredHeight: 50
@@ -25,16 +40,38 @@ Item {
             RowLayout {
                 anchors.fill: parent
                 anchors.margins: 15
-                spacing: 10
+                spacing: 15
+
                 Text { text: "⚖️"; font.pixelSize: 16 }
+
                 Text {
                     text: myPeerModel.rowCount() + " peers listés"
                     color: "#666"; font.pixelSize: 14
                 }
+
+                // Espace flexible pour pousser le slider à droite
+                Item { Layout.fillWidth: true }
+
+                Text {
+                    text: "Auto: " + root.intervalSeconds + "s"
+                    color: "#666"; font.pixelSize: 12
+                }
+
+                Slider {
+                    id: timeSlider
+                    from: 1     // Minimum 1 seconde
+                    to: 10      // Maximum 10 secondes
+                    stepSize: 1
+                    value: root.intervalSeconds
+                    Layout.preferredWidth: 100
+
+                    // Met à jour la vitesse de rafraîchissement en direct
+                    onMoved: root.intervalSeconds = value
+                }
             }
         }
 
-        // Header with Refresh Button
+        // --- HEADER : Titre et Bouton de rafraîchissement manuel ---
         RowLayout {
             Layout.fillWidth: true
             Text {
@@ -66,14 +103,20 @@ Item {
 
                 TapHandler {
                     onTapped: {
+                        // 1. Fait tourner l'icône
                         refreshIcon.rotation += 360
+
+                        // 2. Met à jour les données
                         myPeerModel.refreshPeers()
+
+                        // 3. Redémarre le timer pour décaler le prochain auto-refresh
+                        autoRefreshTimer.restart()
                     }
                 }
             }
         }
 
-        // Servers List
+        // --- LISTE DES SERVEURS ---
         ListView {
             id: peerList
             Layout.fillWidth: true
@@ -82,7 +125,6 @@ Item {
             spacing: 15
 
             model: myPeerModel
-
             delegate: peerDelegate
         }
     }
