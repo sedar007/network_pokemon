@@ -5,6 +5,7 @@ set(SRC
 	"${SRCROOT}/pch.h"
     "${SRCROOT}/pch.cpp"
     "${SRCROOT}/node_info.cpp"
+    "${SRCROOT}/image.cpp"
 
  )
 

@@ -28,6 +28,7 @@ namespace pokemon {
         }
 
         addNodesList();
+        addImagesList();
 
         /*std::string fileNameNode = path + nodeFile;
         addNodesList(fileNameNode);*/
@@ -136,6 +137,15 @@ namespace pokemon {
         }
     }
 
+    void Node::addImagesList() {
+        auto image_list = Json::loadJson<std::vector<Image>>(storagePath_s, IMAGE_LIST_FILE);
+        if (image_list.has_value()) {
+            for (const auto& image : image_list.value()) {
+                resourceManager.addImage(image);
+            }
+        }
+    }
+
     void Node::add_peer(std::string peer_name, std::string peer_ip) noexcept {
        add_peer(peer_name, peer_ip, find_available_port(DEFAULT_PREFERRED_PORT));
     }
@@ -201,5 +211,19 @@ namespace pokemon {
         n.set_name(j.at(Node_Info::NODE_NAME_KEY).get<std::string>());
         n.set_port(j.at(Node_Info::NODE_PORT_KEY).get<int>());
         n.set_ip(j.at(Node_Info::NODE_IP_KEY).get<std::string>());
+    }
+
+    inline void to_json(nlohmann::json& j, const Image& i) {
+        j = nlohmann::json{
+                {Image::IMAGE_NAME_KEY, i.get_name()},
+                {Image::IMAGE_EXTENSION_KEY, i.get_extension()},
+                {Image::IMAGE_HASH_KEY, i.get_hash()},
+        };
+    }
+
+    inline void from_json(const nlohmann::json& j, Image& i) {
+      i.set_name(j.at(Image::IMAGE_NAME_KEY).get<std::string>());
+      i.set_extension(j.at(Image::IMAGE_EXTENSION_KEY).get<std::string>());
+      i.set_hash(j.at(Image::IMAGE_HASH_KEY).get<std::string>());
     }
 }

@@ -75,6 +75,18 @@ namespace pokemon {
         }
     }
 
+    void ResourceManager::addImage(Image image) {
+     std::lock_guard<std::mutex> lock(mutex);
+     auto it = std::find_if(images_list_v.begin(), images_list_v.end(),
+         [&image](const Image& n) {
+             return n == image;
+         });
+
+     if (it == images_list_v.end()) {
+         images_list_v.push_back(image);
+     }
+ }
+
 
     std::vector<std::string> ResourceManager::getNodesList() const {
         std::lock_guard<std::mutex> lock(mutex);
@@ -96,6 +108,11 @@ namespace pokemon {
         std::lock_guard<std::mutex> lock(mutex);
         return nodesInfoList_v;
     }
+
+    std::vector<Image> ResourceManager::getImagesList() const {
+     std::lock_guard<std::mutex> lock(mutex);
+     return images_list_v;
+ }
 
     int ResourceManager::savedPictureToDisk(const std::string &location,  const std::string &pictureName, std::string &extension, const std::string &pic_str) {
         std::lock_guard<std::mutex> lock(mutex);

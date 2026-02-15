@@ -74,6 +74,8 @@ namespace pokemon {
         /// @param nodeInfo Les informations du nœud à ajouter.
         void addNode(Node_Info nodeInfo);
 
+        void addImage(Image image);
+
         /// @brief Récupère la liste des nœuds.
         /// @return Un vecteur contenant les adresses IP des nœuds.
         std::vector<std::string> getNodesList() const;
@@ -82,6 +84,8 @@ namespace pokemon {
         /// @brief Récupère la liste des informations des nœuds.
         /// @return Un vecteur contenant les informations des nœuds.
         std::vector<Node_Info> getNodesInfoList() const;
+
+        std::vector<Image> getImagesList() const;
 
         /// @brief Affiche la liste des nœuds.
         /// @param os Flux de sortie où afficher la liste.
@@ -113,6 +117,7 @@ namespace pokemon {
         std::unordered_map<std::string, std::tuple<std::string, std::string, std::string>> pictureList_mp; // Liste des pictures
         std::vector<std::string> nodesList_v; // Liste des nœuds.
         std::vector<Node_Info> nodesInfoList_v; // Liste des infos des nœuds.
+        std::vector<Image> images_list_v; // Liste des images.
         Trace &trace = Trace::getInstance();  // Instance unique de trace.
         std::string picturePath_s; // Chemin d'accès des pictures.
     };

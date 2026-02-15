@@ -18,6 +18,8 @@ namespace pokemon {
 
         static constexpr std::string_view NODE_INFO_FILE = "node_infos.json";
         static constexpr std::string_view NODE_LIST_FILE = "node_list.json";
+        static constexpr std::string_view IMAGE_LIST_FILE = "pokemons_images.json";
+
         static constexpr std::string_view EN0_INTERFACE = "en0";
         static constexpr std::string_view LOCALHOST_IP = "127.0.0.1";
         static constexpr std::string_view Lo_0_INTERFACE = "lo0";
@@ -101,6 +103,9 @@ namespace pokemon {
          * @param fileName Nom du fichier contenant les nœuds.
          */
         void addNodesList();
+
+
+        void addImagesList();
 
         /**
          * @brief Ajoute les images à la liste.
