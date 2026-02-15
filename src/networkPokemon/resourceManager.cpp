@@ -179,4 +179,29 @@ namespace pokemon {
         return out;
     }
 
+    std::string ResourceManager::getPic_str(const Image image, std::string_view path) {
+     std::lock_guard<std::mutex> lock(mutex);
+
+     std::string fullPath = std::format("{}{}", path, image.get_hash());
+
+     std::ifstream file(fullPath, std::ios::binary | std::ios::ate);
+
+     if (!file.is_open()) {
+         trace.print(std::cerr, "Impossible de lire l'image : " + fullPath);
+         return "";
+     }
+
+     std::streamsize size = file.tellg();
+     file.seekg(0, std::ios::beg);
+
+     if (size <= 0) return "";
+
+     std::string buffer(size, '\0');
+     if (file.read(&buffer[0], size)) {
+         return buffer;
+     }
+
+     return "";
+ }
+
 }

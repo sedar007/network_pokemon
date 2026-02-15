@@ -42,9 +42,9 @@ QVariantMap Node::get_node_infos()
     auto config = m_node.get_node_info();
     map["nodeName"] = QString::fromStdString(config.get_name().data());
     map["port"] = QString::number(config.get_port());
-    map["maxConnections"] = 10;//QString::number(config.maxConnections);
-    map["autoShare"] = 0;//config.autoShare;
-    map["autoDownload"] = 0;//config.autoDownload;
+    map["maxConnections"] = 10;
+    map["autoShare"] = 0;
+    map["autoDownload"] = 0;
 
     qDebug() << "Config chargée depuis le disque.";
     return map;
@@ -81,6 +81,29 @@ void Node::add_peer(QString name, QString port)
     );
 
     qDebug() << "Configuration sauvegardée pour :" << name;
+}
+
+
+QVariantList Node::get_pokemon_list() {
+    QVariantList result;
+
+    auto images = m_node.get_image_list();
+
+    for (const auto& img : images) {
+        QVariantMap map;
+
+        map["name"] = QString::fromStdString(img.get_name().data());
+        map["pNumber"] = QString::fromStdString(img.get_extension().data());
+        map["type"] = "Unknown";
+        map["size"] = "0 MB";
+
+        std::string b64 = m_node.get_picture(img);
+        map["imgUrl"] = QString::fromStdString(b64);
+
+        result.append(map);
+    }
+
+    return result;
 }
 
 

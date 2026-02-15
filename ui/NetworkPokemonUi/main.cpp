@@ -4,6 +4,7 @@
 
 #include "node.h"
 #include "peermodel.h"
+#include "pokemonmodel.h"
 
 int main(int argc, char *argv[])
 {
@@ -13,8 +14,10 @@ int main(int argc, char *argv[])
     Node networkNode;
 
     PeerModel model(&networkNode);
+    PokemonModel pokeModel(&networkNode);
 
     engine.rootContext()->setContextProperty("myPeerModel", &model);
+    engine.rootContext()->setContextProperty("myPokemonModel", &pokeModel);
     engine.rootContext()->setContextProperty("networkNode", &networkNode);
 
     QObject::connect(

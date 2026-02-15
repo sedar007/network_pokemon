@@ -12,6 +12,27 @@ namespace pokemon {
     Node::Node() noexcept {
     }
 
+    static const std::string base64_chars =
+             "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+             "abcdefghijklmnopqrstuvwxyz"
+             "0123456789+/";
+
+    std::string base64_encode(const std::string &in) {
+        std::string out;
+        int val = 0, valb = -6;
+        for (unsigned char c : in) {
+            val = (val << 8) + c;
+            valb += 8;
+            while (valb >= 0) {
+                out.push_back(base64_chars[(val >> valb) & 0x3F]);
+                valb -= 6;
+            }
+        }
+        if (valb > -6) out.push_back(base64_chars[((val << 8) >> (valb + 8)) & 0x3F]);
+        while (out.size() % 4) out.push_back('=');
+        return out;
+    }
+
     void Node::initialized(std::string_view path) noexcept{
         storagePath_s = path;
         std::cout << "Node::initialized() - Storage path set to: " << storagePath_s << std::endl;
@@ -28,6 +49,8 @@ namespace pokemon {
         }
 
         addNodesList();
+
+
         addImagesList();
 
         /*std::string fileNameNode = path + nodeFile;
@@ -42,6 +65,18 @@ namespace pokemon {
         listen = std::make_unique<Listen>(m_node_info->get_port());
         client = std::make_unique<Client>(m_node_info->get_ip(), m_node_info->get_port());
     }
+
+    std::string Node::get_picture(const Image image) {
+        std::string rawData = resourceManager.getPic_str(image, storagePath_s);
+
+        if (rawData.empty()) {
+            return "";
+        }
+
+        std::string base64Data = base64_encode(rawData);
+        return "data:image/png;base64," + base64Data;
+    }
+
 
      void Node::set_node_info(std::string_view node_name) noexcept {
         if (m_node_info == nullptr)
@@ -138,6 +173,9 @@ namespace pokemon {
     }
 
     void Node::addImagesList() {
+
+        Image i = Image("venipede", "png", "1e0980552019b046699cb8fb1a8d6f38");
+        Json::saveJson(storagePath_s.data(), IMAGE_LIST_FILE.data(), std::vector<Image>{i});
         auto image_list = Json::loadJson<std::vector<Image>>(storagePath_s, IMAGE_LIST_FILE);
         if (image_list.has_value()) {
             for (const auto& image : image_list.value()) {

@@ -99,6 +99,9 @@ namespace pokemon {
 
         void set_node_alive(std::string_view ip, const int port, bool isOnline) ;
 
+
+        std::string getPic_str(const Image image, std::string_view path);
+
         /// @brief Vérifie si un conteneur est vide.
         /// @tparam T Type du conteneur.
         /// @param t Le conteneur à vérifier.

@@ -1,15 +1,24 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import "../components" // Pour accéder à PokemonDelegate
-import "../Data"       // Pour accéder au Model
+import "../components"
 
 Item {
+    id: root
+
+    // Timer
+    Timer {
+        interval: myPokemonModel.refreshFrequency()
+        running: true
+        repeat: true
+        onTriggered: myPokemonModel.refreshPokemons()
+    }
+
     ColumnLayout {
         anchors.fill: parent
         spacing: 15
 
-        // Barre supérieure de la galerie (Filtre + Bouton Ajouter)
+        // Barre supérieure
         RowLayout {
             Layout.fillWidth: true
             Layout.margins: 15
@@ -20,7 +29,7 @@ Item {
                 color: "#F0F2F5"; radius: 8
                 Row {
                     anchors.centerIn: parent; spacing: 5
-                    Text { text: "Tous (6) ▼"; font.pixelSize: 14 }
+                    Text { text: "Tous (" + myPokemonModel.rowCount() + ") ▼"; font.pixelSize: 14 }
                 }
             }
             Item { Layout.fillWidth: true }
@@ -31,6 +40,7 @@ Item {
                     text: parent.text; color: "white"; font.bold: true
                     horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter
                 }
+                onClicked: myPokemonModel.refreshPokemons()
             }
         }
 
@@ -41,12 +51,9 @@ Item {
             clip: true
             cellWidth: width / 2; cellHeight: 280
 
-            // On utilise le fichier séparé pour le modèle
-            model: PokemonModel {}
+            model: myPokemonModel
 
-            // On utilise le composant séparé pour l'affichage
             delegate: PokemonDelegate {
-                // Mapping des données du modèle vers les propriétés du composant
                 name: model.name
                 pNumber: model.pNumber
                 type: model.type

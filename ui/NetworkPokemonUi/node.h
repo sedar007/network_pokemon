@@ -21,6 +21,8 @@ class Node  : public QObject{
         Q_INVOKABLE QString get_ip();
         Q_INVOKABLE QVariantList get_node_list();
         Q_INVOKABLE void add_peer(QString name, QString port);
+        Q_INVOKABLE QVariantList get_pokemon_list();
+
 
 
 

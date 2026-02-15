@@ -40,6 +40,12 @@ namespace pokemon {
 
         void addNodesList(const std::string &fileName);
 
+        [[nodiscard]] std::vector<Image> get_image_list() const noexcept {
+            return resourceManager.getImagesList();
+        }
+
+
+        std::string get_picture(const Image image);
 
         /**
          * @brief intitialized the node.

@@ -49,6 +49,7 @@ qt_add_qml_module(${PROJECT_NAME}-ui
         QML_FILES pages/PeersPage.qml
         QML_FILES pages/SearchPage.qml
         SOURCES peermodel.h peermodel.cpp
+        SOURCES pokemonmodel.h pokemonmodel.cpp
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.

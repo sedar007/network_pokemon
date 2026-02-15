@@ -3,8 +3,6 @@
 
 #include <QAbstractListModel>
 #include <QObject>
-// Il est préférable d'utiliser une déclaration anticipée (forward declaration) ici
-// pour éviter les inclusions circulaires.
 class Node;
 
 struct Peer {
@@ -30,19 +28,17 @@ public:
         LastSeenRole
     };
 
-    // MODIFICATION : Le constructeur prend maintenant un pointeur vers Node
     explicit PeerModel(Node* node, QObject *parent = nullptr);
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     QHash<int, QByteArray> roleNames() const override;
 
-    // Cette fonction ira chercher les vraies données
     Q_INVOKABLE void refreshPeers();
 
 private:
     QList<Peer> m_peers;
-    Node* m_node; // Pointeur vers l'instance de Node
+    Node* m_node;
 };
 
 #endif // PEERMODEL_H
