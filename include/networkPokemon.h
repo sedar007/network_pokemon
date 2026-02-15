@@ -20,6 +20,7 @@
 #include <functional>
 #include <atomic>
 #include <map>
+#include <fstream>
 
 #include "models.hpp"
 #include "networkPokemon/export.hpp"

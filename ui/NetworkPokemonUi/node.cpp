@@ -106,4 +106,15 @@ QVariantList Node::get_pokemon_list() {
     return result;
 }
 
+void Node::add_pokemon(QString name, QString filePath)
+{
+    QUrl url(filePath);
+    QString localPath = url.isLocalFile() ? url.toLocalFile() : filePath;
+
+    qDebug() << "Ajout de l'image :" << localPath;
+
+    m_node.add_pokemon(name.toStdString(), localPath.toStdString());
+}
+
+
 

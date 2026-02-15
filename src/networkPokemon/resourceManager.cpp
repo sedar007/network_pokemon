@@ -14,7 +14,6 @@ namespace pokemon {
         pictureList_mp.insert({pictureName, {owner, extention, pictureHash}});
     }
 
-
     void ResourceManager::tracePicturesList(std::ostream &os) const {
         std::lock_guard<std::mutex> lock(mutex);
         trace.print(os, " -- Liste des images -- ");
@@ -84,6 +83,18 @@ namespace pokemon {
 
      if (it == images_list_v.end()) {
          images_list_v.push_back(image);
+     }
+ }
+
+    void ResourceManager::addImage(std::shared_ptr<Image> image) {
+      //std::lock_guard<std::mutex> lock(mutex);
+     auto it = std::find_if(images_list_v.begin(), images_list_v.end(),
+         [&image](const Image& n) {
+             return n == *image;
+         });
+
+     if (it == images_list_v.end()) {
+         images_list_v.push_back(*image);
      }
  }
 
@@ -202,6 +213,74 @@ namespace pokemon {
      }
 
      return "";
+ }
+
+    std::shared_ptr<Image> ResourceManager::addPictureFromPath(std::string_view name, std::string_view picturePath, std::string_view save_path) noexcept {
+        std::lock_guard<std::mutex> lock(mutex);
+        try {
+            std::filesystem::path path(picturePath);
+            return save_image(name, path, save_path);
+
+        } catch (const std::exception &e) {
+          //  trace.print(std::cerr, "Erreur lors de l'ajout de l'image depuis le chemin : " + picturePath + " - " + e.what());
+            return nullptr;
+        }
+    }
+
+
+    std::shared_ptr<Image> ResourceManager::save_image(std::string_view name, std::filesystem::path image_to_save_path, std::string_view save_path) noexcept {
+     try {
+
+         if (std::filesystem::exists(image_to_save_path) && std::filesystem::is_regular_file(image_to_save_path)) {
+             std::ifstream file(image_to_save_path, std::ios::binary | std::ios::ate);
+
+             if (!file.is_open()) {
+        //         trace.print(std::cerr, "Impossible de lire l'image : " + image_to_save_path.to);
+                 return nullptr;
+             }
+
+             std::string extension = image_to_save_path.extension().string();
+             auto bytes = std::filesystem::file_size(image_to_save_path);
+
+             double mb = static_cast<double>(bytes) / (1024.0 * 1024.0);
+
+
+             std::stringstream stream;
+             stream << std::fixed << std::setprecision(1) << mb << " MB";
+
+             std::string picture_size = stream.str();
+
+             std::string hash = name.data() + extension;
+
+             std::streamsize size = file.tellg();
+             file.seekg(0, std::ios::beg);
+
+             if (size <= 0) return nullptr ;
+
+             std::string buffer(size, '\0');
+             if (file.read(&buffer[0], size)) {
+                 std::string saved_name = std::format("{}{}", save_path, hash);
+                std::filesystem::path pathr(saved_name);
+
+                 std::ofstream image_saved(pathr, std::ios::binary);
+                 if (!image_saved.is_open()) {
+                     trace.print(std::cerr, "Impossible de sauvegarder l'image : " + pathr.string());
+                     return nullptr;
+                 }
+                    image_saved.write(buffer.c_str(), buffer.size());
+                    image_saved.close();
+
+                 auto image = std::make_shared<Image>(name, extension, hash);
+
+                 addImage(image);
+                 return image;
+             }
+         }
+
+     } catch (const std::exception &e) {
+         return nullptr;
+        }
+
  }
 
 }

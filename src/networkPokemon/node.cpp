@@ -173,9 +173,6 @@ namespace pokemon {
     }
 
     void Node::addImagesList() {
-
-        Image i = Image("venipede", "png", "1e0980552019b046699cb8fb1a8d6f38");
-        Json::saveJson(storagePath_s.data(), IMAGE_LIST_FILE.data(), std::vector<Image>{i});
         auto image_list = Json::loadJson<std::vector<Image>>(storagePath_s, IMAGE_LIST_FILE);
         if (image_list.has_value()) {
             for (const auto& image : image_list.value()) {
@@ -234,6 +231,23 @@ namespace pokemon {
             os << n << std::endl;*/
 
         return os;
+    }
+
+
+    void Node::add_pokemon(std::string_view name, std::string_view picturePath) noexcept {
+        std::shared_ptr<Image> image = resourceManager.addPictureFromPath(name, picturePath, storagePath_s);
+        if (image == nullptr) {
+            trace.print(std::cerr, "Erreur lors de l'ajout de l'image depuis le chemin : ", picturePath.data());
+            return;
+        }
+
+        auto image_list = Json::loadJson<std::vector<Image>>(storagePath_s, IMAGE_LIST_FILE);
+        std::vector<Image> images_list_to_save;
+        if (image_list.has_value()) {
+            images_list_to_save = image_list.value();
+        }
+        images_list_to_save.push_back(*image);
+        Json::saveJson(storagePath_s.data(), IMAGE_LIST_FILE.data(), images_list_to_save);
     }
 
 

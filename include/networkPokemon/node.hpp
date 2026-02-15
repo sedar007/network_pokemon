@@ -44,6 +44,8 @@ namespace pokemon {
             return resourceManager.getImagesList();
         }
 
+        void add_pokemon(std::string_view name, std::string_view picturePath) noexcept;
+
 
         std::string get_picture(const Image image);
 

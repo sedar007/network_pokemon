@@ -10,6 +10,7 @@ struct PokemonItem {
     QString type;
     QString size;
     QString imgUrl;
+    bool isMine;
 };
 
 class PokemonModel : public QAbstractListModel
@@ -24,7 +25,8 @@ public:
         NumberRole,
         TypeRole,
         SizeRole,
-        ImgUrlRole
+        ImgUrlRole,
+        IsMineRole
     };
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
@@ -33,6 +35,10 @@ public:
 
     Q_INVOKABLE void refreshPokemons();
     Q_INVOKABLE int refreshFrequency() const { return 5000; } // 5 seconds
+    Q_INVOKABLE void addPokemon(const QString &name, const QString &filePath);
+    Q_INVOKABLE void removePokemon(int index);
+    Q_INVOKABLE void savePokemon(int index, const QString &destinationPath);
+
 
 
 private:
