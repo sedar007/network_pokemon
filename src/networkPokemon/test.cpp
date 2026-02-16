@@ -28,16 +28,16 @@ namespace pokemon {
     }
 
     void Test::saveConfig(std::string name, int port, int maxConn, bool share, bool download) {
-        currentConfig = {name, port, maxConn, share, download};
-        Json::saveJson<Config>(storagePath, "config.json", currentConfig);
+       /* currentConfig = {name, port, maxConn, share, download};
+        Json::saveJson<Config>(storagePath, "config.json", currentConfig);*/
     }
 
     std::optional<Config> Test::getConfig() {
-        auto config = Json::loadJson<Config>(storagePath, "config.json");
+      /*  auto config = Json::loadJson<Config>(storagePath, "config.json");
         if (config.has_value()) {
             currentConfig = config.value();
             return currentConfig;
-        }
+        }*/
         return std::nullopt;
     }
 

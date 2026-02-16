@@ -1,6 +1,5 @@
 #pragma once
 
-//#include <modbus.h>
 #include <mutex>
 #include "sstream"
 #include <fstream>
@@ -15,7 +14,6 @@
 
 #include <nlohmann/json.hpp>
 
-#include  "json.hpp"
 #include "sockpp/tcp_acceptor.h"
 #include "sockpp/tcp_connector.h"
 #include "sockpp/tcp_socket.h"

@@ -14,10 +14,10 @@ namespace pokemon {
 
     void Node::initialized(std::string_view path) noexcept{
         storagePath_s = path;
+        m_storage = std::make_unique<storage_manager>(path);
         resourceManager.set_path(path);
         std::cout << "Node::initialized() - Storage path set to: " << storagePath_s << std::endl;
-        auto node_info_data = Json::loadJson<Node_Info>(storagePath_s, NODE_INFO_FILE);
-
+        auto node_info_data = m_storage->loadNodeInfo();
         if (node_info_data.has_value()) {
             m_node_info = std::make_shared<Node_Info>(node_info_data.value());
             m_node_info->set_ip(get_network_ip());
@@ -26,8 +26,7 @@ namespace pokemon {
             m_node_info = std::make_shared<Node_Info>(Helper::generate_uuid_v4(), Node_Info::DEFAULT_NODE_NAME, get_network_ip(), find_available_port(DEFAULT_PREFERRED_PORT));
         }
 
-        Json::saveJson<Node_Info>(storagePath_s, NODE_INFO_FILE, *m_node_info);
-
+        m_storage->saveNodeInfo(*m_node_info);
         addNodesList();
 
 
@@ -63,7 +62,9 @@ namespace pokemon {
             m_node_info =  std::make_unique<Node_Info>();
 
         m_node_info->set_name(node_name);
-        Json::saveJson<Node_Info>(storagePath_s, NODE_INFO_FILE, *m_node_info);
+        if (m_storage) {
+            m_storage->saveNodeInfo(*m_node_info);
+        }
     }
 
     std::string Node::get_network_ip() const {
@@ -143,43 +144,31 @@ namespace pokemon {
         }
     }
 
+
     void Node::addNodesList() {
-        auto node_List = Json::loadJson<std::vector<Node_Info>>(storagePath_s, NODE_LIST_FILE);
-        if (node_List.has_value()) {
-            for (const auto& nodeInfo : node_List.value()) {
-                resourceManager.addNode(nodeInfo);
-            }
+        if (!m_storage) return;
+
+        auto nodes = m_storage->loadNodeList();
+        for (const auto& nodeInfo : nodes) {
+            resourceManager.addNode(nodeInfo);
         }
     }
 
     void Node::addImagesList() {
-        auto image_list = Json::loadJson<std::vector<Image>>(storagePath_s, IMAGE_LIST_FILE);
-        if (image_list.has_value()) {
-            for (const auto& image : image_list.value()) {
-                resourceManager.addImage(image);
-            }
+        if (!m_storage) return;
+
+        auto images = m_storage->loadImageList();
+        for (const auto& image : images) {
+            resourceManager.addImage(image);
         }
     }
 
     void Node::add_new_peer(std::string peer_name, std::string peer_ip) noexcept {
-
-       add_peer(Helper::generate_uuid_v4(), peer_name, peer_ip, find_available_port(DEFAULT_PREFERRED_PORT));
+       add_peer(peer_name, peer_ip, find_available_port(DEFAULT_PREFERRED_PORT));
     }
 
-    void Node::add_peer(std::string id, std::string peer_name, std::string peer_ip, int port) noexcept {
+    void Node::add_peer(std::string peer_name, std::string peer_ip, int port) noexcept {
         client->add_new_node(peer_name, peer_ip, port);
-        /*Node_Info node_info(id, peer_name, peer_ip, port);
-        resourceManager.addNode(node_info);
-        auto node_List = Json::loadJson<std::vector<Node_Info>>(storagePath_s, NODE_LIST_FILE);
-        if (node_List.has_value()) {
-            auto nodes = node_List.value();
-            nodes.push_back(node_info);
-            Json::saveJson<std::vector<Node_Info>>(storagePath_s, NODE_LIST_FILE, nodes);
-        } else {
-            std::vector<Node_Info> nodes;
-            nodes.push_back(node_info);
-            Json::saveJson<std::vector<Node_Info>>(storagePath_s, NODE_LIST_FILE, nodes);
-        }*/
     }
 
     void Node::addImagesList(const std::string &fileName) {
@@ -224,13 +213,9 @@ namespace pokemon {
             return;
         }
 
-        auto image_list = Json::loadJson<std::vector<Image>>(storagePath_s, IMAGE_LIST_FILE);
-        std::vector<Image> images_list_to_save;
-        if (image_list.has_value()) {
-            images_list_to_save = image_list.value();
+        if (m_storage) {
+            m_storage->addImageToSavedList(*image);
         }
-        images_list_to_save.push_back(*image);
-        Json::saveJson(storagePath_s.data(), IMAGE_LIST_FILE.data(), images_list_to_save);
     }
 
     void Node::remove_pokemon(std::string_view name, std::string_view picturePath) noexcept {
@@ -247,38 +232,5 @@ namespace pokemon {
         }
         images_list_to_save.push_back(*image);
         Json::saveJson(storagePath_s.data(), IMAGE_LIST_FILE.data(), images_list_to_save);*/
-    }
-
-
-    inline void to_json(nlohmann::json& j, const Node_Info& n) {
-        j = nlohmann::json{
-            {Node_Info::NODE_ID_KEY, n.get_id()},
-            {Node_Info::NODE_NAME_KEY, n.get_name()},
-            {Node_Info::NODE_PORT_KEY, n.get_port()},
-            {Node_Info::NODE_IP_KEY, n.get_ip()}
-        };
-    }
-
-    inline void from_json(const nlohmann::json& j, Node_Info& n) {
-        n.set_id(j.at(Node_Info::NODE_ID_KEY).get<std::string>());
-        n.set_name(j.at(Node_Info::NODE_NAME_KEY).get<std::string>());
-        n.set_port(j.at(Node_Info::NODE_PORT_KEY).get<int>());
-        n.set_ip(j.at(Node_Info::NODE_IP_KEY).get<std::string>());
-    }
-
-    inline void to_json(nlohmann::json& j, const Image& i) {
-        j = nlohmann::json{
-                {Image::IMAGE_NAME_KEY, i.get_name()},
-                {Image::IMAGE_EXTENSION_KEY, i.get_extension()},
-                {Image::IMAGE_HASH_KEY, i.get_hash()},
-                    {Image::IMAGE_OWNER_KEY, i.get_owner()}
-        };
-    }
-
-    inline void from_json(const nlohmann::json& j, Image& i) {
-      i.set_name(j.at(Image::IMAGE_NAME_KEY).get<std::string>());
-      i.set_extension(j.at(Image::IMAGE_EXTENSION_KEY).get<std::string>());
-      i.set_hash(j.at(Image::IMAGE_HASH_KEY).get<std::string>());
-        i.set_owner(j.at(Image::IMAGE_OWNER_KEY).get<std::string>());
     }
 }

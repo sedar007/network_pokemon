@@ -29,37 +29,10 @@ namespace pokemon {
         Node_Info node_info(id, "unknown", ip, std::atoi(port_str.c_str()));
 
         resourceManager.addNode(node_info);
-        auto node_List = Json::loadJson<std::vector<Node_Info>>(resourceManager.get_path(), Node::NODE_LIST_FILE);
-        if (node_List.has_value()) {
-            auto nodes = node_List.value();
-            nodes.push_back(node_info);
-            Json::saveJson<std::vector<Node_Info>>(resourceManager.get_path(), Node::NODE_LIST_FILE, nodes);
-        } else {
-            std::vector<Node_Info> nodes;
-            nodes.push_back(node_info);
-            Json::saveJson<std::vector<Node_Info>>(resourceManager.get_path(), Node::NODE_LIST_FILE, nodes);
-        }
 
-        int port = std::atoi(port_str.c_str());
-  /*      if (alive == "ALIVE") {
-            client.getRessource().set_node_alive(ip, port, true);
-            client.getTrace().print(std::cout, std::format("{}:{} is up", ip ,port_str));
-        }*/
+        storage_manager storage(resourceManager.get_path());
+        storage.addNodeToSavedList(node_info);
+
     }
 
-    inline void to_json(nlohmann::json& j, const Node_Info& n) {
-        j = nlohmann::json{
-                {Node_Info::NODE_ID_KEY, n.get_id()},
-                {Node_Info::NODE_NAME_KEY, n.get_name()},
-                {Node_Info::NODE_PORT_KEY, n.get_port()},
-                {Node_Info::NODE_IP_KEY, n.get_ip()}
-        };
-    }
-
-    inline void from_json(const nlohmann::json& j, Node_Info& n) {
-        n.set_id(j.at(Node_Info::NODE_ID_KEY).get<std::string>());
-        n.set_name(j.at(Node_Info::NODE_NAME_KEY).get<std::string>());
-        n.set_port(j.at(Node_Info::NODE_PORT_KEY).get<int>());
-        n.set_ip(j.at(Node_Info::NODE_IP_KEY).get<std::string>());
-    }
 }

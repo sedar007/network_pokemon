@@ -16,10 +16,6 @@ namespace pokemon {
          */
         Node() noexcept;
 
-        static constexpr std::string_view NODE_INFO_FILE = "node_infos.json";
-        static constexpr std::string_view NODE_LIST_FILE = "node_list.json";
-        static constexpr std::string_view IMAGE_LIST_FILE = "pokemons_images.json";
-
         static constexpr std::string_view EN0_INTERFACE = "en0";
         static constexpr std::string_view LOCALHOST_IP = "127.0.0.1";
         static constexpr std::string_view Lo_0_INTERFACE = "lo0";
@@ -36,7 +32,7 @@ namespace pokemon {
         }
 
         void add_new_peer(std::string peer_name, std::string peer_port) noexcept;
-        void add_peer(std::string id, std::string peer_name, std::string peer_ip, int port) noexcept;
+        void add_peer(std::string peer_name, std::string peer_ip, int port) noexcept;
 
         void addNodesList(const std::string &fileName);
 
@@ -106,6 +102,7 @@ namespace pokemon {
         std::unique_ptr<Listen> listen; ///< Écouteur.
         std::unique_ptr<Client> client; ///< Client.
         std::mutex mutex; ///< Mutex pour la synchronisation.
+        std::unique_ptr<storage_manager> m_storage;
 
         /**
          * @brief Ajoute les nœuds à la liste.

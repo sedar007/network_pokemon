@@ -22,6 +22,8 @@
 #include <map>
 #include <fstream>
 
+#include <storage.hpp>
+
 #include "models.hpp"
 #include "networkPokemon/export.hpp"
 #include "networkPokemon/thread_pool.hpp"

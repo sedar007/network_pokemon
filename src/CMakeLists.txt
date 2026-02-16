@@ -43,5 +43,6 @@ set(GCC_DEBUG_OPTIMISATION
 )
 
 add_subdirectory(models)
+add_subdirectory(storage)
 add_subdirectory(networkPokemon)
 add_subdirectory(console)
