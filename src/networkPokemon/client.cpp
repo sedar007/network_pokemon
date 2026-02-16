@@ -9,11 +9,16 @@ namespace pokemon {
       //  auto run = getIps();
       //  run.detach();
 
+        auto check_connected_thread = std::thread([this] { check_connected_nodes(); });
+        check_connected_thread.detach();
+
         auto get_ips_thread = std::thread([this] { get_client_ip(); });
         get_ips_thread.detach();
 
-        auto check_connected_thread = std::thread([this] { check_connected_nodes(); });
-        check_connected_thread.detach();
+        auto get_pictures_thread = std::thread([this] { get_client_pictures(); });
+        get_pictures_thread.detach();
+
+
     }
 
 
@@ -126,12 +131,28 @@ namespace pokemon {
         }
     }
 
+    void Client::get_client_pictures() noexcept {
+        while (true) {
+            for (auto &node: get_peer_registry().get_nodes()) {
+                std::string_view msg = protocolToString(PROTOCOL::GET_PICS);
+
+                auto task = [this, ip = node.get_ip(), port = node.get_port(), msg]() {
+                    this->start(ip, port, msg);
+                };
+                enqueue_thread(task);
+                std::this_thread::sleep_for(threadSleep_seconde(std::chrono::seconds(2), std::chrono::seconds(3)));
+            }
+            std::this_thread::sleep_for(threadSleep_seconde(std::chrono::seconds(2), std::chrono::seconds(5)));
+        }
+    }
+
+
+
     void Client::check_connected_nodes() noexcept {
         while (true) {
             for (auto &node: get_peer_registry().get_nodes()) {
                 std::string_view msg = protocolToString(PROTOCOL::GET_ALIVE);
                 get_peer_registry().set_node_alive(node.get_ip(), node.get_port(), false);
-
 
                 auto task = [this, ip = node.get_ip(), port = node.get_port(), msg]() {
                     this->start(ip, port, msg);

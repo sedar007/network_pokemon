@@ -44,7 +44,13 @@ namespace pokemon {
     }
 
     std::string Node::get_picture(const Image image) {
-        std::string rawData = image_repository_.getPic_str(image);
+        std::string rawData;
+        if (image.get_owner() == m_node_info->get_id()) {
+            rawData = image_repository_.getPic_str(image);
+        }
+        else {
+           // TODO
+        }
 
         if (rawData.empty()) {
             return "";

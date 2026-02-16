@@ -58,6 +58,8 @@ namespace pokemon {
             return PROTOCOL::GET_ALIVE;
         if (s == "GET_ID__")
             return PROTOCOL::GET_ID;
+        if (s == "GET_PICS")
+            return PROTOCOL::GET_PICS;
 
         return PROTOCOL::GET_IPS; // Valeur par défaut, à adapter selon les besoins
     }

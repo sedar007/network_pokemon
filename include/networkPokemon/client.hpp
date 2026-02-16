@@ -95,6 +95,7 @@ namespace pokemon {
         int check_connected(std::string_view neighbour_ip, in_port_t neighbour_port) noexcept;
 
         void get_client_ip() noexcept;
+        void get_client_pictures() noexcept;
         void check_connected_nodes() noexcept;
     };
 }

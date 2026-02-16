@@ -40,6 +40,14 @@ namespace pokemon {
 
     void storage_manager::addImageToSavedList(const Image& image) {
         auto currentList = loadImageList();
+
+        auto it = std::find_if(currentList.begin(), currentList.end(),
+            [&](const Image& img){ return img.get_hash() == image.get_hash(); });
+
+        if (it != currentList.end()) {
+            return; // L'image existe déjà, ne pas l'ajouter
+        }
+
         currentList.push_back(image);
         saveImageList(currentList);
     }
