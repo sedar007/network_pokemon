@@ -28,7 +28,7 @@ namespace pokemon {
 
         Node_Info node_info(id, "unknown", ip, std::atoi(port_str.c_str()));
 
-        resourceManager.addNode(node_info);
+        client.get_peer_registry().add_node(node_info);
 
         storage_manager storage(resourceManager.get_path());
         storage.addNodeToSavedList(node_info);

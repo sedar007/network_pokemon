@@ -5,9 +5,9 @@ namespace pokemon {
 
     }
 
-    std::string ip_command::getIpsToSend() const {
+    std::string ip_command::get_ip_to_send(const std::vector<Node_Info> nodes) const {
         std::string str;
-        for (const auto &node: resourceManager.getNodesInfoList())
+        for (const auto &node: nodes)
             str += std::format("{}_{}_{}_{};", node.get_id(), node.get_name(), node.get_ip(), node.get_port());
         return str;
     }
@@ -17,7 +17,7 @@ namespace pokemon {
             return;
         }
 
-        std::string msg = getIpsToSend();
+        std::string msg = get_ip_to_send(server.get_peer_registry().get_nodes());
         const std::string std_send = std::format("{}{}{}", server.generateFormattedNumber(msg.size()), server.protocolToString(protocol), msg);
         std::cout << std_send << std::endl;
         socket->write(&std_send[0], std_send.size());
@@ -40,7 +40,7 @@ namespace pokemon {
             try {
                 Node_Info nodeInfo(id_str, name_str, ip_str, std::stoi(port_str));
 
-                resourceManager.addNode(nodeInfo);
+                client.get_peer_registry().add_node(nodeInfo);
             } catch (...) {
             }
         }

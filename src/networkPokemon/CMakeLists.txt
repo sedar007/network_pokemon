@@ -24,18 +24,8 @@ set(SRC
     "${SRCROOT}/alive_command.cpp"
     "${SRCROOT}/add_new_node_command.cpp"
     "${SRCROOT}/command_dispatcher.cpp"
-
-
-
-
-        #"${SRCROOT}/pch.cpp"
-
-	#"${SRCROOT}/main.cpp"
-        #"${SRCROOT}/client.cpp"
-
-	#"${SRCROOT}/helper.cpp"
-
-
+    "${SRCROOT}/peer_registry.cpp"
+    "${SRCROOT}/image_repository.cpp"
  )
 
 add_library(${PROJECT_NAME}-network-pokemon

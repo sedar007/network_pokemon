@@ -21,6 +21,7 @@
 #include <atomic>
 #include <map>
 #include <fstream>
+#include <shared_mutex>
 
 #include <storage.hpp>
 
@@ -37,11 +38,15 @@
 #include  "networkPokemon/alive_command.hpp"
 #include "networkPokemon/add_new_node_command.hpp"
 #include "networkPokemon/command_dispatcher.h"
+#include "networkPokemon/peer_registry.hpp"
+#include "networkPokemon/image_repository.hpp"
 #include "networkPokemon/networkNode.hpp"
 #include "networkPokemon/client.hpp"
 #include "networkPokemon/server.hpp"
 #include "networkPokemon/listen.hpp"
 #include "networkPokemon/test.hpp"
+
+
 #include "networkPokemon/node.hpp"
 #include "networkPokemon/main.hpp"
 /*

@@ -7,8 +7,8 @@
 #include <QDir>
 #include <QDebug>
 
-Node::Node(QObject *parent)
-    : QObject{parent}
+Node::Node(pokemon::peer_registry& registry, pokemon::image_repository& image_repository, QObject *parent)
+    : QObject{parent}, m_node(registry, image_repository)
 {
     QString writablePath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
 

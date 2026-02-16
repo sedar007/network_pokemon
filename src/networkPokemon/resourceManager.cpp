@@ -51,79 +51,6 @@ namespace pokemon {
         return pictureList_mp;
     }
 
-    void ResourceManager::addNode(const std::string &ip) {
-        std::lock_guard<std::mutex> lock(mutex);
-        auto it = std::find(nodesList_v.begin(), nodesList_v.end(), ip);
-
-        // Si l'adresse IP n'est pas trouvée, l'ajouter
-        if (it == nodesList_v.end()) {
-            nodesList_v.push_back(ip);
-        }
-    }
-
-    void ResourceManager::addNode(Node_Info nodeInfo) {
-        std::lock_guard<std::mutex> lock(mutex);
-        auto it = std::find_if(nodesInfoList_v.begin(), nodesInfoList_v.end(),
-            [&nodeInfo](const Node_Info& n) {
-                return n.get_name() == nodeInfo.get_name() &&
-                       n.get_port() == nodeInfo.get_port();
-            });
-
-        if (it == nodesInfoList_v.end()) {
-            nodesInfoList_v.push_back(nodeInfo);
-        }
-    }
-
-    void ResourceManager::addImage(Image image) {
-     std::lock_guard<std::mutex> lock(mutex);
-     auto it = std::find_if(images_list_v.begin(), images_list_v.end(),
-         [&image](const Image& n) {
-             return n == image;
-         });
-
-     if (it == images_list_v.end()) {
-         images_list_v.push_back(image);
-     }
- }
-
-    void ResourceManager::addImage(std::shared_ptr<Image> image) {
-      //std::lock_guard<std::mutex> lock(mutex);
-     auto it = std::find_if(images_list_v.begin(), images_list_v.end(),
-         [&image](const Image& n) {
-             return n == *image;
-         });
-
-     if (it == images_list_v.end()) {
-         images_list_v.push_back(*image);
-     }
- }
-
-
-    std::vector<std::string> ResourceManager::getNodesList() const {
-        std::lock_guard<std::mutex> lock(mutex);
-        return nodesList_v;
-    }
-
-    void ResourceManager::set_node_alive(std::string_view ip, const int port, bool isOnline) {
-        std::lock_guard<std::mutex> lock(mutex);
-        auto node = std::find_if(nodesInfoList_v.begin(), nodesInfoList_v.end(),
-           [&ip, &port](const Node_Info& n) {
-                return n.get_ip() == ip && n.get_port() == port;
-            });
-        if (node != nodesInfoList_v.end()) {
-             node->set_isConnected(isOnline);
-        }
-    }
-
-    std::vector<Node_Info> ResourceManager::getNodesInfoList() const {
-        std::lock_guard<std::mutex> lock(mutex);
-        return nodesInfoList_v;
-    }
-
-    std::vector<Image> ResourceManager::getImagesList() const {
-     std::lock_guard<std::mutex> lock(mutex);
-     return images_list_v;
- }
 
     int ResourceManager::savedPictureToDisk(const std::string &location,  const std::string &pictureName, std::string &extension, const std::string &pic_str) {
         std::lock_guard<std::mutex> lock(mutex);
@@ -142,25 +69,6 @@ namespace pokemon {
         return 0;
     }
 
-
-    void ResourceManager::printNodesList(std::ostream &os) const {
-        std::lock_guard<std::mutex> lock(mutex);
-        os <<std::endl;
-        os << " -- Liste des nodes -- " << std::endl;
-        for (auto &node: nodesInfoList_v)
-            os << node << std::endl;
-        os << "nombres totals: " + std::to_string(nodesInfoList_v.size()) << std::endl <<std::endl;
-    }
-
-    std::optional<std::string> ResourceManager::findNode(const std::string &ip) const {
-        std::lock_guard<std::mutex> lock(mutex);
-
-        auto node = std::find(nodesList_v.begin(), nodesList_v.end(), ip);
-        if (node != nodesList_v.end()) // Si le est trouvée, retourner l'ip
-            return *node;
-        // Si le node n'est pas trouvée, retourne nullopt
-        return std::nullopt;
-    }
 
     void ResourceManager::addPicturePath(const std::string &picturePath) {
         picturePath_s = picturePath;
@@ -215,72 +123,5 @@ namespace pokemon {
      return "";
  }
 
-    std::shared_ptr<Image> ResourceManager::addPictureFromPath(std::string_view name, std::string_view owner_id, std::string_view picturePath) noexcept {
-        std::lock_guard<std::mutex> lock(mutex);
-        try {
-            std::filesystem::path path(picturePath);
-            return save_image(name,owner_id, path);
-
-        } catch (const std::exception &e) {
-          //  trace.print(std::cerr, "Erreur lors de l'ajout de l'image depuis le chemin : " + picturePath + " - " + e.what());
-            return nullptr;
-        }
-    }
-
-
-    std::shared_ptr<Image> ResourceManager::save_image(std::string_view name, std::string_view owner_id, std::filesystem::path image_to_save_path) noexcept {
-     try {
-
-         if (std::filesystem::exists(image_to_save_path) && std::filesystem::is_regular_file(image_to_save_path)) {
-             std::ifstream file(image_to_save_path, std::ios::binary | std::ios::ate);
-
-             if (!file.is_open()) {
-        //         trace.print(std::cerr, "Impossible de lire l'image : " + image_to_save_path.to);
-                 return nullptr;
-             }
-
-             std::string extension = image_to_save_path.extension().string();
-             auto bytes = std::filesystem::file_size(image_to_save_path);
-
-             double mb = static_cast<double>(bytes) / (1024.0 * 1024.0);
-
-
-             std::stringstream stream;
-             stream << std::fixed << std::setprecision(1) << mb << " MB";
-
-             std::string picture_size = stream.str();
-
-             std::string hash = name.data() + extension;
-
-             std::streamsize size = file.tellg();
-             file.seekg(0, std::ios::beg);
-
-             if (size <= 0) return nullptr ;
-
-             std::string buffer(size, '\0');
-             if (file.read(&buffer[0], size)) {
-                 std::string saved_name = std::format("{}{}", get_path(), hash);
-                std::filesystem::path pathr(saved_name);
-
-                 std::ofstream image_saved(pathr, std::ios::binary);
-                 if (!image_saved.is_open()) {
-                     trace.print(std::cerr, "Impossible de sauvegarder l'image : " + pathr.string());
-                     return nullptr;
-                 }
-                    image_saved.write(buffer.c_str(), buffer.size());
-                    image_saved.close();
-
-                 auto image = std::make_shared<Image>(name, extension, hash, owner_id);
-
-                 addImage(image);
-                 return image;
-             }
-         }
-
-     } catch (const std::exception &e) {
-         return nullptr;
-        }
-
- }
 
 }

@@ -21,8 +21,6 @@ namespace pokemon {
             return path_s;
         }
 
-
-
         /* ---  Picture  --- */
 
         /// @brief Ajoute une image à la liste des ressources.
@@ -76,26 +74,6 @@ namespace pokemon {
 
         /* ---  Nodes  --- */
 
-        /// @brief Ajoute un nœud à la liste des ressources.
-        /// @param ip L'adresse IP du nœud à ajouter.
-        void addNode(const std::string &ip);
-
-        /// @brief Ajoute un nœud à la liste des ressources.
-        /// @param nodeInfo Les informations du nœud à ajouter.
-        void addNode(Node_Info nodeInfo);
-
-        void addImage(Image image);
-
-        /// @brief Récupère la liste des nœuds.
-        /// @return Un vecteur contenant les adresses IP des nœuds.
-        std::vector<std::string> getNodesList() const;
-
-
-        /// @brief Récupère la liste des informations des nœuds.
-        /// @return Un vecteur contenant les informations des nœuds.
-        std::vector<Node_Info> getNodesInfoList() const;
-
-        std::vector<Image> getImagesList() const;
 
         /// @brief Affiche la liste des nœuds.
         /// @param os Flux de sortie où afficher la liste.
@@ -107,16 +85,8 @@ namespace pokemon {
         std::optional<std::string> findNode(const std::string &ip) const;
 
 
-        void set_node_alive(std::string_view ip, const int port, bool isOnline) ;
-
 
         std::string getPic_str(const Image image, std::string_view path);
-
-
-        std::shared_ptr<Image> addPictureFromPath(std::string_view name, std::string_view owner_id, std::string_view picturePath) noexcept;
-
-        std::shared_ptr<Image> save_image(std::string_view name, std::string_view owner_id, std::filesystem::path image_to_save_path) noexcept;
-        void addImage(std::shared_ptr<Image> image);
 
 
         /// @brief Vérifie si un conteneur est vide.
@@ -135,9 +105,6 @@ namespace pokemon {
         static std::mutex mutex;
         // <nomImage, {ipOwner, extention, pictureHash} >
         std::unordered_map<std::string, std::tuple<std::string, std::string, std::string>> pictureList_mp; // Liste des pictures
-        std::vector<std::string> nodesList_v; // Liste des nœuds.
-        std::vector<Node_Info> nodesInfoList_v; // Liste des infos des nœuds.
-        std::vector<Image> images_list_v; // Liste des images.
         Trace &trace = Trace::getInstance();  // Instance unique de trace.
         std::string picturePath_s; // Chemin d'accès des pictures.
         std::string path_s;

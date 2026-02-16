@@ -11,7 +11,7 @@ namespace pokemon {
          * @brief Constructeur pour initialiser le serveur avec le port spécifié.
          * @param port Le numéro de port sur lequel écouter.
          */
-        Server(in_port_t port, const std::shared_ptr<Node_Info> node_info) noexcept;
+        Server(in_port_t port, const std::shared_ptr<Node_Info> node_info, peer_registry& peers, image_repository& images_repository) noexcept;
 
         /**
          * @brief Démarre le serveur et gère les connexions entrantes.

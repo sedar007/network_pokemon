@@ -9,8 +9,10 @@
 using namespace std::chrono_literals;
 
 namespace pokemon {
-    Node::Node() noexcept {
-    }
+    Node::Node(peer_registry& peers, image_repository& image_repository) noexcept
+        : peers_(peers)
+        , image_repository_(image_repository)
+    {}
 
     void Node::initialized(std::string_view path) noexcept{
         storagePath_s = path;
@@ -41,8 +43,8 @@ namespace pokemon {
 
         sockpp::initialize();
 
-        listen = std::make_unique<Listen>(m_node_info->get_port(), m_node_info);
-        client = std::make_unique<Client>(m_node_info->get_ip(), m_node_info->get_port(), m_node_info);
+        listen = std::make_unique<Listen>(m_node_info->get_port(), m_node_info, peers_, image_repository_);
+        client = std::make_unique<Client>(m_node_info->get_ip(), m_node_info->get_port(), m_node_info, peers_, image_repository_);
     }
 
     std::string Node::get_picture(const Image image) {
@@ -123,34 +125,13 @@ namespace pokemon {
         return preferred_port;
     }
 
-    void Node::addNodesList(const std::string &fileName) {
-        std::ifstream file(fileName);
-
-        if (file.is_open()) {
-            std::string line;
-            std::getline(file, line);
-            size_t pos = line.find(':');
-            if (pos != std::string::npos) {
-                ip_s = line.substr(0, pos);
-                port_s = std::stoi(line.substr(pos + 1));
-            }
-            while (std::getline(file, line))
-                if (isValidIPAddressPort(line))
-                    resourceManager.addNode(line);
-            file.close();
-        } else {
-            trace.print(std::cerr, "Impossible d'ouvrir le fichier.");
-            return;
-        }
-    }
-
 
     void Node::addNodesList() {
         if (!m_storage) return;
 
         auto nodes = m_storage->loadNodeList();
         for (const auto& nodeInfo : nodes) {
-            resourceManager.addNode(nodeInfo);
+            peers_.add_node(nodeInfo);
         }
     }
 
@@ -159,7 +140,7 @@ namespace pokemon {
 
         auto images = m_storage->loadImageList();
         for (const auto& image : images) {
-            resourceManager.addImage(image);
+            image_repository_.add_image(image);
         }
     }
 
@@ -194,7 +175,7 @@ namespace pokemon {
 
     std::ostream &operator<<(std::ostream &os, const Node &node) {
         os << "[ Node " << " ] : " << "Ip: " << node.ip_s << " port: " << node.port_s << std::endl;
-        auto nodesList = node.resourceManager.getNodesInfoList();
+        auto nodesList = node.peers_.get_nodes();
         if (!node.resourceManager.empty(nodesList))
             os << "Liste Nodes connus: " << std::endl;
 

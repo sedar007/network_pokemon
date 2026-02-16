@@ -29,7 +29,7 @@ namespace pokemon {
 
         int port = std::atoi(port_str.c_str());
         if (alive == "ALIVE") {
-            client.getRessource().set_node_alive(ip, port, true);
+            client.get_peer_registry().set_node_alive(ip, port, true);
             client.getTrace().print(std::cout, std::format("{}:{} is up", ip ,port_str));
         }
     }

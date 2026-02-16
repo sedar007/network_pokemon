@@ -22,7 +22,8 @@ namespace pokemon {
          * This constructor is noexcept and guarantees not to throw exceptions.
          * @param port The network port number.
          */
-        NetworkNode(const in_port_t port, const std::shared_ptr<Node_Info> node_info) noexcept;
+        NetworkNode(const in_port_t port, const std::shared_ptr<Node_Info> node_info,
+            peer_registry& peers_registry, image_repository& images) noexcept;
 
         inline std::shared_ptr<Node_Info> get_node_info() const noexcept {
             return node_info_ptr;
@@ -44,6 +45,14 @@ namespace pokemon {
 
         [[nodiscard]] inline Trace& getTrace() const noexcept {
             return trace;
+        }
+
+        [[nodiscard]] inline peer_registry& get_peer_registry() const noexcept {
+            return peers_registry_;
+        }
+
+        [[nodiscard]] inline image_repository& get_images_repository() const noexcept {
+            return images_repository_;
         }
 
         template<class F>
@@ -84,6 +93,9 @@ namespace pokemon {
         Thread_pool thread_pool;
 
         std::shared_ptr<Node_Info> node_info_ptr;
+
+        peer_registry& peers_registry_;
+        image_repository& images_repository_;
 
 
     };

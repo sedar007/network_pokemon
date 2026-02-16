@@ -12,8 +12,6 @@ Item {
     id: root
     anchors.fill: parent
 
-    Backend { id: myBackend }
-    Node { id: node_cpp}
 
     property var currentConfig: { "nodeName": "Chargement...", "port": "..." }
 

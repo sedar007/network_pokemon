@@ -2,8 +2,8 @@
 
 namespace pokemon {
 
-    Client::Client(std::string_view ip, const in_port_t port, const std::shared_ptr<Node_Info> node_info) noexcept
-            : NetworkNode(port, node_info)
+    Client::Client(std::string_view ip, const in_port_t port, const std::shared_ptr<Node_Info> node_info, peer_registry& peers, image_repository& images_repository) noexcept
+            : NetworkNode(port, node_info, peers,images_repository)
             ,  ip_s(ip) {
       //  auto run = getIps();
       //  run.detach();
@@ -76,23 +76,24 @@ namespace pokemon {
                 std::this_thread::sleep_for(threadSleep_s(1500, 3500));
             }*/
 
-            for (auto &node: getRessource().getNodesList()) {
+           /*  for (auto &node: getRessource().getNodesList()) {
                 std::string neighbour_ip;
                 in_port_t neighbour_port;
                 if(getPort_Ip(node, neighbour_ip, neighbour_port) == -1)
                     continue;
                 if (getIp)
                     msg = protocolToString(PROTOCOL::GET_IPS);
-              /*  else
+               else
                     msg = protocolToString(PROTOCOL::GET_PICS);
-                */
+
                 auto task = [this, ip = neighbour_ip, port = neighbour_port, msg]() {
                     this->start(ip, port, msg);
                 };
 
                 enqueue_thread(task);
                 std::this_thread::sleep_for(threadSleep_s(500, 1500));
-            }
+
+            }*/
             getIp = !getIp;
             std::this_thread::sleep_for(threadSleep_s(5000, 7000));
         }
@@ -111,7 +112,7 @@ namespace pokemon {
 
     void Client::get_client_ip() noexcept {
         while (true) {
-            for (auto &node: getRessource().getNodesInfoList()) {
+            for (auto &node: get_peer_registry().get_nodes()) {
                 std::string_view msg = protocolToString(PROTOCOL::GET_IPS);
 
                 auto task = [this, ip = node.get_ip(), port = node.get_port(), msg]() {
@@ -126,9 +127,9 @@ namespace pokemon {
 
     void Client::check_connected_nodes() noexcept {
         while (true) {
-            for (auto &node: getRessource().getNodesInfoList()) {
+            for (auto &node: get_peer_registry().get_nodes()) {
                 std::string_view msg = protocolToString(PROTOCOL::GET_ALIVE);
-                getRessource().set_node_alive(node.get_ip(), node.get_port(), false);
+                get_peer_registry().set_node_alive(node.get_ip(), node.get_port(), false);
 
 
                 auto task = [this, ip = node.get_ip(), port = node.get_port(), msg]() {
@@ -564,7 +565,7 @@ void Client::addIps(const std::string &ips_str) const noexcept {
 
         /*if (nodeInfo == this)
             continue;*/
-        getRessource().addNode(nodeInfo);
+        get_peer_registry().add_node(nodeInfo);
 
     }
 }
@@ -636,7 +637,7 @@ void Client::addIps(const std::string &ips_str) const noexcept {
     std::shared_ptr<Image> Client::add_pokemon(std::string_view name, std::string_view picturePath) noexcept {
         if (get_node_info() == nullptr)
             return nullptr;
-        return  getRessource().addPictureFromPath(name, get_node_info()->get_id(), picturePath);
+        return  get_images_repository().add_picture_from_path(name, get_node_info()->get_id(), picturePath);
 
     }
 

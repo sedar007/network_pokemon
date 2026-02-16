@@ -18,7 +18,7 @@ namespace pokemon {
          * @param port Port du client.
          * @param connector Connecteur TCP partagé.
          */
-        Client(std::string_view ip, const in_port_t port, const std::shared_ptr<Node_Info> node_info) noexcept;
+        Client(std::string_view ip, const in_port_t port, const std::shared_ptr<Node_Info> node_info, peer_registry& peers, image_repository& images_repository) noexcept;
         ~Client() noexcept;
 
         /**

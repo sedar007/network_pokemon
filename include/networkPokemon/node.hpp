@@ -14,7 +14,7 @@ namespace pokemon {
         /**
          * @brief Constructeur de la classe Node.
          */
-        Node() noexcept;
+        Node(peer_registry& peers,  image_repository& image_repository) noexcept;
 
         static constexpr std::string_view EN0_INTERFACE = "en0";
         static constexpr std::string_view LOCALHOST_IP = "127.0.0.1";
@@ -34,10 +34,8 @@ namespace pokemon {
         void add_new_peer(std::string peer_name, std::string peer_port) noexcept;
         void add_peer(std::string peer_name, std::string peer_ip, int port) noexcept;
 
-        void addNodesList(const std::string &fileName);
-
         [[nodiscard]] std::vector<Image> get_image_list() const noexcept {
-            return resourceManager.getImagesList();
+            return image_repository_.get_images();
         }
 
         void add_pokemon(std::string_view name, std::string_view picturePath) noexcept;
@@ -87,7 +85,7 @@ namespace pokemon {
         }
 
         [[nodiscard]] std::vector<Node_Info> get_node_list() const noexcept {
-            return resourceManager.getNodesInfoList();
+            return peers_.get_nodes();
         }
 
 
@@ -103,6 +101,8 @@ namespace pokemon {
         std::unique_ptr<Client> client; ///< Client.
         std::mutex mutex; ///< Mutex pour la synchronisation.
         std::unique_ptr<storage_manager> m_storage;
+        peer_registry& peers_;
+        image_repository& image_repository_;
 
         /**
          * @brief Ajoute les nœuds à la liste.
