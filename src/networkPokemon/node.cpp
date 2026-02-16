@@ -138,26 +138,6 @@ namespace pokemon {
         client->add_new_node(peer_name, peer_ip, port);
     }
 
-    void Node::addImagesList(const std::string &fileName) {
-        std::ifstream file(fileName);
-        char separateur = ' ';
-        if (file.is_open()) {
-            std::string line;
-            while (std::getline(file, line)) {
-                std::stringstream ss(line);
-                std::string name, extension, hash;
-                std::getline(ss, name, separateur);
-                std::getline(ss, extension, separateur);
-                std::getline(ss, hash, separateur);
-                resourceManager.addPicture(name, extension, hash, ip_s + ":" + std::to_string(port_s));
-            }
-            file.close();
-        } else {
-            trace.print(std::cerr, "Impossible d'ouvrir le fichier.");
-            return;
-        }
-    }
-
 
     std::ostream &operator<<(std::ostream &os, const Node &node) {
         os << "[ Node " << " ] : " << "Ip: " << node.ip_s << " port: " << node.port_s << std::endl;

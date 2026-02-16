@@ -65,12 +65,6 @@ namespace pokemon {
          */
         void run();
 
-        /**
-         * @brief Obtient une image à partir d'un nom de fichier.
-         * @param picName Nom du fichier image.
-         */
-        inline void getPic(const std::string &picName) noexcept { client->getPic(picName);}
-
 
         /**
          * @brief Obtient l'adresse IP du nœud.

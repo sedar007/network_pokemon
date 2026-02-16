@@ -31,11 +31,6 @@ namespace pokemon {
          */
         std::thread run(std::string_view nodeToConnectIp, const in_port_t nodeToConnectPort, const std::string &msg) noexcept;
 
-        /**
-         * @brief permet de gérer la recherche de l'image et pour le télécharger .
-         * @param picName Nom du fichier image.
-         */
-        void getPic(const std::string &picName) noexcept;
 
 
         void add_new_node(std::string peer_name, std::string peer_ip, int port) noexcept;
@@ -81,11 +76,6 @@ namespace pokemon {
          */
         void addIps(const std::string &ips_str) const noexcept;
 
-        /**
-         * @brief Ajoute les images à la liste.
-         * @param str Chaîne d'images.
-         */
-        void addPictures(const std::string &str) const noexcept;
 
         /**
          * @brief Ajoute une image à la liste.

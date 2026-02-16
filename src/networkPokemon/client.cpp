@@ -199,50 +199,6 @@ namespace pokemon {
         return std::thread([this] { run_getIp(); });
     }
 
-    void Client::getPic(const std::string &pictureName) noexcept {
-
-        auto pic = getRessource().findPicture(pictureName);
-
-        if (pic.has_value()) { //vérifie si l'optional contient une valeur
-
-            //<nomImage, {ipOwner, extention, imageHash} >
-            auto tupleValue = pic.value();
-            std::string ipOwner = std::get<0>(tupleValue);
-            std::string extention = std::get<1>(tupleValue);
-            std::string pictureHash = std::get<2>(tupleValue);
-
-            if (ipOwner == (ip_s + ":" + std::to_string(getPort()))) {
-                auto pic_str = getRessource().getPic_str(pictureHash);
-                if (pic_str.empty()) {
-                    std::cout << NO_PICTURE_FOUND(pictureName) << std::endl;
-                    getTrace().print(std::cerr, NO_PICTURE_FOUND(pictureName));
-                    return;
-                }
-                if(getRessource().savedPictureToDisk(FOLDER_TO_SAVE,pictureName , extention, pic_str) == 0)
-                    std::cout<<SAVE_PICTURE_SUCCESS<<std::endl;
-                return;
-            }
-
-            std::string knownNodeIp;
-            in_port_t knownNodePort;
-            if(getPort_Ip(ipOwner, knownNodeIp, knownNodePort) == -1){
-                std::cout << SAVE_PICTURE_FAIL << std::endl;
-                getTrace().print(std::cerr, "Can't extract Port or Ip");
-                return;
-            }
-
-            // Protocole  + sizePictureHash + pictureHash +  sizePictureName  + pictureName + sizeExtention  + extention
-            std::string msg = protocolToString(PROTOCOL::GET_PIC) + generateFormattedNumber(pictureHash.size()) + pictureHash +
-                    generateFormattedNumber(pictureName.size()) + pictureName + generateFormattedNumber(extention.size()) + extention;
-            auto clientThread = run(knownNodeIp, knownNodePort, msg);
-            clientThread.join();
-        }
-        else{
-            std::cout << NO_PICTURE_FOUND(pictureName) << std::endl;
-            getTrace().print(std::cerr, NO_PICTURE_FOUND(pictureName));
-        }
-    }
-
     int Client::start(std::string_view neighbour_ip, in_port_t neighbour_port, std::string_view msg) noexcept {
     try {
 
@@ -575,7 +531,7 @@ if (!read_exact(connector, msg_buf.data(), t)) {
                 addIps(msg_str);
             }
             else if (protocole == protocolToString(PROTOCOL::GET_PICS)) {
-                addPictures(msg_str);
+
             }
             else if (protocole == protocolToString(PROTOCOL::GET_PIC)) {
                 addPicture(msg_str);
@@ -623,26 +579,6 @@ void Client::addIps(const std::string &ips_str) const noexcept {
     }
 }
 
-
-    void Client::addPictures(const std::string &str) const noexcept {
-        std::string pic_str;
-        std::stringstream ss(str);
-        while (std::getline(ss, pic_str, ';')) {
-            std::string nomImage;
-            std::string extention;
-            std::string imageHash;
-            std::string owner;
-
-            std::stringstream ss2(pic_str);
-
-            // Utilisation de getline pour extraire chaque partie en utilisant ':' comme délimiteur
-            getline(ss2, nomImage, ',');
-            getline(ss2, owner, ',');
-            getline(ss2, extention, ',');
-            getline(ss2, imageHash);
-            getRessource().addPicture(nomImage, extention, imageHash, owner);
-        }
-    }
 
     void Client::addPicture(const std::string &str) const noexcept{
 

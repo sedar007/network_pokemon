@@ -23,13 +23,6 @@ namespace pokemon {
 
         /* ---  Picture  --- */
 
-        /// @brief Ajoute une image à la liste des ressources.
-        /// @param pictureName Le nom de l'image.
-        /// @param extention L'extension de l'image.
-        /// @param pictureHash Le hachage de l'image.
-        /// @param owner Le propriétaire de l'image.
-        void addPicture(const std::string &pictureName, const std::string &extention, const std::string &pictureHash,
-                      const std::string &owner);
 
         /// @brief Affiche la liste des images.
         /// @param os Flux de sortie où afficher la liste.
@@ -39,17 +32,6 @@ namespace pokemon {
         /// @param os Flux de sortie où afficher la liste.
         void printPokemonPictures(std::ostream &os) const;
 
-        // <pictureName, {ipOwner, extention, pictureHash} >
-        /// @brief Récupère la liste des images.
-        /// @return Une map associant le nom de l'image à un tuple contenant l'IP du propriétaire, l'extension et le hachage de l'image.
-        std::unordered_map<std::string, std::tuple<std::string, std::string, std::string>> getPicturesList() const;
-
-        // <pictureName, <extention, pictureHash>>
-        /// @brief Recherche une image par son nom.
-        /// @param name Le nom de l'image à rechercher.
-        /// @return Un tuple contenant l'extension et le hachage de l'image s'il est trouvé, sinon std::nullopt.
-        std::optional<std::tuple<std::string, std::string, std::string>> findPicture(const std::string &name) const;
-
         /// @brief Sauvegarde une image sur le disque.
         /// @param location Emplacement où sauvegarder l'image.
         /// @param pictureName le nom de l'image.
@@ -58,14 +40,6 @@ namespace pokemon {
         /// @return 0 si la sauvegarde est réussie, sinon un code d'erreur.
         int savedPictureToDisk(const std::string &location, const std::string &pictureName, std::string &extension, const std::string &pic_str);
 
-        /// @brief Récupère les données de l'image par son hachage.
-        /// @param picHash Le hachage de l'image.
-        /// @return Les données de l'image.
-        std::string getPic_str(const std::string &picHash);
-
-        /// @brief Ajoute un chemin d'accès pour les images.
-        /// @param picturePath Le chemin d'accès des images.
-        void addPicturePath(const std::string &picturePath);
 
         /// @brief Récupère le nom et l'extension de l'image par son hachage.
         /// @param imageHash Le hachage de l'image.
@@ -96,13 +70,10 @@ namespace pokemon {
 
     private:
         // Constructeur privé pour empêcher l'instanciation en dehors de la classe
-        ResourceManager() { picturePath_s = ""; }
+        ResourceManager() { }
         // Mutex pour la synchronisation
         static std::mutex mutex;
-        // <nomImage, {ipOwner, extention, pictureHash} >
-        std::unordered_map<std::string, std::tuple<std::string, std::string, std::string>> pictureList_mp; // Liste des pictures
         Trace &trace = Trace::getInstance();  // Instance unique de trace.
-        std::string picturePath_s; // Chemin d'accès des pictures.
         std::string path_s;
     };
 }

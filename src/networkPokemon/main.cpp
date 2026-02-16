@@ -68,7 +68,7 @@ namespace pokemon {
                 std::cout << ENTER_PICTURE_NAME;
                 std::string picName;
                 getline(std::cin, picName);
-                node_uptr->getPic(toLower(trim(picName)));
+                //node_uptr->getPic(toLower(trim(picName)));
             }
             else if(menu == "4" || toLower(trim(menu)) == EXIT){
                 std::cout << GOODBYE_MESSAGE<< std::endl;

@@ -168,17 +168,6 @@ namespace pokemon {
 #endif
 
 
-
-
-    std::string Server:: getPicsToSend() const {
-        std::string str("");
-        for (auto &msg: getRessource().getPicturesList())
-            str += msg.first + "," + std::get<0>(msg.second) + ","
-                   + std::get<1>(msg.second) + ","
-                   + std::get<2>(msg.second) + ";";
-        return str;
-    }
-
     std::string Server::getPicToSend(const std::string &buf_str, const char *buf) const{
         // sizePictureHash + pictureHash +  sizePictureName  + pictureName + sizeExtention  + extention
         std::string str("");
@@ -207,7 +196,7 @@ namespace pokemon {
 
             std::string nameAndExtension(buf, a, pos); //
 
-            return nameAndExtension + getRessource().getPic_str(pic_hash);
+            return nameAndExtension ;
         }
         catch (const std::exception &e) {
             return "";
