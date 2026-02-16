@@ -15,7 +15,8 @@ namespace pokemon {
     {}
 
     void Node::initialized() noexcept{
-        m_storage = std::make_unique<storage_manager>(image_repository_.get_storage_path());
+        m_storage = std::make_shared<storage_manager>(image_repository_.get_storage_path());
+
         auto node_info_data = m_storage->loadNodeInfo();
         if (node_info_data.has_value()) {
             m_node_info = std::make_shared<Node_Info>(node_info_data.value());
@@ -38,8 +39,8 @@ namespace pokemon {
 
         sockpp::initialize();
 
-        listen = std::make_unique<Listen>(m_node_info->get_port(), m_node_info, peers_, image_repository_);
-        client = std::make_unique<Client>(m_node_info->get_ip(), m_node_info->get_port(), m_node_info, peers_, image_repository_);
+        listen = std::make_unique<Listen>(m_node_info->get_port(), m_node_info, peers_, image_repository_, m_storage);
+        client = std::make_unique<Client>(m_node_info->get_ip(), m_node_info->get_port(), m_node_info, peers_, image_repository_, m_storage);
     }
 
     std::string Node::get_picture(const Image image) {

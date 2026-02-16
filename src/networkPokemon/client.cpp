@@ -2,8 +2,9 @@
 
 namespace pokemon {
 
-    Client::Client(std::string_view ip, const in_port_t port, const std::shared_ptr<Node_Info> node_info, peer_registry& peers, image_repository& images_repository) noexcept
-            : NetworkNode(port, node_info, peers,images_repository)
+    Client::Client(std::string_view ip, const in_port_t port, const std::shared_ptr<Node_Info> node_info,
+        peer_registry& peers, image_repository& images_repository, std::shared_ptr<storage_manager> storage) noexcept
+            : NetworkNode(port, node_info, peers,images_repository, storage)
             ,  ip_s(ip) {
       //  auto run = getIps();
       //  run.detach();

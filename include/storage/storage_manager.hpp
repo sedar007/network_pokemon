@@ -7,9 +7,12 @@ namespace pokemon {
         public:
 
             explicit storage_manager(std::string_view rootPath);
+
+            [[nodiscard]] inline std::string_view get_path() const noexcept {
+                return m_rootPath;
+            }
             std::optional<Node_Info> loadNodeInfo() const;
             void saveNodeInfo(const Node_Info& info) const;
-
             std::vector<Node_Info> loadNodeList() const;
             void saveNodeList(const std::vector<Node_Info>& nodes) const;
             void addNodeToSavedList(const Node_Info& node);

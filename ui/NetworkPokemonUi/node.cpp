@@ -47,6 +47,9 @@ QVariantList Node::get_node_list() {
     auto nodes = m_node.get_node_list();
 
     for (const auto& nodeInfo : nodes) {
+        if (nodeInfo.get_id() == m_node.get_node_info().get_id()) {
+            continue;
+        }
         QVariantMap nodeMap;
         nodeMap["name"] = QString::fromStdString(std::string(nodeInfo.get_name()));
         nodeMap["port"] = QString::number(nodeInfo.get_port());

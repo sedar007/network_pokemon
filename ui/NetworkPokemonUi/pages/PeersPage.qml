@@ -45,7 +45,7 @@ Item {
                 Text { text: "⚖️"; font.pixelSize: 16 }
 
                 Text {
-                    text: myPeerModel.rowCount() + " peers listés"
+                    text: myPeerModel.peers_count() + " peers listés"
                     color: "#666"; font.pixelSize: 14
                 }
 

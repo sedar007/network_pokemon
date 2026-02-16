@@ -23,7 +23,7 @@ namespace pokemon {
          * @param port The network port number.
          */
         NetworkNode(const in_port_t port, const std::shared_ptr<Node_Info> node_info,
-            peer_registry& peers_registry, image_repository& images) noexcept;
+            peer_registry& peers_registry, image_repository& images, std::shared_ptr<storage_manager> storage) noexcept;
 
         inline std::shared_ptr<Node_Info> get_node_info() const noexcept {
             return node_info_ptr;
@@ -53,6 +53,10 @@ namespace pokemon {
 
         [[nodiscard]] inline image_repository& get_images_repository() const noexcept {
             return images_repository_;
+        }
+
+        [[nodiscard]] inline std::shared_ptr<storage_manager> get_storage() const noexcept {
+            return storage_;
         }
 
         template<class F>
@@ -96,6 +100,7 @@ namespace pokemon {
 
         peer_registry& peers_registry_;
         image_repository& images_repository_;
+        std::shared_ptr<storage_manager> storage_;
 
 
     };

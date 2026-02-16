@@ -2,8 +2,8 @@
 
 namespace pokemon {
 
-    Listen::Listen(const in_port_t port, const std::shared_ptr<Node_Info> node_info, peer_registry& peers, image_repository& images_repository) noexcept
-    : NetworkNode(port, node_info, peers, images_repository)  {
+    Listen::Listen(const in_port_t port, const std::shared_ptr<Node_Info> node_info, peer_registry& peers, image_repository& images_repository, std::shared_ptr<storage_manager> storage) noexcept
+    : NetworkNode(port, node_info, peers, images_repository, storage)  {
         auto listenThread = connect();
         listenThread.detach();
     }
@@ -40,7 +40,7 @@ namespace pokemon {
                 std::cerr << "listening:: new connection : " << getPort() << " from: " << sock->peer_address() <<std::endl;
                 std::shared_ptr<sockpp::tcp_socket> sharedSock = std::move(sock);
                 auto runServerTask = [this, s = sharedSock]() {
-                    Server server(getPort(), get_node_info(), get_peer_registry(), get_images_repository());
+                    Server server(getPort(), get_node_info(), get_peer_registry(), get_images_repository(), get_storage());
                     server.process(s);
                 };
                 enqueue_thread(std::move(runServerTask));

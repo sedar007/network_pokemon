@@ -95,7 +95,7 @@ namespace pokemon {
         std::unique_ptr<Listen> listen; ///< Écouteur.
         std::unique_ptr<Client> client; ///< Client.
         std::mutex mutex; ///< Mutex pour la synchronisation.
-        std::unique_ptr<storage_manager> m_storage;
+        std::shared_ptr<storage_manager> m_storage;
         peer_registry& peers_;
         image_repository& image_repository_;
 

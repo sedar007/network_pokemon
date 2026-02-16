@@ -76,3 +76,10 @@ void PeerModel::refreshPeers()
 
     endResetModel();
 }
+
+
+int PeerModel::peers_count()
+{
+    if (!m_node) return 0;
+    return m_peers.size();
+}

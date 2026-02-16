@@ -35,6 +35,7 @@ public:
     QHash<int, QByteArray> roleNames() const override;
 
     Q_INVOKABLE void refreshPeers();
+    Q_INVOKABLE int peers_count();
 
 private:
     QList<Peer> m_peers;
