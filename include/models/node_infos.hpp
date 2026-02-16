@@ -4,14 +4,22 @@ namespace pokemon {
 
     class NETWORK_POKEMON_MODELS_API Node_Info {
         public:
-            Node_Info(std::string_view nodeName, std::string_view ip, int port) noexcept;
+            Node_Info(std::string_view id, std::string_view nodeName, std::string_view ip, int port) noexcept;
             Node_Info() noexcept = default;
 
 
             static constexpr std::string_view DEFAULT_NODE_NAME = "NetworkPokemonNode";
+            static constexpr std::string_view NODE_ID_KEY = "id";
             static constexpr std::string_view NODE_PORT_KEY = "nodePort";
             static constexpr std::string_view NODE_NAME_KEY = "nodeName";
             static constexpr std::string_view NODE_IP_KEY = "nodeIp";
+
+            inline void set_id(std::string_view id) noexcept {
+                id_s = id;
+            }
+            [[nodiscard]] inline std::string_view get_id() const noexcept {
+                return id_s;
+            }
 
             inline void set_name(std::string_view node_name) noexcept {
                 nodeName_s = node_name;
@@ -57,6 +65,7 @@ namespace pokemon {
             }
 
     private:
+        std::string id_s;
         std::string nodeName_s;
         std::string ip_s;
         int port_i;

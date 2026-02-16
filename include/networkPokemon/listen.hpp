@@ -17,7 +17,7 @@ namespace pokemon {
          * @brief Constructeur de la classe Listen.
          * @param port Port sur lequel écouter les connexions.
          */
-        Listen(const in_port_t port) noexcept;
+        Listen(const in_port_t port, const std::shared_ptr<Node_Info> node_info) noexcept;
 
         /**
          * @brief Lance l'écoute des connexions sur un port spécifique dans un thread séparé.

@@ -8,8 +8,9 @@
 #include "pch.h"
 
 namespace pokemon {
-    Node_Info::Node_Info(std::string_view nodeName, std::string_view ip, int port ) noexcept
-        : nodeName_s(nodeName)
+    Node_Info::Node_Info(std::string_view id, std::string_view nodeName, std::string_view ip, int port ) noexcept
+        : id_s(id)
+        , nodeName_s(nodeName)
         , ip_s(ip)
         , port_i(port){
         isConnected_b = is_node_online(ip_s);

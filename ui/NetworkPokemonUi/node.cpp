@@ -75,7 +75,7 @@ QString Node::get_ip()
 void Node::add_peer(QString name, QString port)
 {
 
-    m_node.add_peer(
+    m_node.add_new_peer(
         name.toStdString(),
         port.toStdString()
     );
@@ -115,6 +115,18 @@ void Node::add_pokemon(QString name, QString filePath)
 
     m_node.add_pokemon(name.toStdString(), localPath.toStdString());
 }
+
+void Node::remove_pokemon(QString name, QString filePath)
+{
+    QUrl url(filePath);
+    QString localPath = url.isLocalFile() ? url.toLocalFile() : filePath;
+
+    qDebug() << "Ajout de l'image :" << localPath;
+
+    m_node.add_pokemon(name.toStdString(), localPath.toStdString());
+}
+
+
 
 
 

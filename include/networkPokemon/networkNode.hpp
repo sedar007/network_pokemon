@@ -22,7 +22,16 @@ namespace pokemon {
          * This constructor is noexcept and guarantees not to throw exceptions.
          * @param port The network port number.
          */
-        NetworkNode(const in_port_t port) noexcept;
+        NetworkNode(const in_port_t port, const std::shared_ptr<Node_Info> node_info) noexcept;
+
+        inline std::shared_ptr<Node_Info> get_node_info() const noexcept {
+            return node_info_ptr;
+        }
+
+        [[nodiscard]] inline std::string_view get_id() const noexcept {
+            return node_info_ptr->get_id();
+        }
+
 
         [[nodiscard]] inline in_port_t getPort() const noexcept {
             return port_s;
@@ -47,6 +56,7 @@ namespace pokemon {
             //  m_dispatcher.registerCommand(protocolToString(PROTOCOL::GET_PICS), std::make_unique<GetPicsCommand>());
             // m_dispatcher.registerCommand(protocolToString(PROTOCOL::GET_PIC), std::make_unique<GetPicCommand>());
             m_dispatcher.registerCommand(PROTOCOL::GET_ALIVE, std::make_unique<alive_command>());
+            m_dispatcher.registerCommand(PROTOCOL::GET_ID, std::make_unique<add_new_node_command>());
         }
 
 
@@ -72,6 +82,8 @@ namespace pokemon {
         Trace &trace = Trace::getInstance();
 
         Thread_pool thread_pool;
+
+        std::shared_ptr<Node_Info> node_info_ptr;
 
 
     };

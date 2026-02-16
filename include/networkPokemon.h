@@ -33,6 +33,7 @@
 #include "networkPokemon/INetworkCommand.hpp"
 #include "networkPokemon/ip_command.hpp"
 #include  "networkPokemon/alive_command.hpp"
+#include "networkPokemon/add_new_node_command.hpp"
 #include "networkPokemon/command_dispatcher.h"
 #include "networkPokemon/networkNode.hpp"
 #include "networkPokemon/client.hpp"

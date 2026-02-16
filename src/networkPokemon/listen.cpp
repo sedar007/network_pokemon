@@ -2,7 +2,7 @@
 
 namespace pokemon {
 
-    Listen::Listen(const in_port_t port) noexcept : NetworkNode(port)  {
+    Listen::Listen(const in_port_t port, const std::shared_ptr<Node_Info> node_info) noexcept : NetworkNode(port, node_info)  {
         auto listenThread = connect();
         listenThread.detach();
     }
@@ -39,7 +39,7 @@ namespace pokemon {
                 std::cerr << "listening:: new connection : " << getPort() << " from: " << sock->peer_address() <<std::endl;
                 std::shared_ptr<sockpp::tcp_socket> sharedSock = std::move(sock);
                 auto runServerTask = [this, s = sharedSock]() {
-                    Server server(getPort());
+                    Server server(getPort(), get_node_info());
                     server.process(s);
                 };
                 enqueue_thread(std::move(runServerTask));

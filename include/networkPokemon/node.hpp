@@ -35,8 +35,8 @@ namespace pokemon {
             return *m_node_info;
         }
 
-        void add_peer(std::string peer_name, std::string peer_port) noexcept;
-        void add_peer(std::string peer_name, std::string peer_ip, int port) noexcept;
+        void add_new_peer(std::string peer_name, std::string peer_port) noexcept;
+        void add_peer(std::string id, std::string peer_name, std::string peer_ip, int port) noexcept;
 
         void addNodesList(const std::string &fileName);
 
@@ -45,6 +45,7 @@ namespace pokemon {
         }
 
         void add_pokemon(std::string_view name, std::string_view picturePath) noexcept;
+        void remove_pokemon(std::string_view name, std::string_view picturePath) noexcept;
 
 
         std::string get_picture(const Image image);
@@ -97,7 +98,7 @@ namespace pokemon {
     private:
         in_port_t port_s; ///< Port du nœud.
         std::string ip_s; ///< Adresse IP du nœud.
-        std::unique_ptr<Node_Info> m_node_info;
+        std::shared_ptr<Node_Info> m_node_info;
         std::string storagePath_s;
         ResourceManager &resourceManager = ResourceManager::getInstance(); ///< Gestionnaire de ressources.
         Trace &trace = Trace::getInstance(); ///< Traceur.

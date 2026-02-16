@@ -4,7 +4,7 @@
 using namespace std::chrono_literals;
 namespace pokemon {
 
-    Server::Server(in_port_t port) noexcept : NetworkNode(port){}
+    Server::Server(in_port_t port, const std::shared_ptr<Node_Info> node_info) noexcept : NetworkNode(port, node_info){}
 
     /*std::thread Server::run(std::unique_ptr<sockpp::tcp_socket> socket) noexcept {
         return std::thread([this, socket = std::move(socket)]() mutable {

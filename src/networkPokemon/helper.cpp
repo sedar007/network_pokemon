@@ -46,6 +46,8 @@ namespace pokemon {
                 return "GET_PIC_";
             case PROTOCOL::GET_ALIVE:
                 return "GETALIVE";
+            case PROTOCOL::GET_ID:
+                return "GET_ID__";
             default:
                 return "UNKNOWN_";
         }
@@ -54,6 +56,8 @@ namespace pokemon {
     PROTOCOL Helper::string_to_protocol(std::string_view s) const {
         if (s == "GETALIVE")
             return PROTOCOL::GET_ALIVE;
+        if (s == "GET_ID__")
+            return PROTOCOL::GET_ID;
 
         return PROTOCOL::GET_IPS; // Valeur par défaut, à adapter selon les besoins
     }
@@ -93,6 +97,46 @@ namespace pokemon {
 
     size_t Helper::protocolSize() const {
         return protocol_size;
+    }
+
+    std::string Helper::generate_uuid_v4() noexcept {
+        static std::random_device rd;
+        static std::mt19937 gen(rd());
+        static std::uniform_int_distribution<> dis(0, 15);
+        static std::uniform_int_distribution<> dis2(8, 11);
+
+        std::stringstream ss;
+        ss << std::hex;
+
+        int i;
+        for (i = 0; i < 8; i++) ss << dis(gen);
+        ss << "-";
+        for (i = 0; i < 4; i++) ss << dis(gen);
+        ss << "-4"; // UUID version 4
+        for (i = 0; i < 3; i++) ss << dis(gen);
+        ss << "-";
+        ss << dis2(gen); // Variant (8, 9, a, b)
+        for (i = 0; i < 3; i++) ss << dis(gen);
+        ss << "-";
+        for (i = 0; i < 12; i++) ss << dis(gen);
+
+        return ss.str();
+    }
+
+    std::string Helper::base64_encode(const std::string &in) noexcept {
+        std::string out;
+        int val = 0, valb = -6;
+        for (unsigned char c : in) {
+            val = (val << 8) + c;
+            valb += 8;
+            while (valb >= 0) {
+                out.push_back(BASE64_CHARS[(val >> valb) & 0x3F]);
+                valb -= 6;
+            }
+        }
+        if (valb > -6) out.push_back(BASE64_CHARS[((val << 8) >> (valb + 8)) & 0x3F]);
+        while (out.size() % 4) out.push_back('=');
+        return out;
     }
 
 

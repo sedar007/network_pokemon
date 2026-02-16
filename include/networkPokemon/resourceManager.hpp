@@ -13,6 +13,16 @@ namespace pokemon {
 
         ResourceManager &operator=(const ResourceManager &) = delete;
 
+        inline void set_path(std::string_view path) noexcept {
+            path_s = path;
+        }
+
+        [[nodiscard]] inline std::string get_path() const noexcept {
+            return path_s;
+        }
+
+
+
         /* ---  Picture  --- */
 
         /// @brief Ajoute une image à la liste des ressources.
@@ -130,5 +140,6 @@ namespace pokemon {
         std::vector<Image> images_list_v; // Liste des images.
         Trace &trace = Trace::getInstance();  // Instance unique de trace.
         std::string picturePath_s; // Chemin d'accès des pictures.
+        std::string path_s;
     };
 }

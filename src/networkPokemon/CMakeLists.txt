@@ -23,7 +23,7 @@ set(SRC
 	"${SRCROOT}/client.cpp"
     "${SRCROOT}/ip_command.cpp"
     "${SRCROOT}/alive_command.cpp"
-
+    "${SRCROOT}/add_new_node_command.cpp"
     "${SRCROOT}/command_dispatcher.cpp"
 
 

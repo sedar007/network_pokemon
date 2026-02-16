@@ -8,7 +8,7 @@ namespace pokemon {
     std::string ip_command::getIpsToSend() const {
         std::string str;
         for (const auto &node: resourceManager.getNodesInfoList())
-            str += std::format("{}_{}_{};", node.get_name(), node.get_ip(), node.get_port());
+            str += std::format("{}_{}_{}_{};", node.get_id(), node.get_name(), node.get_ip(), node.get_port());
         return str;
     }
 
@@ -29,15 +29,16 @@ namespace pokemon {
         std::string data;
 
         while (std::getline(ss, data, ';')) {
-            std::string name_str, ip_str, port_str;
+            std::string id_str, name_str, ip_str, port_str;
             std::stringstream ss2(data);
 
+            std::getline(ss2, id_str, '_');
             std::getline(ss2, name_str, '_');
             std::getline(ss2, ip_str, '_');
             std::getline(ss2, port_str);
 
             try {
-                Node_Info nodeInfo(name_str, ip_str, std::stoi(port_str));
+                Node_Info nodeInfo(id_str, name_str, ip_str, std::stoi(port_str));
 
                 resourceManager.addNode(nodeInfo);
             } catch (...) {

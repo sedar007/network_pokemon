@@ -18,7 +18,7 @@ namespace pokemon {
          * @param port Port du client.
          * @param connector Connecteur TCP partagé.
          */
-        Client(std::string_view ip, const in_port_t port) noexcept;
+        Client(std::string_view ip, const in_port_t port, const std::shared_ptr<Node_Info> node_info) noexcept;
         ~Client() noexcept;
 
         /**
@@ -35,6 +35,10 @@ namespace pokemon {
          * @param picName Nom du fichier image.
          */
         void getPic(const std::string &picName) noexcept;
+
+
+        void add_new_node(std::string peer_name, std::string peer_ip, int port) noexcept;
+        void get_client_id(std::string_view ip, in_port_t port) noexcept;
 
 
     private:
