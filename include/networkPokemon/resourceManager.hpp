@@ -85,10 +85,6 @@ namespace pokemon {
         std::optional<std::string> findNode(const std::string &ip) const;
 
 
-
-        std::string getPic_str(const Image image, std::string_view path);
-
-
         /// @brief Vérifie si un conteneur est vide.
         /// @tparam T Type du conteneur.
         /// @param t Le conteneur à vérifier.

@@ -2,6 +2,8 @@ set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(sockpp CONFIG REQUIRED)
 find_package(Threads REQUIRED)
 find_package(nlohmann_json CONFIG REQUIRED)
+find_package(OpenSSL REQUIRED)
+
 
 set(INCROOT "${PROJECT_SOURCE_DIR}/include/networkPokemon")
 set(SRCROOT "${PROJECT_SOURCE_DIR}/src/networkPokemon")
@@ -37,6 +39,7 @@ target_include_directories(${PROJECT_NAME}-network-pokemon
 	PUBLIC
         ${PROJECT_SOURCE_DIR}/include
 		${sockpp_INCLUDE_DIRS}
+        ${OPENSSL_INCLUDE_DIR}
 )
 
 target_link_libraries(${PROJECT_NAME}-network-pokemon
@@ -45,6 +48,8 @@ target_link_libraries(${PROJECT_NAME}-network-pokemon
 	PRIVATE
 		Threads::Threads
         nlohmann_json::nlohmann_json
+        OpenSSL::SSL
+        OpenSSL::Crypto
         ${PROJECT_NAME}-model
         ${PROJECT_NAME}-storage
 )

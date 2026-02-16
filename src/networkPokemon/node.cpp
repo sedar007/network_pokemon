@@ -14,11 +14,8 @@ namespace pokemon {
         , image_repository_(image_repository)
     {}
 
-    void Node::initialized(std::string_view path) noexcept{
-        storagePath_s = path;
-        m_storage = std::make_unique<storage_manager>(path);
-        resourceManager.set_path(path);
-        std::cout << "Node::initialized() - Storage path set to: " << storagePath_s << std::endl;
+    void Node::initialized() noexcept{
+        m_storage = std::make_unique<storage_manager>(image_repository_.get_storage_path());
         auto node_info_data = m_storage->loadNodeInfo();
         if (node_info_data.has_value()) {
             m_node_info = std::make_shared<Node_Info>(node_info_data.value());
@@ -29,17 +26,15 @@ namespace pokemon {
         }
 
         m_storage->saveNodeInfo(*m_node_info);
-        addNodesList();
-
-
-        addImagesList();
+        m_storage->load_nodes(peers_);
+        m_storage->load_images(image_repository_);
 
         /*std::string fileNameNode = path + nodeFile;
         addNodesList(fileNameNode);*/
-        std::string fileNameImages = std::format("{}{}", path, "pokemons.txt");
+        /*std::string fileNameImages = std::format("{}{}", path, "pokemons.txt");
         addImagesList(fileNameImages);
 
-        resourceManager.addPicturePath(path.data());
+        resourceManager.addPicturePath(path.data());*/
 
         sockpp::initialize();
 
@@ -48,7 +43,7 @@ namespace pokemon {
     }
 
     std::string Node::get_picture(const Image image) {
-        std::string rawData = resourceManager.getPic_str(image, storagePath_s);
+        std::string rawData = image_repository_.getPic_str(image);
 
         if (rawData.empty()) {
             return "";
@@ -125,25 +120,6 @@ namespace pokemon {
         return preferred_port;
     }
 
-
-    void Node::addNodesList() {
-        if (!m_storage) return;
-
-        auto nodes = m_storage->loadNodeList();
-        for (const auto& nodeInfo : nodes) {
-            peers_.add_node(nodeInfo);
-        }
-    }
-
-    void Node::addImagesList() {
-        if (!m_storage) return;
-
-        auto images = m_storage->loadImageList();
-        for (const auto& image : images) {
-            image_repository_.add_image(image);
-        }
-    }
-
     void Node::add_new_peer(std::string peer_name, std::string peer_ip) noexcept {
        add_peer(peer_name, peer_ip, find_available_port(DEFAULT_PREFERRED_PORT));
     }
@@ -200,18 +176,6 @@ namespace pokemon {
     }
 
     void Node::remove_pokemon(std::string_view name, std::string_view picturePath) noexcept {
-        /*std::shared_ptr<Image> image = resourceManager.addPictureFromPath(name, picturePath, storagePath_s);
-        if (image == nullptr) {
-            trace.print(std::cerr, "Erreur lors de l'ajout de l'image depuis le chemin : ", picturePath.data());
-            return;
-        }
 
-        auto image_list = Json::loadJson<std::vector<Image>>(storagePath_s, IMAGE_LIST_FILE);
-        std::vector<Image> images_list_to_save;
-        if (image_list.has_value()) {
-            images_list_to_save = image_list.value();
-        }
-        images_list_to_save.push_back(*image);
-        Json::saveJson(storagePath_s.data(), IMAGE_LIST_FILE.data(), images_list_to_save);*/
     }
 }

@@ -2,6 +2,7 @@
   "dependencies": [
     "boost-test",
     "sockpp",
-    "nlohmann-json"
+    "nlohmann-json",
+    "openssl"
   ]
 }

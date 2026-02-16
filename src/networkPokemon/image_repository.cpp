@@ -60,11 +60,10 @@ namespace pokemon {
 
 
                 std::stringstream stream;
-                stream << std::fixed << std::setprecision(1) << mb << " MB";
+                stream << std::fixed << std::setprecision(1) << mb;
 
                 std::string picture_size = stream.str();
-
-                std::string hash = name.data() + extension;
+                std::string size_unit = "MB";
 
                 std::streamsize size = file.tellg();
                 file.seekg(0, std::ios::beg);
@@ -73,18 +72,18 @@ namespace pokemon {
 
                 std::string buffer(size, '\0');
                 if (file.read(&buffer[0], size)) {
+                    const std::string hash = calculate_sha256(buffer);
                     std::string saved_name = std::format("{}{}", storagePath_, hash);
                     std::filesystem::path pathr(saved_name);
 
                     std::ofstream image_saved(pathr, std::ios::binary);
                     if (!image_saved.is_open()) {
-                        // trace.print(std::cerr, "Impossible de sauvegarder l'image : " + pathr.string());
                         return nullptr;
                     }
                     image_saved.write(buffer.c_str(), buffer.size());
                     image_saved.close();
 
-                    auto image = std::make_shared<Image>(name, extension, hash, owner_id);
+                    auto image = std::make_shared<Image>(name, extension, hash, owner_id, picture_size, size_unit);
 
                     add_image(image);
                     return image;
@@ -105,6 +104,42 @@ namespace pokemon {
              //  trace.print(std::cerr, "Erreur lors de l'ajout de l'image depuis le chemin : " + picturePath + " - " + e.what());
              return nullptr;
          }
+    }
+
+    std::string image_repository::calculate_sha256(const std::string& data) {
+         unsigned char hash[SHA256_DIGEST_LENGTH];
+         SHA256_CTX sha256;
+         SHA256_Init(&sha256);
+         SHA256_Update(&sha256, data.c_str(), data.size());
+         SHA256_Final(hash, &sha256);
+
+         std::stringstream ss;
+         for(int i = 0; i < SHA256_DIGEST_LENGTH; i++) {
+             ss << std::hex << std::setw(2) << std::setfill('0') << (int)hash[i];
+         }
+         return ss.str();
+    }
+
+    std::string image_repository::getPic_str(const Image image) {
+
+         std::string fullPath = std::format("{}{}", storagePath_, image.get_hash());
+         std::ifstream file(fullPath, std::ios::binary | std::ios::ate);
+
+         if (!file.is_open()) {
+             return "";
+         }
+
+         std::streamsize size = file.tellg();
+         file.seekg(0, std::ios::beg);
+
+         if (size <= 0) return "";
+
+         std::string buffer(size, '\0');
+         if (file.read(&buffer[0], size)) {
+             return buffer;
+         }
+
+         return "";
      }
 
 }

@@ -20,11 +20,20 @@ namespace pokemon {
 
         std::shared_ptr<Image> add_picture_from_path(std::string_view name, std::string_view owner_id, std::string_view picturePath) noexcept;
 
+        [[nodiscard]] inline std::string_view get_storage_path() const noexcept {
+            return storagePath_;
+        }
+
+        std::string getPic_str(const Image image);
+
 
     private:
         std::string storagePath_;
         mutable std::shared_mutex mutex_;
         std::vector<Image> images_;
+
+
+        std::string calculate_sha256(const std::string& data);
     };
 
 }

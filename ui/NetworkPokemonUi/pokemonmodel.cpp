@@ -25,6 +25,7 @@ QVariant PokemonModel::data(const QModelIndex &index, int role) const
     case NumberRole: return item.pNumber;
     case TypeRole:   return item.type;
     case SizeRole:   return item.size;
+    case SizeUnitRole: return item.sizeUnit;
     case ImgUrlRole: return item.imgUrl;
     case IsMineRole: return item.isMine;
     default:         return QVariant();
@@ -38,6 +39,7 @@ QHash<int, QByteArray> PokemonModel::roleNames() const
     roles[NumberRole] = "pNumber";
     roles[TypeRole] = "type";
     roles[SizeRole] = "size";
+    roles[SizeUnitRole] = "sizeUnit";
     roles[ImgUrlRole] = "imgUrl";
     roles[IsMineRole] = "isMine";
     return roles;
@@ -60,7 +62,8 @@ void PokemonModel::refreshPokemons()
         item.name = map.value("name", "Unknown").toString();
         item.pNumber = map.value("pNumber", "???").toString();
         item.type = map.value("type", "Normal").toString();
-        item.size = map.value("size", "0 MB").toString();
+        item.size = map.value("size", "0").toString();
+        item.sizeUnit = map.value("sizeUnit", "MB").toString();
         item.imgUrl = map.value("imgUrl", "").toString();
 
         if (i++ % 2 == 0) {

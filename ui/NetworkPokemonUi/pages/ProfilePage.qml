@@ -16,7 +16,7 @@ Item {
     property var currentConfig: { "nodeName": "Chargement...", "port": "..." }
 
     function refreshConfig() {
-        var data = node_cpp.get_node_infos();
+        var data = networkNode.get_node_infos();
         if (data && Object.keys(data).length > 0) root.currentConfig = data;
     }
 
@@ -55,7 +55,7 @@ Item {
                         Column {
                             Layout.fillWidth: true
                             Text { text: root.currentConfig.nodeName; font.bold: true; font.pixelSize: 18 }
-                            Text { text: node_cpp.get_ip(); color: "#7F8C8D" }
+                            Text { text: networkNode.get_ip(); color: "#7F8C8D" }
                         }
 
                         Rectangle {
@@ -102,7 +102,7 @@ Item {
         onRequestSave: (name, port, maxConn, share, download) => {
             console.log("Sauvegarde demandée depuis le composant Popup")
 
-            node_cpp.save_node_infos(name, port, maxConn, share, download)
+            networkNode.save_node_infos(name, port, maxConn, share, download)
 
             // On rafraichit l'interface
             root.refreshConfig()
@@ -213,7 +213,7 @@ Item {
                     onClicked: {
                         console.log("Connexion à : " + peerNameInput.text + " [" + peerIpInput.text + "]")
 
-                        node_cpp.add_peer(peerNameInput.text, peerIpInput.text)
+                        networkNode.add_peer(peerNameInput.text, peerIpInput.text)
 
                         addPeerPopup.close()
                     }

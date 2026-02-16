@@ -10,15 +10,7 @@
 Node::Node(pokemon::peer_registry& registry, pokemon::image_repository& image_repository, QObject *parent)
     : QObject{parent}, m_node(registry, image_repository)
 {
-    QString writablePath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
-
-    QDir dir(writablePath);
-    if (!dir.exists()) {
-        dir.mkpath(".");
-    }
-
-    QString fullPath = writablePath + QDir::separator();
-    m_node.initialized(fullPath.toStdString());
+    m_node.initialized();
 }
 
 void Node::save_node_infos(QString name, QString port, QString maxConn, bool share, bool download)
@@ -93,9 +85,10 @@ QVariantList Node::get_pokemon_list() {
         QVariantMap map;
 
         map["name"] = QString::fromStdString(img.get_name().data());
-        map["pNumber"] = QString::fromStdString(img.get_extension().data());
-        map["type"] = "Unknown";
-        map["size"] = "0 MB";
+        map["pNumber"] = "";
+        map["type"] = "";
+        map["size"] = QString::fromStdString(img.get_size().data());
+        map["sizeUnit"] = QString::fromStdString(img.get_size_unit().data());
 
         std::string b64 = m_node.get_picture(img);
         map["imgUrl"] = QString::fromStdString(b64);

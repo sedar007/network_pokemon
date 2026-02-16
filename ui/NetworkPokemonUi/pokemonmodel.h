@@ -9,6 +9,7 @@ struct PokemonItem {
     QString pNumber;
     QString type;
     QString size;
+    QString sizeUnit;
     QString imgUrl;
     bool isMine;
 };
@@ -25,6 +26,7 @@ public:
         NumberRole,
         TypeRole,
         SizeRole,
+        SizeUnitRole,
         ImgUrlRole,
         IsMineRole
     };

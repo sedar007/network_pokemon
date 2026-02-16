@@ -12,17 +12,19 @@ int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
 
-
     QString writablePath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+
     QDir dir(writablePath);
     if (!dir.exists()) {
         dir.mkpath(".");
     }
-    std::string storagePath = (writablePath + QDir::separator()).toStdString();
+
+    QString storagePath = writablePath + QDir::separator();
+
 
     QQmlApplicationEngine engine;
     pokemon::peer_registry peerRegistry;
-    pokemon::image_repository imageRepo(storagePath);
+    pokemon::image_repository imageRepo(storagePath.toStdString());
 
     Node networkNode(peerRegistry, imageRepo);
 

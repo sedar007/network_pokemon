@@ -235,6 +235,7 @@ Item {
                     pNumber: model.pNumber
                     type: model.type
                     size: model.size
+                    sizeUnit: model.sizeUnit
                     imgUrl: model.imgUrl
                 }
 

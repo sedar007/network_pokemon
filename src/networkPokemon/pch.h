@@ -10,6 +10,7 @@
 #include <cctype>
 #include "exception"
 #include <sstream>
+#include <openssl/sha.h>
 
 
 #include <nlohmann/json.hpp>

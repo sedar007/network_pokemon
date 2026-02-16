@@ -5,11 +5,11 @@ import QtQuick.Effects
 
 Item {
     id: root
-    // Propriétés requises par le GridView
     property string name
     property string pNumber
     property string type
     property string size
+    property string sizeUnit;
     property string imgUrl
 
     width: GridView.view.cellWidth - 10
@@ -44,7 +44,7 @@ Item {
                         }
                     }
                 }
-                Text { text: root.size; color: "#95A5A6"; font.pixelSize: 12; Layout.topMargin: 5 }
+                Text { text: root.size + " " + root.sizeUnit; color: "#95A5A6"; font.pixelSize: 12; Layout.topMargin: 5 }
                 Item { Layout.fillHeight: true }
             }
         }

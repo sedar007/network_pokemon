@@ -5,13 +5,16 @@ namespace pokemon {
 
     class NETWORK_POKEMON_MODELS_API Image {
         public:
-            Image(std::string_view name, std::string_view extension, std::string_view hash, std::string_view owner) noexcept;
+            Image(std::string_view name, std::string_view extension, std::string_view hash,
+                std::string_view owner, std::string_view size, std::string_view size_unit) noexcept;
             Image() noexcept = default;
 
             static constexpr std::string_view IMAGE_NAME_KEY = "name";
             static constexpr std::string_view IMAGE_EXTENSION_KEY = "extension";
             static constexpr std::string_view IMAGE_HASH_KEY = "hash";
             static constexpr std::string_view IMAGE_OWNER_KEY = "owner";
+            static constexpr std::string_view IMAGE_SIZE_KEY = "size";
+            static constexpr std::string_view IMAGE_SIZE_UNIT_KEY = "size_unit";
 
             [[nodiscard]] inline std::string_view get_name() const noexcept {
                 return name_s;
@@ -44,6 +47,23 @@ namespace pokemon {
             return owner_s;
         }
 
+        inline void set_size(std::string_view size) noexcept {
+            size_s = size;
+        }
+
+        [[nodiscard]] inline std::string_view get_size() const noexcept {
+            return size_s;
+        }
+
+        inline void set_size_unit(std::string_view size_unit) noexcept {
+            size_unit_s = size_unit;
+        }
+
+        [[nodiscard]] inline std::string_view get_size_unit() const noexcept {
+            return size_unit_s;
+        }
+
+
 
 
         friend std::ostream &operator<<(std::ostream &os, const Image &image) {
@@ -66,6 +86,8 @@ namespace pokemon {
         std::string extension_s;
         std::string hash_s;
         std::string owner_s;
+        std::string size_s;
+        std::string size_unit_s;
 
     };
 }

@@ -25,7 +25,9 @@ namespace pokemon {
                 {Image::IMAGE_NAME_KEY, i.get_name()},
                 {Image::IMAGE_EXTENSION_KEY, i.get_extension()},
                 {Image::IMAGE_HASH_KEY, i.get_hash()},
-                {Image::IMAGE_OWNER_KEY, i.get_owner()}
+                {Image::IMAGE_OWNER_KEY, i.get_owner()},
+                {Image::IMAGE_SIZE_KEY, i.get_size()},
+                {Image::IMAGE_SIZE_UNIT_KEY, i.get_size_unit()}
         };
     }
 
@@ -34,5 +36,7 @@ namespace pokemon {
         i.set_extension(j.at(Image::IMAGE_EXTENSION_KEY).get<std::string>());
         i.set_hash(j.at(Image::IMAGE_HASH_KEY).get<std::string>());
         i.set_owner(j.at(Image::IMAGE_OWNER_KEY).get<std::string>());
+        i.set_size(j.at(Image::IMAGE_SIZE_KEY).get<std::string>());
+        i.set_size_unit(j.at(Image::IMAGE_SIZE_UNIT_KEY).get<std::string>());
     }
 }
