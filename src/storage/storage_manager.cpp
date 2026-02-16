@@ -24,6 +24,13 @@ namespace pokemon {
 
     void storage_manager::addNodeToSavedList(const Node_Info& node_info) {
         auto currentList = loadNodeList();
+
+        auto it = std::find_if(currentList.begin(), currentList.end(),
+            [&](const Node_Info& n){ return n.get_id() == node_info.get_id(); });
+        if (it != currentList.end()) {
+            return;
+        }
+
         currentList.push_back(node_info);
         saveNodeList(currentList);
     }
@@ -45,11 +52,48 @@ namespace pokemon {
             [&](const Image& img){ return img.get_hash() == image.get_hash(); });
 
         if (it != currentList.end()) {
-            return; // L'image existe déjà, ne pas l'ajouter
+            return;
         }
 
         currentList.push_back(image);
         saveImageList(currentList);
+    }
+
+
+    /* Image Cache */
+
+    std::vector<image_cache> storage_manager::loadImageCacheList() const {
+        auto result = Json::loadJson<std::vector<image_cache>>(m_rootPath, FILE_IMAGE_CACHE_DATA);
+        return result.value_or(std::vector<image_cache>{});
+    }
+
+    void storage_manager::saveImageCacheList(const std::vector<image_cache>& images) const {
+        Json::saveJson<std::vector<image_cache>>(m_rootPath, FILE_IMAGE_CACHE_DATA, images);
+    }
+
+    void storage_manager::addImageCacheToSavedList(const image_cache& image) {
+        auto currentList = loadImageCacheList();
+
+        auto it = std::find_if(currentList.begin(), currentList.end(),
+            [&](const image_cache& img){ return img.get_hash() == image.get_hash(); });
+
+        if (it != currentList.end()) {
+            return;
+        }
+
+        currentList.push_back(image);
+        saveImageCacheList(currentList);
+    }
+
+    std::string storage_manager::get_image_cache_data(std::string_view hash) const {
+        auto cacheList = loadImageCacheList();
+        auto it = std::find_if(cacheList.begin(), cacheList.end(),
+            [&](const image_cache& img){ return img.get_hash() == hash; });
+
+        if (it != cacheList.end()) {
+            return it->get_data().data();
+        }
+        return "";
     }
 
 }

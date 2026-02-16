@@ -45,6 +45,11 @@ namespace pokemon {
         get_id.detach();
     }
 
+    void Client::get_picture(std::string hash) noexcept {
+        auto get_pic = std::thread([this, hash] { get_client_picture(hash); });
+        get_pic.detach();
+    }
+
 
     std::thread Client::run(std::string_view neighbour_ip, const in_port_t neighbour_port, const std::string &msg) noexcept {
         std::thread t([this, neighbour_ip, neighbour_port, msg] {
@@ -115,6 +120,32 @@ namespace pokemon {
        std::thread t(task);
        t.join();
     }
+
+
+    void Client::get_client_picture(std::string hash) noexcept {
+
+        auto image = get_images_repository().find_image(hash);
+        if (!image.has_value()) {
+            getTrace().print(std::cerr, "No image found with hash: " + std::string(hash));
+            return;
+        }
+        try{
+            auto nodeInfo = get_peer_registry().find_node_by_id(image.value().get_owner());
+
+            std::string msg = std::format("{}{}{}", protocolToString(PROTOCOL::GET_PIC), generateFormattedNumber(hash.size()), hash);
+
+            auto task = [this, ip = nodeInfo.get_ip(), port = nodeInfo.get_port(), msg]() {
+                this->start(ip, port, msg);
+            };
+            std::thread t(task);
+            t.join();
+
+        }
+        catch (const std::exception& e) {
+            getTrace().print(std::cerr, "Error getting picture: " + std::string(e.what()));
+        }
+    }
+
 
     void Client::get_client_ip() noexcept {
         while (true) {

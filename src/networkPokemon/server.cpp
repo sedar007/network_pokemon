@@ -40,7 +40,7 @@ namespace pokemon {
         }
 
         std::cout << "server:: connection address: " << socket->address().to_string() << std::endl;
-        char buf[SERVER_BUF_SIZE];
+        char buf[protocolSize()];
         std::string b;
 
         getTrace().print(std::clog, std::format(MSG_SERVER_RECEIVED_CONNECTION, std::format(MSG_NODE_ID, getPort(), SERVER),
@@ -51,7 +51,7 @@ namespace pokemon {
         }
 
 
-        std::string buf_str(buf, SERVER_BUF_SIZE);
+        std::string buf_str(buf, protocolSize());
 
         std::cout << "Server:: buffer: " << buf_str << std::endl;
 

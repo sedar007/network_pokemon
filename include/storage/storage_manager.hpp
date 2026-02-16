@@ -37,12 +37,21 @@ namespace pokemon {
                 }
             }
 
+            /* Image Cache */
+            std::vector<image_cache> loadImageCacheList() const;
+            void saveImageCacheList(const std::vector<image_cache>& images) const;
+            void addImageCacheToSavedList(const image_cache& image);
+            std::string get_image_cache_data(std::string_view hash) const;
+
+
+
     private:
         std::string_view m_rootPath;
 
         static constexpr std::string_view FILE_NODE_INFO = "node_infos.json";
         static constexpr std::string_view FILE_NODE_LIST = "node_list.json";
         static constexpr std::string_view FILE_IMAGE_LIST = "pokemons_images.json";
+        static constexpr std::string_view FILE_IMAGE_CACHE_DATA = "image_cache_data.json";
     };
 
 

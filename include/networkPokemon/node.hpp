@@ -85,6 +85,7 @@ namespace pokemon {
         }
 
 
+
     private:
         in_port_t port_s; ///< Port du nœud.
         std::string ip_s; ///< Adresse IP du nœud.

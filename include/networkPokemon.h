@@ -38,6 +38,7 @@
 #include "networkPokemon/alive_command.hpp"
 #include "networkPokemon/add_new_node_command.hpp"
 #include "networkPokemon/pictures_command.hpp"
+#include "networkPokemon/image_data_command.hpp"
 
 #include "networkPokemon/command_dispatcher.h"
 #include "networkPokemon/peer_registry.hpp"

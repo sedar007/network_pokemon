@@ -20,10 +20,6 @@ namespace pokemon {
          */
 
     public:
-        inline static constexpr std::string_view BASE64_CHARS =
-            "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-            "abcdefghijklmnopqrstuvwxyz"
-            "0123456789+/";
         /**
          * @brief Constructeur par défaut de la classe Helper.
          */
@@ -90,8 +86,6 @@ namespace pokemon {
 
         [[nodiscard]] static std::string generate_uuid_v4() noexcept;
 
-
-        std::string base64_encode(const std::string &in) noexcept;
 
     public:
         std::random_device rd_; ///< Générateur de nombres aléatoires.

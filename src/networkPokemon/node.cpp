@@ -46,18 +46,21 @@ namespace pokemon {
     std::string Node::get_picture(const Image image) {
         std::string rawData;
         if (image.get_owner() == m_node_info->get_id()) {
-            rawData = image_repository_.getPic_str(image);
+            rawData = image_repository_.get_picture_base64(image);
         }
         else {
-           // TODO
+            rawData = m_storage->get_image_cache_data(image.get_hash());
+            if (rawData.empty()) {
+                client->get_picture(image.get_hash().data());
+                rawData = m_storage->get_image_cache_data(image.get_hash());
+            }
         }
 
         if (rawData.empty()) {
             return "";
         }
 
-        std::string base64Data = base64_encode(rawData);
-        return "data:image/png;base64," + base64Data;
+        return rawData;
     }
 
 

@@ -39,4 +39,16 @@ namespace pokemon {
         i.set_size(j.at(Image::IMAGE_SIZE_KEY).get<std::string>());
         i.set_size_unit(j.at(Image::IMAGE_SIZE_UNIT_KEY).get<std::string>());
     }
+
+    inline void to_json(nlohmann::json& j, const image_cache& i) {
+        j = nlohmann::json{
+                    {image_cache::IMAGE_CACHE_HASH_KEY, i.get_hash()},
+                    {image_cache::IMAGE_CACHE_DATA_KEY, i.get_data()}
+        };
+    }
+
+    inline void from_json(const nlohmann::json& j, image_cache& i) {
+        i.set_hash(j.at(image_cache::IMAGE_CACHE_HASH_KEY).get<std::string>());
+        i.set_data(j.at(image_cache::IMAGE_CACHE_DATA_KEY).get<std::string>());
+    }
 }

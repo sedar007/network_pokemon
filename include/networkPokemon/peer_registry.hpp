@@ -11,6 +11,9 @@ namespace pokemon {
 
         std::vector<Node_Info> get_nodes() const;
 
+
+        Node_Info find_node_by_id(std::string_view id) const;
+
         void set_node_alive(std::string_view ip, int port, bool status);
         void printNodesList(std::ostream &os) const {
             /*std::lock_guard<std::mutex> lock(mutex);

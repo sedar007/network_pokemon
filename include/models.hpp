@@ -7,4 +7,5 @@
 #include "models/export.hpp"
 #include "models/node_infos.hpp"
 #include "models/image.hpp"
+#include "models/image_cache.hpp"
 

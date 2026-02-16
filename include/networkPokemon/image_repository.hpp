@@ -5,6 +5,11 @@ namespace pokemon {
     class NETWORK_POKEMON_API image_repository {
     public:
 
+        inline static constexpr std::string_view BASE64_CHARS =
+            "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+            "abcdefghijklmnopqrstuvwxyz"
+            "0123456789+/";
+
         explicit image_repository(std::string_view storagePath);
 
         void add_image(const Image& image) noexcept;
@@ -24,7 +29,10 @@ namespace pokemon {
             return storagePath_;
         }
 
-        std::string getPic_str(const Image image);
+
+
+        std::string get_picture_base64(const Image image);
+
 
 
     private:
@@ -32,7 +40,8 @@ namespace pokemon {
         mutable std::shared_mutex mutex_;
         std::vector<Image> images_;
 
-
+        std::string base64_encode(const std::string &in) noexcept;
+        std::string getPic_str(const Image image);
         std::string calculate_sha256(const std::string& data);
     };
 

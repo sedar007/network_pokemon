@@ -27,5 +27,17 @@ namespace pokemon {
         }
     }
 
+    Node_Info peer_registry::find_node_by_id(std::string_view id) const {
+        std::shared_lock lock(mutex_);
+        auto it = std::find_if(nodes_.begin(), nodes_.end(),
+            [&](const Node_Info& n) { return n.get_id() == id; });
+
+        if (it != nodes_.end()) {
+            return *it;
+        }
+        throw std::runtime_error("No such node found");
+     }
+
+
 
 }

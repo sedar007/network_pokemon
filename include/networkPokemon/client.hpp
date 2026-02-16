@@ -39,7 +39,9 @@ namespace pokemon {
 
 
         void add_new_node(std::string peer_name, std::string peer_ip, int port) noexcept;
+        void get_picture(std::string hash) noexcept;
         void get_client_id(std::string_view ip, in_port_t port) noexcept;
+        void get_client_picture(std::string hash) noexcept;
 
         std::shared_ptr<Image> add_pokemon(std::string_view name, std::string_view picturePath) noexcept;
 
