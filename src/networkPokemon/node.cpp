@@ -217,7 +217,8 @@ namespace pokemon {
 
 
     void Node::add_pokemon(std::string_view name, std::string_view picturePath) noexcept {
-        std::shared_ptr<Image> image = resourceManager.addPictureFromPath(name, picturePath, storagePath_s);
+        std::shared_ptr<Image> image = client->add_pokemon(name, picturePath);
+
         if (image == nullptr) {
             trace.print(std::cerr, "Erreur lors de l'ajout de l'image depuis le chemin : ", picturePath.data());
             return;
@@ -270,6 +271,7 @@ namespace pokemon {
                 {Image::IMAGE_NAME_KEY, i.get_name()},
                 {Image::IMAGE_EXTENSION_KEY, i.get_extension()},
                 {Image::IMAGE_HASH_KEY, i.get_hash()},
+                    {Image::IMAGE_OWNER_KEY, i.get_owner()}
         };
     }
 
@@ -277,5 +279,6 @@ namespace pokemon {
       i.set_name(j.at(Image::IMAGE_NAME_KEY).get<std::string>());
       i.set_extension(j.at(Image::IMAGE_EXTENSION_KEY).get<std::string>());
       i.set_hash(j.at(Image::IMAGE_HASH_KEY).get<std::string>());
+        i.set_owner(j.at(Image::IMAGE_OWNER_KEY).get<std::string>());
     }
 }

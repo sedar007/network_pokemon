@@ -113,9 +113,9 @@ namespace pokemon {
         std::string getPic_str(const Image image, std::string_view path);
 
 
-        std::shared_ptr<Image> addPictureFromPath(std::string_view name, std::string_view picturePath, std::string_view save_path) noexcept;
+        std::shared_ptr<Image> addPictureFromPath(std::string_view name, std::string_view owner_id, std::string_view picturePath) noexcept;
 
-        std::shared_ptr<Image> save_image(std::string_view name, std::filesystem::path image_to_save_path, std::string_view save_path) noexcept;
+        std::shared_ptr<Image> save_image(std::string_view name, std::string_view owner_id, std::filesystem::path image_to_save_path) noexcept;
         void addImage(std::shared_ptr<Image> image);
 
 

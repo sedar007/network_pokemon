@@ -5,12 +5,13 @@ namespace pokemon {
 
     class NETWORK_POKEMON_MODELS_API Image {
         public:
-            Image(std::string_view name, std::string_view extension, std::string_view hash) noexcept;
+            Image(std::string_view name, std::string_view extension, std::string_view hash, std::string_view owner) noexcept;
             Image() noexcept = default;
 
             static constexpr std::string_view IMAGE_NAME_KEY = "name";
             static constexpr std::string_view IMAGE_EXTENSION_KEY = "extension";
             static constexpr std::string_view IMAGE_HASH_KEY = "hash";
+            static constexpr std::string_view IMAGE_OWNER_KEY = "owner";
 
             [[nodiscard]] inline std::string_view get_name() const noexcept {
                 return name_s;
@@ -35,6 +36,14 @@ namespace pokemon {
             hash_s = hash;
         }
 
+        inline void set_owner(std::string_view owner) noexcept {
+            owner_s = owner;
+        }
+
+        [[nodiscard]] inline std::string_view get_owner() const noexcept {
+            return owner_s;
+        }
+
 
 
         friend std::ostream &operator<<(std::ostream &os, const Image &image) {
@@ -56,6 +65,7 @@ namespace pokemon {
         std::string name_s;
         std::string extension_s;
         std::string hash_s;
+        std::string owner_s;
 
     };
 }

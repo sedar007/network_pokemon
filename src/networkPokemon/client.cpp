@@ -631,4 +631,13 @@ void Client::addIps(const std::string &ips_str) const noexcept {
             std::cout<< SAVE_PICTURE_FAIL<<std::endl;
     }
 
+
+
+    std::shared_ptr<Image> Client::add_pokemon(std::string_view name, std::string_view picturePath) noexcept {
+        if (get_node_info() == nullptr)
+            return nullptr;
+        return  getRessource().addPictureFromPath(name, get_node_info()->get_id(), picturePath);
+
+    }
+
 }

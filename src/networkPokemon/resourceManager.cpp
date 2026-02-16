@@ -215,11 +215,11 @@ namespace pokemon {
      return "";
  }
 
-    std::shared_ptr<Image> ResourceManager::addPictureFromPath(std::string_view name, std::string_view picturePath, std::string_view save_path) noexcept {
+    std::shared_ptr<Image> ResourceManager::addPictureFromPath(std::string_view name, std::string_view owner_id, std::string_view picturePath) noexcept {
         std::lock_guard<std::mutex> lock(mutex);
         try {
             std::filesystem::path path(picturePath);
-            return save_image(name, path, save_path);
+            return save_image(name,owner_id, path);
 
         } catch (const std::exception &e) {
           //  trace.print(std::cerr, "Erreur lors de l'ajout de l'image depuis le chemin : " + picturePath + " - " + e.what());
@@ -228,7 +228,7 @@ namespace pokemon {
     }
 
 
-    std::shared_ptr<Image> ResourceManager::save_image(std::string_view name, std::filesystem::path image_to_save_path, std::string_view save_path) noexcept {
+    std::shared_ptr<Image> ResourceManager::save_image(std::string_view name, std::string_view owner_id, std::filesystem::path image_to_save_path) noexcept {
      try {
 
          if (std::filesystem::exists(image_to_save_path) && std::filesystem::is_regular_file(image_to_save_path)) {
@@ -259,7 +259,7 @@ namespace pokemon {
 
              std::string buffer(size, '\0');
              if (file.read(&buffer[0], size)) {
-                 std::string saved_name = std::format("{}{}", save_path, hash);
+                 std::string saved_name = std::format("{}{}", get_path(), hash);
                 std::filesystem::path pathr(saved_name);
 
                  std::ofstream image_saved(pathr, std::ios::binary);
@@ -270,7 +270,7 @@ namespace pokemon {
                     image_saved.write(buffer.c_str(), buffer.size());
                     image_saved.close();
 
-                 auto image = std::make_shared<Image>(name, extension, hash);
+                 auto image = std::make_shared<Image>(name, extension, hash, owner_id);
 
                  addImage(image);
                  return image;
