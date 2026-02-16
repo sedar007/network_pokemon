@@ -39,8 +39,8 @@ namespace pokemon {
 
             try {
                 Node_Info nodeInfo(id_str, name_str, ip_str, std::stoi(port_str));
-
                 client.get_peer_registry().add_node(nodeInfo);
+                client.get_storage()->addNodeToSavedList(nodeInfo);
             } catch (...) {
             }
         }
