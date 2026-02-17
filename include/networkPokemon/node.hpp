@@ -87,7 +87,7 @@ namespace pokemon {
         ResourceManager &resourceManager = ResourceManager::getInstance(); ///< Gestionnaire de ressources.
         Trace &trace = Trace::getInstance(); ///< Traceur.
         std::shared_ptr<sockpp::tcp_connector> connector; ///< Connecteur TCP partagé.
-        std::unique_ptr<Listen> listen; ///< Écouteur.
+        std::unique_ptr<Server> m_server; ///< Écouteur.
         std::unique_ptr<Client> client; ///< Client.
         std::mutex mutex; ///< Mutex pour la synchronisation.
         std::shared_ptr<storage_manager> m_storage;

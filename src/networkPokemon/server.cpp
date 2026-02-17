@@ -2,17 +2,17 @@
 
 namespace pokemon {
 
-    Listen::Listen(const in_port_t port, const std::shared_ptr<Node_Info> node_info, peer_registry& peers, image_repository& images_repository, std::shared_ptr<storage_manager> storage) noexcept
+    Server::Server(const in_port_t port, const std::shared_ptr<Node_Info> node_info, peer_registry& peers, image_repository& images_repository, std::shared_ptr<storage_manager> storage) noexcept
     : NetworkNode(port, node_info, peers, images_repository, storage)  {
         auto listenThread = connect();
         listenThread.detach();
     }
 
-    std::thread Listen::connect() {
+    std::thread Server::connect() {
         return std::thread([this] { listening(); });
     }
 
-    void Listen::listening() {
+    void Server::listening() {
         getTrace().print(std::clog, std::format(MSG_LISTENING_START, std::format(MSG_NODE_ID, getPort(), LISTEN)));
 
         // Create acceptor

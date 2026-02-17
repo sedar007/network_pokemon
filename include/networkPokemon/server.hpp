@@ -1,8 +1,8 @@
 #pragma once
 #include "networkNode.hpp"
 /**
- * @file listen.hpp
- * @brief Définition de la classe Listen.
+ * @file server.hpp
+ * @brief Définition de la classe Server.
  */
 
 
@@ -11,13 +11,13 @@ namespace pokemon {
     /**
      * @brief Classe responsable de l'écoute des connexions sur un port spécifique.
      */
-    class NETWORK_POKEMON_API Listen : public NetworkNode {
+    class NETWORK_POKEMON_API Server : public NetworkNode {
     public:
         /**
-         * @brief Constructeur de la classe Listen.
+         * @brief Constructeur de la classe Server.
          * @param port Port sur lequel écouter les connexions.
          */
-        Listen(const in_port_t port, const std::shared_ptr<Node_Info> node_info, peer_registry& peers, image_repository& images_repository, std::shared_ptr<storage_manager> storage) noexcept;
+        Server(const in_port_t port, const std::shared_ptr<Node_Info> node_info, peer_registry& peers, image_repository& images_repository, std::shared_ptr<storage_manager> storage) noexcept;
 
         /**
          * @brief Lance l'écoute des connexions sur un port spécifique dans un thread séparé.

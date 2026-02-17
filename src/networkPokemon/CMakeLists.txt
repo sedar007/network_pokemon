@@ -15,7 +15,7 @@ set(SRC
     "${SRCROOT}/networkNode.cpp"
     "${SRCROOT}/resourceManager.cpp"
     "${SRCROOT}/trace.cpp"
-    "${SRCROOT}/listen.cpp"
+    "${SRCROOT}/server.cpp"
     "${SRCROOT}/test.cpp"
     "${SRCROOT}/thread_pool.cpp"
     "${SRCROOT}/session.cpp"
