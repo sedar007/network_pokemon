@@ -5,7 +5,7 @@ namespace pokemon {
 
     }
 
-    void add_new_node_command::write(session& ss, PROTOCOL protocol, std::shared_ptr<sockpp::tcp_socket> socket) {
+    void add_new_node_command::send_to_client(session& ss, PROTOCOL protocol, std::shared_ptr<sockpp::tcp_socket> socket) {
         if (!socket || !(*socket)) {
             return;
         }

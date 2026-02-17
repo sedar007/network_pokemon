@@ -2,6 +2,13 @@
 
 namespace pokemon {
 
+    struct Node_Packet {
+        char id[37];
+        char name[32];
+        char ip[16];
+        uint16_t port;
+    };
+
     class NETWORK_POKEMON_MODELS_API Node_Info {
         public:
             Node_Info(std::string_view id, std::string_view nodeName, std::string_view ip, int port) noexcept;

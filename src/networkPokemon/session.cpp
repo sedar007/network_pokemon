@@ -50,7 +50,6 @@ namespace pokemon {
             return -1;
         }
 
-
         std::string buf_str(buf, protocolSize());
 
         std::cout << "session:: buffer: " << buf_str << std::endl;
@@ -62,27 +61,8 @@ namespace pokemon {
         getTrace().print(std::clog, std::format(MSG_SERVER_RECEIVED_QUERY, std::format(MSG_NODE_ID, getPort(), SERVER),
                                               protocol_str));
 
-        m_dispatcher.dispatch_write(*this, string_to_protocol(protocol_str), std::move(socket));
-       // m_dispatcher.dispatch_write(*this, protocolToString(PROTOCOL::GET_IPS), std::move(socket));
+        m_dispatcher.dispatch_send_to_client(*this, string_to_protocol(protocol_str), std::move(socket));
 
-        /*if (protocol_str == protocolToString(PROTOCOL::GET_IPS)) {
-            return send_msg(std::move(socket), getIpsToSend(), protocol_str );
-        }
-        if (protocol_str == protocolToString(PROTOCOL::GET_PICS)) {
-            return send_msg(std::move(socket), getPicsToSend(), protocol_str );
-        }
-
-        if (protocol_str == protocolToString(PROTOCOL::GET_ALIVE)) {
-            return send_msg(std::move(socket), std::format("{};{}", "ALIVE", getPort() ), protocol_str );
-        }
-
-        if (protocol_str == protocolToString(PROTOCOL::GET_PIC)) {
-            std::string std_send = getPicToSend(buf_str, buf);
-            if(std_send.empty()){
-                return -1;
-            }
-            return send_msg(std::move(socket), std_send, protocol_str );
-        }*/
         return 0;
     }
 
