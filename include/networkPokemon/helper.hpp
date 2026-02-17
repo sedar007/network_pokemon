@@ -84,8 +84,6 @@ namespace pokemon {
          */
         size_t protocolSize() const;
 
-        [[nodiscard]] static std::string generate_uuid_v4() noexcept;
-
 
     public:
         std::random_device rd_; ///< Générateur de nombres aléatoires.

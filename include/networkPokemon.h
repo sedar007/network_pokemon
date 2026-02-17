@@ -27,6 +27,8 @@
 
 #include "models.hpp"
 #include "networkPokemon/export.hpp"
+
+#include "networkPokemon/utils.hpp"
 #include "networkPokemon/thread_pool.hpp"
 #include "networkPokemon/const.hpp"
 #include "networkPokemon/helper.hpp"

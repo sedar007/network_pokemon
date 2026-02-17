@@ -23,7 +23,7 @@ namespace pokemon {
             m_node_info->set_ip(get_network_ip());
         }
         else {
-            m_node_info = std::make_shared<Node_Info>(Helper::generate_uuid_v4(), Node_Info::DEFAULT_NODE_NAME, get_network_ip(), find_available_port(DEFAULT_PREFERRED_PORT));
+            m_node_info = std::make_shared<Node_Info>(utils::generate_uuid_v4(), Node_Info::DEFAULT_NODE_NAME, get_network_ip(), find_available_port(DEFAULT_PREFERRED_PORT));
         }
 
         m_storage->saveNodeInfo(*m_node_info);

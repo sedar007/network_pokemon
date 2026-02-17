@@ -27,6 +27,7 @@ set(SRC
     "${SRCROOT}/alive_command.cpp"
     "${SRCROOT}/add_new_node_command.cpp"
     "${SRCROOT}/image_data_command.cpp"
+    "${SRCROOT}/utils.cpp"
 
     "${SRCROOT}/command_dispatcher.cpp"
     "${SRCROOT}/peer_registry.cpp"
