@@ -23,6 +23,7 @@ namespace pokemon {
     static constexpr int LISTEN_ERROR_CONNECTION_SLEEP_RANGE_END = 2000;
     static constexpr size_t SERVER_BUF_SIZE = 10;
     static constexpr size_t FORMATTED_NUMBER_SIZE = 6; ///< nombre de charactere de la taille des messages.
+    static constexpr size_t PROTOCOL_SIZE = 8; ///< nombre de charactere du protocole.
 
     // Exception
     static std::runtime_error MSG_ERROR_CREATING_ACCEPTOR("Error creating the acceptor");

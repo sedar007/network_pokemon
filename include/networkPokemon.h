@@ -29,14 +29,15 @@
 #include "networkPokemon/export.hpp"
 
 #include "networkPokemon/utils.hpp"
-#include "networkPokemon/thread_pool.hpp"
 #include "networkPokemon/const.hpp"
+#include "networkPokemon/thread_pool.hpp"
+
 #include "networkPokemon/helper.hpp"
 #include "networkPokemon/trace.hpp"
 #include "networkPokemon/resourceManager.hpp"
 
-#include "networkPokemon/INetworkCommand.hpp"
-#include "networkPokemon/ip_command.hpp"
+#include "networkPokemon/command/INetworkCommand.hpp"
+#include "networkPokemon/command/ip_command.hpp"
 #include "networkPokemon/alive_command.hpp"
 #include "networkPokemon/add_new_node_command.hpp"
 #include "networkPokemon/pictures_command.hpp"

@@ -16,8 +16,8 @@ namespace pokemon {
         socket->shutdown(SHUT_RDWR);
     }
 
-    void add_new_node_command::client_read(Client& client, PROTOCOL protocol, std::string_view payload) {
-        std::stringstream ss(payload.data());
+    void add_new_node_command::receive_from_server(Client& client, PROTOCOL protocol, std::shared_ptr<sockpp::tcp_connector> connector) {
+        /*std::stringstream ss(payload.data());
         std::string id;
         std::string ip;
         std::string port_str;
@@ -29,7 +29,7 @@ namespace pokemon {
         Node_Info node_info(id, "unknown", ip, std::atoi(port_str.c_str()));
 
         client.get_peer_registry().add_node(node_info);
-        client.get_storage()->addNodeToSavedList(node_info);
+        client.get_storage()->addNodeToSavedList(node_info);*/
     }
 
 }

@@ -25,10 +25,14 @@ int main(int argc, char* argv[]) {
 
     pokemon::Main main(traceLog);
 
-    auto node = std::make_unique<pokemon::Node>(); // Create a Node
+    pokemon::peer_registry peerRegistry;
+    pokemon::image_repository imageRepo(picturePath);
 
 
-    node->initialized(picturePath);
+    auto node = std::make_unique<pokemon::Node>(peerRegistry, imageRepo); // Create a Node
+
+
+    node->initialized();
 
     main.addNode(node);
 

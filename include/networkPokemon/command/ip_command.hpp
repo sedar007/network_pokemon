@@ -6,13 +6,14 @@ namespace pokemon {
         public:
             void read_and_save(Client& client, const std::string& payload) override;
             void send_to_client(session& ss, PROTOCOL protocol, std::shared_ptr<sockpp::tcp_socket> socket) override;
-            void client_read(Client &client, PROTOCOL protocol, std::string_view payload) override;
+            void receive_from_server(Client &client, PROTOCOL protocol, std::shared_ptr<sockpp::tcp_connector> connector) override;
 
 
     private:
         ResourceManager &resourceManager = ResourceManager::getInstance();
         std::string get_ip_to_send(const std::vector<Node_Info> nodes) const;
-        void send_nodes_list(std::shared_ptr<sockpp::tcp_socket> socket, const std::vector<Node_Info>& nodes);
+        void send_nodes_list(std::shared_ptr<sockpp::tcp_socket> socket, const std::vector<Node_Info>& nodes) const noexcept;
+        void receive_nodes_list(Client& client, std::shared_ptr<sockpp::tcp_connector> connector);
 
     };
 }

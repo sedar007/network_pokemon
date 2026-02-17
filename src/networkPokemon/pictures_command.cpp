@@ -25,8 +25,8 @@ namespace pokemon {
         socket->shutdown(SHUT_RDWR);
     }
 
-    void pictures_command::client_read(Client& client, PROTOCOL protocol, std::string_view payload) {
-        std::stringstream ss(payload.data());
+    void pictures_command::receive_from_server(Client& client, PROTOCOL protocol, std::shared_ptr<sockpp::tcp_connector> connector) {
+       /* std::stringstream ss(payload.data());
         std::string data;
 
         while (std::getline(ss, data, ';')) {
@@ -46,6 +46,6 @@ namespace pokemon {
                 client.get_storage()->addImageToSavedList(image);
             } catch (...) {
             }
-        }
+        }*/
     }
 }

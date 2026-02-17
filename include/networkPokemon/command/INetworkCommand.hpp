@@ -11,7 +11,8 @@ namespace pokemon {
 
         virtual void read_and_save(Client &client, const std::string &payload) = 0;
         virtual void send_to_client(session& ss, PROTOCOL protocol, std::shared_ptr<sockpp::tcp_socket> socket) = 0;
-        virtual void client_read(Client &client, PROTOCOL protocol, std::string_view payload) = 0;
+        virtual void receive_from_server(Client &client, PROTOCOL protocol, std::shared_ptr<sockpp::tcp_connector> connector) = 0;
+
 
 
     };

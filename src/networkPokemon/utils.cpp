@@ -2,7 +2,7 @@
 
 namespace pokemon {
 
-    std::string utils::generate_uuid_v4() noexcept {
+    std::string Utils::generate_uuid_v4() noexcept {
         static std::random_device rd;
         static std::mt19937 gen(rd());
         static std::uniform_int_distribution<> dis(0, 15);
@@ -25,6 +25,21 @@ namespace pokemon {
 
         return ss.str();
     }
+
+    std::string Utils::formatted_number(size_t number) noexcept {
+        return std::format("{:0{}}", number, FORMATTED_NUMBER_SIZE);
+    }
+
+
+    bool Utils::read_exact(std::shared_ptr<sockpp::tcp_connector> connector, char* buffer, size_t length) noexcept {
+        size_t total_read = 0;
+        while (total_read < length) {
+            ssize_t n = connector->read(buffer + total_read, length - total_read);
+            if (n <= 0) return false;
+            total_read += n;
+        }
+        return true;
+    };
 
 
 

@@ -8,30 +8,6 @@ namespace pokemon {
         peer_registry& peers, image_repository& images_repository, std::shared_ptr<storage_manager> storage) noexcept
         : NetworkNode(port, node_info, peers, images_repository, storage){}
 
-    /*std::thread session::run(std::unique_ptr<sockpp::tcp_socket> socket) noexcept {
-        return std::thread([this, socket = std::move(socket)]() mutable {
-            process(std::move(socket));
-        });
-    }*/
-#if 0
-    int session::process(std::unique_ptr<sockpp::tcp_socket> socket) {
-
-        if (!socket || !(*socket)) {
-            std::cout << "socket is null" << std::endl;
-        }
-        char buf[16];
-        ssize_t n = socket->read(buf, sizeof(buf));
-        std::cout << "received: " << buf << std::endl;
-        std::cout << "rec " << std::endl;
-
-        std::string std_send("cool");
-        socket->write(&std_send[0], std_send.size());
-
-        //while (socket.read(buf, sizeof(buf))) {
-          //  std::cout << "received data: " << buf << std::endl;
-        //}
-    }
-#endif
 
     int session::process(std::shared_ptr<sockpp::tcp_socket> socket) {
 
@@ -39,148 +15,20 @@ namespace pokemon {
            return -1;
         }
 
-        std::cout << "session:: connection address: " << socket->address().to_string() << std::endl;
-        char buf[protocolSize()];
-        std::string b;
+        char protocol_buf[PROTOCOL_SIZE];
 
         getTrace().print(std::clog, std::format(MSG_SERVER_RECEIVED_CONNECTION, std::format(MSG_NODE_ID, getPort(), SERVER),
                                           socket->address().to_string(), getPort()));
 
-        if (const auto res = socket->read(buf, sizeof(buf)); !res || res <= 0) {
+        if (const auto res = socket->read(protocol_buf, sizeof(protocol_buf)); !res || res <= 0) {
             return -1;
         }
 
-        std::string buf_str(buf, protocolSize());
-
-        std::cout << "session:: buffer: " << buf_str << std::endl;
-
-        std::string protocol_str(buf, protocolSize()); // get protocole
-
-        std::cout << "session:: protocol: " << protocol_str << std::endl;
-
+        std::string protocol_str(protocol_buf, PROTOCOL_SIZE);
         getTrace().print(std::clog, std::format(MSG_SERVER_RECEIVED_QUERY, std::format(MSG_NODE_ID, getPort(), SERVER),
                                               protocol_str));
 
         m_dispatcher.dispatch_send_to_client(*this, string_to_protocol(protocol_str), std::move(socket));
-
         return 0;
-    }
-
-
-    int session::send_msg(std::shared_ptr<sockpp::tcp_socket> socket, const std::string_view &msg, const std::string_view &protocol ) const noexcept {
-
-        if (!socket || !(*socket)) {
-            return -1;
-        }
-        // Renvoie une chaine de format 00XX + receivedData + std_send
-        // Pour pouvoir connaitre la taille de std_send pour creer mon buf cote client
-        // Et pouvoir idendifier la requete
-        const std::string std_send = std::format("{}{}{}", generateFormattedNumber(msg.size()), protocol, msg);
-
-        socket->write(&std_send[0], std_send.size());
-
-        if (protocol == protocolToString(PROTOCOL::GET_IPS)) {
-            getTrace().print(std::clog, std::format(MSG_SERVER_SENT_IPS_LIST, std::format(MSG_NODE_ID, getPort(), SERVER),
-                                              socket->address().to_string()));
-        }
-
-        else if (protocol == protocolToString(PROTOCOL::GET_PICS)) {
-            getTrace().print(std::clog, std::format(MSG_SERVER_SENT_PICTURES_LIST, std::format(MSG_NODE_ID, getPort(), SERVER),
-                                              socket->address().to_string()));
-        }
-        else if (protocol == protocolToString(PROTOCOL::GET_PIC)) {
-            getTrace().print(std::clog, std::format(MSG_SERVER_SENT_PICTURE, std::format(MSG_NODE_ID, getPort(), SERVER),
-                                              socket->address().to_string()));
-        }
-
-        socket->shutdown(SHUT_RDWR);
-        return 0;
-    }
-
-
-
-#if 0
-    int session::process(sockpp::tcp_socket &socket) {
-        std::string id_str("[node - " + std::to_string(getPort()) + "] - Server");
-
-        size_t sizeBuf = 512;
-        char buf[sizeBuf];
-       /* sockpp::result<size_t> res;
-
-
-        while ((res = socket.read(buf, sizeof(buf))) && res.value() > 0) {
-            std::string socketAdress(socket.address().to_string());
-            std::string std_send("");
-            std::string buf_str(buf, sizeBuf);
-
-            std::string protocoleStr(buf, protocolSize()); // get protocole
-            trace.print(std::clog, id_str + " - received " + protocoleStr + " query");
-
-            if (protocoleStr == protocolToString(PROTOCOL::GET_IPS)) {
-                std_send = getIpsToSend();
-                trace.print(std::clog, id_str + " - ports list was sent to " + socketAdress);
-            }
-            else if (protocoleStr == protocolToString(PROTOCOL::GET_PICS)) {
-                std_send = getPicsToSend();
-                trace.print(std::clog, id_str + " - Pictures list was sent to " + socketAdress);
-            }
-            else if (protocoleStr == protocolToString(PROTOCOL::GET_PIC)) {
-                std_send = getPicToSend(buf_str, buf);
-                if(std_send.empty()){
-                    memset(buf, 0, sizeBuf);
-                    socket.shutdown(SHUT_RDWR);
-                    return -1;
-                }
-                trace.print(std::clog, id_str + " - Picture was sent to " + socketAdress);
-            }
-
-            // Renvoie une chaine de format 00XX + receivedData + std_send
-            // Pour pouvoir connaitre la taille de std_send pour creer mon buf cote client
-            // Et pouvoir idendifier la requete
-            std_send = generateFormattedNumber(std_send.size()) + protocoleStr + std_send;
-            socket.write(&std_send[0], std_send.size());
-            break;
-        }*/
-        memset(buf, 0, sizeBuf);
-        socket.shutdown(SHUT_RDWR);
-        return 0;
-    }
-#endif
-
-
-    std::string session::getPicToSend(const std::string &buf_str, const char *buf) const{
-        // sizePictureHash + pictureHash +  sizePictureName  + pictureName + sizeExtention  + extention
-        std::string str("");
-        size_t pos = protocolSize();
-
-        std::string sizeHash_str = buf_str.substr(pos, FORMATTED_NUMBER_SIZE);  // sizePictureHash : str
-        pos += FORMATTED_NUMBER_SIZE;
-        getTrace().print(std::clog, sizeHash_str);
-        size_t sizeHash;
-        try {
-            sizeHash = std::stoi(sizeHash_str); // sizePictureHash : size_t
-            std::string pic_hash = buf_str.substr(pos, sizeHash); // pictureHash : str
-            pos += sizeHash;
-            getTrace().print(std::clog, pic_hash);
-
-            size_t a = pos;
-            std::string sizePicName_str = buf_str.substr(pos, FORMATTED_NUMBER_SIZE); // sizePictureName : str
-            pos += FORMATTED_NUMBER_SIZE;
-            size_t sizePicName = std::stoi(sizePicName_str); // sizePictureName : size_t
-            pos += sizePicName;
-
-            std::string sizePicExtension_str = buf_str.substr(pos, FORMATTED_NUMBER_SIZE); // sizeExtention : str
-            pos += FORMATTED_NUMBER_SIZE;
-            size_t sizeExtension = std::stoi(sizePicExtension_str); // sizeExtention : size_t
-            pos += sizeExtension;
-
-            std::string nameAndExtension(buf, a, pos); //
-
-            return nameAndExtension ;
-        }
-        catch (const std::exception &e) {
-            return "";
-        }
-
     }
 }

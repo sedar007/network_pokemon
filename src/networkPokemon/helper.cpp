@@ -54,6 +54,8 @@ namespace pokemon {
     }
 
     PROTOCOL Helper::string_to_protocol(std::string_view s) const {
+        if (s == "GET_IPS_")
+            return PROTOCOL::GET_IPS;
         if (s == "GETALIVE")
             return PROTOCOL::GET_ALIVE;
         if (s == "GET_ID__")
@@ -62,7 +64,7 @@ namespace pokemon {
             return PROTOCOL::GET_PICS;
         if (s=="GET_PIC_")
             return PROTOCOL::GET_PIC;
-        return PROTOCOL::GET_IPS; // Valeur par défaut, à adapter selon les besoins
+        return PROTOCOL::UNKNOWN;
     }
 
 

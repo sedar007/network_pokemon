@@ -1,5 +1,6 @@
 [
     {
+        "id": "3023",
         "nodeIp": "127.0.0.1",
         "nodeName": "network",
         "nodePort": 3023

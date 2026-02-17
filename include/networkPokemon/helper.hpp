@@ -6,7 +6,7 @@
 
 namespace pokemon {
     enum class PROTOCOL {
-        GET_IPS, GET_PICS, GET_PIC, GET_ALIVE, GET_ID
+        GET_IPS, GET_PICS, GET_PIC, GET_ALIVE, GET_ID, UNKNOWN
     };
 
     /**

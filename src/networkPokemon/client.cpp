@@ -202,58 +202,53 @@ namespace pokemon {
     int Client::start(std::string_view neighbour_ip, in_port_t neighbour_port, std::string_view msg) noexcept {
     try {
 
-        std::string ip_str(neighbour_ip);
         std::string knowPortStr = std::to_string(neighbour_port);
-
-        sockpp::tcp_connector connector;
+        std::string ip_str(neighbour_ip);
+        auto connector = std::make_shared<sockpp::tcp_connector>();
 
         getTrace().print(std::clog, std::format(MSG_CLIENT_TRYING_TO_CONNECT,
                                     std::format(MSG_NODE_ID, getPort(), CLIENT), knowPortStr));
 
 
-        if (!connector.connect(sockpp::inet_address(ip_str, neighbour_port))) {
+        if (!connector->connect(sockpp::inet_address(ip_str, neighbour_port))) {
             getTrace().print(std::cerr, std::format(MSG_CLIENT_ERROR_CONNECTING,
                                         std::format(MSG_NODE_ID, getPort(), CLIENT), neighbour_ip, neighbour_port));
-            return -1; // Pas besoin de shutdown si connect a échoué
+            return -1;
         }
 
         getTrace().print(std::clog, std::format(MSG_CLIENT_CONNECTED,
                                     std::format(MSG_NODE_ID, getPort(), CLIENT), neighbour_ip, neighbour_port));
 
 
-        if (auto res = connector.write(msg.data(), msg.size()); res != msg.size()) {
+        if (auto res = connector->write(msg.data(), msg.size()); res != msg.size()) {
             getTrace().print(std::cerr, std::format(MSG_CLIENT_ERROR_WRITING_TCP_STREAM,
-                                        std::format(MSG_NODE_ID, getPort(), CLIENT), connector.last_error_str()));
-            connector.shutdown(SHUT_RDWR);
+                                        std::format(MSG_NODE_ID, getPort(), CLIENT), connector->last_error_str()));
+            connector->shutdown(SHUT_RDWR);
             return 1;
         }
 
-        auto read_exact = [&](char* buffer, size_t length) -> bool {
-            size_t total_read = 0;
-            while (total_read < length) {
-                ssize_t n = connector.read(buffer + total_read, length - total_read);
-                if (n <= 0) return false; // Erreur ou déconnexion
-                total_read += n;
-            }
-            return true;
-        };
+        PROTOCOL protocol = string_to_protocol(msg);
 
-        char sizeMsg[FORMATTED_NUMBER_SIZE];
-        if (!read_exact(sizeMsg, FORMATTED_NUMBER_SIZE)) {
-            getTrace().print(std::cerr, std::format(MSG_CLIENT_ERROR_READING_TCP_STREAM,
-                                        std::format(MSG_NODE_ID, getPort(), CLIENT), "Read Size Failed"));
-            connector.shutdown(SHUT_RDWR);
+        if (protocol == PROTOCOL::UNKNOWN) {
+            connector->shutdown(SHUT_RDWR);
             return 1;
         }
 
-        // B. Lecture du protocole
+        m_dispatcher.dispatch_client_read(*this, protocol , connector);
+
+
+
+        // read
+
+
+      /*  // B. Lecture du protocole
         size_t pSize = protocolSize();
         // Utilisation d'un vector pour garantir la sécurité mémoire, ou buffer fixe si pSize est constant petite
         std::vector<char> protocolBuf(pSize);
         if (!read_exact(protocolBuf.data(), pSize)) {
             getTrace().print(std::cerr, std::format(MSG_CLIENT_ERROR_READING_TCP_STREAM,
                                         std::format(MSG_NODE_ID, getPort(), CLIENT), "Read Protocol Failed"));
-            connector.shutdown(SHUT_RDWR);
+            connector->shutdown(SHUT_RDWR);
             return 1;
         }
         std::string protocole(protocolBuf.begin(), protocolBuf.end());
@@ -267,7 +262,7 @@ namespace pokemon {
         catch (const std::exception& e) {
             getTrace().print(std::cerr, std::format(MSG_CLIENT_ERROR_CONVERTING_SIZE,
                                         std::format(MSG_NODE_ID, getPort(), CLIENT), std::string(sizeMsg, FORMATTED_NUMBER_SIZE)));
-            connector.shutdown(SHUT_RDWR);
+            connector->shutdown(SHUT_RDWR);
             return 1;
         }
 
@@ -277,13 +272,12 @@ namespace pokemon {
         if (!read_exact(msg_buf.data(), t)) {
             getTrace().print(std::cerr, std::format(MSG_CLIENT_ERROR_READING_TCP_STREAM,
                                         std::format(MSG_NODE_ID, getPort(), CLIENT), "Read Body Failed"));
-            connector.shutdown(SHUT_RDWR);
+            connector->shutdown(SHUT_RDWR);
             return 1;
         }
 
         std::string msg_str(msg_buf.begin(), msg_buf.end());
 
-        m_dispatcher.dispatch_client_read(*this, string_to_protocol(protocole), msg_str);
 
         /*
         if (protocole == protocolToString(PROTOCOL::GET_IPS)) {
@@ -299,7 +293,7 @@ namespace pokemon {
         //m_dispatcher.dispatch_read(*this, protocole, msg_str);
 
         // Fermeture propre
-        connector.shutdown(SHUT_RDWR);
+        connector->shutdown(SHUT_RDWR);
         return 0;
 
     } catch (const std::exception& e) {

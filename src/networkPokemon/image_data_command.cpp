@@ -65,8 +65,8 @@ namespace pokemon {
         socket->shutdown(SHUT_RDWR);
     }
 
-    void image_data_command::client_read(Client& client, PROTOCOL protocol, std::string_view payload) {
-        std::stringstream ss(payload.data());
+    void image_data_command::receive_from_server(Client& client, PROTOCOL protocol, std::shared_ptr<sockpp::tcp_connector> connector) {
+       /* std::stringstream ss(payload.data());
         std::string hash;
         std::string data;
 
@@ -75,7 +75,7 @@ namespace pokemon {
 
         image_cache cache(hash, data);
         //client.get_images_repository().add(image);
-        client.get_storage()->addImageCacheToSavedList(cache);
+        client.get_storage()->addImageCacheToSavedList(cache);*/
 
     }
 

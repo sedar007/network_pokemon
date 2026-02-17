@@ -1,4 +1,4 @@
-#include "pch.h"
+#include "../pch.h"
 
 namespace pokemon {
 
@@ -19,10 +19,10 @@ namespace pokemon {
         }
     }
 
-    void command_dispatcher::dispatch_client_read(Client& client,PROTOCOL protocol, std::string_view payload) {
+    void command_dispatcher::dispatch_client_read(Client& client,PROTOCOL protocol, std::shared_ptr<sockpp::tcp_connector> connector) {
         auto it = m_commands.find(protocol);
         if (it != m_commands.end()) {
-            it->second->client_read(client, protocol, payload);
+            it->second->receive_from_server(client, protocol, connector);
         }
     }
 

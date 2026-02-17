@@ -17,8 +17,8 @@ namespace pokemon {
         socket->shutdown(SHUT_RDWR);
     }
 
-    void alive_command::client_read(Client& client, PROTOCOL protocol, std::string_view payload) {
-        std::stringstream ss(payload.data());
+    void alive_command::receive_from_server(Client& client, PROTOCOL protocol, std::shared_ptr<sockpp::tcp_connector> connector) {
+       /* std::stringstream ss(payload.data());
         std::string alive;
         std::string ip;
         std::string port_str;
@@ -31,7 +31,7 @@ namespace pokemon {
         if (alive == "ALIVE") {
             client.get_peer_registry().set_node_alive(ip, port, true);
             client.getTrace().print(std::cout, std::format("{}:{} is up", ip ,port_str));
-        }
+        }*/
     }
 
 
