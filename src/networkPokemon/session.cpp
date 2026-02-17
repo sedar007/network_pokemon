@@ -4,17 +4,17 @@
 using namespace std::chrono_literals;
 namespace pokemon {
 
-    Server::Server(in_port_t port, const std::shared_ptr<Node_Info> node_info,
+    session::session(in_port_t port, const std::shared_ptr<Node_Info> node_info,
         peer_registry& peers, image_repository& images_repository, std::shared_ptr<storage_manager> storage) noexcept
         : NetworkNode(port, node_info, peers, images_repository, storage){}
 
-    /*std::thread Server::run(std::unique_ptr<sockpp::tcp_socket> socket) noexcept {
+    /*std::thread session::run(std::unique_ptr<sockpp::tcp_socket> socket) noexcept {
         return std::thread([this, socket = std::move(socket)]() mutable {
             process(std::move(socket));
         });
     }*/
 #if 0
-    int Server::process(std::unique_ptr<sockpp::tcp_socket> socket) {
+    int session::process(std::unique_ptr<sockpp::tcp_socket> socket) {
 
         if (!socket || !(*socket)) {
             std::cout << "socket is null" << std::endl;
@@ -33,13 +33,13 @@ namespace pokemon {
     }
 #endif
 
-    int Server::process(std::shared_ptr<sockpp::tcp_socket> socket) {
+    int session::process(std::shared_ptr<sockpp::tcp_socket> socket) {
 
         if (!socket || !(*socket)) {
            return -1;
         }
 
-        std::cout << "server:: connection address: " << socket->address().to_string() << std::endl;
+        std::cout << "session:: connection address: " << socket->address().to_string() << std::endl;
         char buf[protocolSize()];
         std::string b;
 
@@ -53,11 +53,11 @@ namespace pokemon {
 
         std::string buf_str(buf, protocolSize());
 
-        std::cout << "Server:: buffer: " << buf_str << std::endl;
+        std::cout << "session:: buffer: " << buf_str << std::endl;
 
         std::string protocol_str(buf, protocolSize()); // get protocole
 
-        std::cout << "Server:: protocol: " << protocol_str << std::endl;
+        std::cout << "session:: protocol: " << protocol_str << std::endl;
 
         getTrace().print(std::clog, std::format(MSG_SERVER_RECEIVED_QUERY, std::format(MSG_NODE_ID, getPort(), SERVER),
                                               protocol_str));
@@ -87,7 +87,7 @@ namespace pokemon {
     }
 
 
-    int Server::send_msg(std::shared_ptr<sockpp::tcp_socket> socket, const std::string_view &msg, const std::string_view &protocol ) const noexcept {
+    int session::send_msg(std::shared_ptr<sockpp::tcp_socket> socket, const std::string_view &msg, const std::string_view &protocol ) const noexcept {
 
         if (!socket || !(*socket)) {
             return -1;
@@ -120,7 +120,7 @@ namespace pokemon {
 
 
 #if 0
-    int Server::process(sockpp::tcp_socket &socket) {
+    int session::process(sockpp::tcp_socket &socket) {
         std::string id_str("[node - " + std::to_string(getPort()) + "] - Server");
 
         size_t sizeBuf = 512;
@@ -168,7 +168,7 @@ namespace pokemon {
 #endif
 
 
-    std::string Server::getPicToSend(const std::string &buf_str, const char *buf) const{
+    std::string session::getPicToSend(const std::string &buf_str, const char *buf) const{
         // sizePictureHash + pictureHash +  sizePictureName  + pictureName + sizeExtention  + extention
         std::string str("");
         size_t pos = protocolSize();

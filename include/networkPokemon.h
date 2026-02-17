@@ -47,7 +47,7 @@
 #include "networkPokemon/image_repository.hpp"
 #include "networkPokemon/networkNode.hpp"
 #include "networkPokemon/client.hpp"
-#include "networkPokemon/server.hpp"
+#include "networkPokemon/session.hpp"
 #include "networkPokemon/listen.hpp"
 #include "networkPokemon/test.hpp"
 

@@ -5,12 +5,12 @@ namespace pokemon {
 
     }
 
-    void add_new_node_command::write(Server& server, PROTOCOL protocol, std::shared_ptr<sockpp::tcp_socket> socket) {
+    void add_new_node_command::write(session& ss, PROTOCOL protocol, std::shared_ptr<sockpp::tcp_socket> socket) {
         if (!socket || !(*socket)) {
             return;
         }
-        std::string msg = std::format("{};{}", server.get_id(), socket->address().to_string());
-        const std::string std_send = std::format("{}{}{}", server.generateFormattedNumber(msg.size()), server.protocolToString(protocol), msg);
+        std::string msg = std::format("{};{}", ss.get_id(), socket->address().to_string());
+        const std::string std_send = std::format("{}{}{}", ss.generateFormattedNumber(msg.size()), ss.protocolToString(protocol), msg);
         std::cout << std_send << std::endl;
         socket->write(&std_send[0], std_send.size());
         socket->shutdown(SHUT_RDWR);

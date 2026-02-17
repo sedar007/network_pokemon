@@ -5,7 +5,7 @@ namespace pokemon {
 
     }
 
-    void image_data_command::write(Server& server, PROTOCOL protocol, std::shared_ptr<sockpp::tcp_socket> socket) {
+    void image_data_command::write(session& ss, PROTOCOL protocol, std::shared_ptr<sockpp::tcp_socket> socket) {
         if (!socket || !(*socket)) {
             return;
         }
@@ -48,18 +48,18 @@ namespace pokemon {
         }
 
         std::string hash(hashBuf.begin(), hashBuf.end());
-        auto image = server.get_images_repository().find_image(hash);
+        auto image = ss.get_images_repository().find_image(hash);
 
         if (!image.has_value()) {
             socket->shutdown(SHUT_RDWR);
             return;
         }
 
-        std::string data = server.get_images_repository().get_picture_base64(image.value());
+        std::string data = ss.get_images_repository().get_picture_base64(image.value());
 
 
         std::string msg = std::format("{};{}", image->get_hash(),data);
-        const std::string std_send = std::format("{}{}{}", server.generateFormattedNumber(msg.size()), server.protocolToString(protocol), msg);
+        const std::string std_send = std::format("{}{}{}", ss.generateFormattedNumber(msg.size()), ss.protocolToString(protocol), msg);
         std::cout << std_send << std::endl;
         socket->write(&std_send[0], std_send.size());
         socket->shutdown(SHUT_RDWR);

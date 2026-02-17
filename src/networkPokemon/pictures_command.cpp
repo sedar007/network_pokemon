@@ -13,13 +13,13 @@ namespace pokemon {
         return str;
     }
 
-    void pictures_command::write(Server& server, PROTOCOL protocol, std::shared_ptr<sockpp::tcp_socket> socket) {
+    void pictures_command::write(session& ss, PROTOCOL protocol, std::shared_ptr<sockpp::tcp_socket> socket) {
         if (!socket || !(*socket)) {
             return;
         }
 
-        std::string msg = get_pictures_to_send(server.get_images_repository().get_images());
-        const std::string std_send = std::format("{}{}{}", server.generateFormattedNumber(msg.size()), server.protocolToString(protocol), msg);
+        std::string msg = get_pictures_to_send(ss.get_images_repository().get_images());
+        const std::string std_send = std::format("{}{}{}", ss.generateFormattedNumber(msg.size()), ss.protocolToString(protocol), msg);
         std::cout << std_send << std::endl;
         socket->write(&std_send[0], std_send.size());
         socket->shutdown(SHUT_RDWR);

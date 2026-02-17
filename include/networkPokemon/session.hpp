@@ -5,13 +5,13 @@ namespace pokemon {
     /**
      * @brief Représente un serveur pour gérer les connexions entrantes.
      */
-    class NETWORK_POKEMON_API  Server : public NetworkNode {
+    class NETWORK_POKEMON_API  session : public NetworkNode {
     public:
         /**
          * @brief Constructeur pour initialiser le serveur avec le port spécifié.
          * @param port Le numéro de port sur lequel écouter.
          */
-        Server(in_port_t port, const std::shared_ptr<Node_Info> node_info, peer_registry& peers,
+        session(in_port_t port, const std::shared_ptr<Node_Info> node_info, peer_registry& peers,
             image_repository& images_repository, std::shared_ptr<storage_manager> storage) noexcept;
 
         /**

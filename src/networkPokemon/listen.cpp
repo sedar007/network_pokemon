@@ -40,8 +40,8 @@ namespace pokemon {
                 std::cerr << "listening:: new connection : " << getPort() << " from: " << sock->peer_address() <<std::endl;
                 std::shared_ptr<sockpp::tcp_socket> sharedSock = std::move(sock);
                 auto runServerTask = [this, s = sharedSock]() {
-                    Server server(getPort(), get_node_info(), get_peer_registry(), get_images_repository(), get_storage());
-                    server.process(s);
+                    session ss(getPort(), get_node_info(), get_peer_registry(), get_images_repository(), get_storage());
+                    ss.process(s);
                 };
                 enqueue_thread(std::move(runServerTask));
             }
