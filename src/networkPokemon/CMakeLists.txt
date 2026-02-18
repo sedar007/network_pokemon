@@ -55,6 +55,7 @@ target_link_libraries(${PROJECT_NAME}-network-pokemon
         OpenSSL::Crypto
         ${PROJECT_NAME}-model
         ${PROJECT_NAME}-storage
+        ${PROJECT_NAME}-sockpp
 )
 
 target_compile_options(${PROJECT_NAME}-network-pokemon
