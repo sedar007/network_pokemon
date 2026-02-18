@@ -9,9 +9,9 @@ if not os.path.exists("build"):
 # Changement de répertoire vers le dossier "build"
 os.chdir("build")
 
-traceLog = '0'
+traceLog = '1'
 # Définition du nombre de noeuds
-NB_NODES = 1
+NB_NODES = 2
 if len(sys.argv) > 1:
     for i in range (1, len(sys.argv)):
         arg = sys.argv[i]

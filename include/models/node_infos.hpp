@@ -56,20 +56,23 @@ namespace pokemon {
                 isConnected_b = isConnected;
             }
 
-        friend std::ostream &operator<<(std::ostream &os, const Node_Info &node) {
-                os << "Node Information:\n"
-                   << "  Name: " << node.get_name() << "\n"
-                   << "  IP: " << node.get_ip() << "\n"
-                   << "  Port: " << node.get_port() << "\n";
-                   //<< "  Peer Count: " << resourceManager.getNodesInfoList().size();
-                return os;
-        }
+            [[nodiscard]] static Node_Packet to_packet(const Node_Info &node_info) noexcept;
+            [[nodiscard]] static Node_Info from_packet(const Node_Packet &packet) noexcept;
 
-        friend bool operator==(const Node_Info &lhs, const Node_Info &rhs) noexcept {
-            return lhs.get_name() == rhs.get_name() &&
-                   lhs.get_ip() == rhs.get_ip() &&
-                   lhs.get_port() == rhs.get_port();
+            friend std::ostream &operator<<(std::ostream &os, const Node_Info &node) {
+                    os << "Node Information:\n"
+                       << "  Name: " << node.get_name() << "\n"
+                       << "  IP: " << node.get_ip() << "\n"
+                       << "  Port: " << node.get_port() << "\n";
+                       //<< "  Peer Count: " << resourceManager.getNodesInfoList().size();
+                    return os;
             }
+
+            friend bool operator==(const Node_Info &lhs, const Node_Info &rhs) noexcept {
+                return lhs.get_name() == rhs.get_name() &&
+                       lhs.get_ip() == rhs.get_ip() &&
+                       lhs.get_port() == rhs.get_port();
+                }
 
     private:
         std::string id_s;
@@ -77,7 +80,6 @@ namespace pokemon {
         std::string ip_s;
         int port_i;
         bool isConnected_b;
-
 
         bool is_node_online(std::string_view ip) const noexcept;
 

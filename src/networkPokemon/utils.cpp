@@ -42,6 +42,33 @@ namespace pokemon {
     };
 
 
+    size_t Utils::get_total_bytes_from_connector(const std::shared_ptr<sockpp::tcp_connector> &connector) {
+        char sizeHeader[FORMATTED_NUMBER_SIZE];
+
+        if (!Utils::read_exact(connector, sizeHeader, FORMATTED_NUMBER_SIZE)) {
+            connector->shutdown(SHUT_RDWR);
+            throw std::runtime_error("Failed to read size header");
+        }
+
+        try {
+            return  std::stoul(std::string(sizeHeader, FORMATTED_NUMBER_SIZE));
+
+        } catch(...) {
+            connector->shutdown(SHUT_RDWR);
+            throw std::runtime_error("Failed to convert size header to number");
+        }
+    }
+
+
+    std::string Utils::safe_string(const char* data, size_t max_len) noexcept {
+        size_t len = 0;
+        while(len < max_len && data[len] != '\0') len++;
+        return std::string(data, len);
+    }
+
+
+
+
 
 
 }

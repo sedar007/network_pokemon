@@ -1,9 +1,6 @@
 #include "../pch.h"
 
 namespace pokemon {
-    void ip_command::read_and_save(Client& client, const std::string& payload) {
-
-    }
 
     void ip_command::send_to_client(session& ss, PROTOCOL protocol, std::shared_ptr<sockpp::tcp_socket> socket) {
         if (!socket || !(*socket)) {
@@ -14,7 +11,10 @@ namespace pokemon {
         socket->shutdown(SHUT_RDWR);
     }
 
-    void ip_command::receive_from_server(Client& client, PROTOCOL protocol, std::shared_ptr<sockpp::tcp_connector> connector) {
+    void ip_command::receive_from_server(Client& client, std::shared_ptr<sockpp::tcp_connector> connector) {
+        if (connector == nullptr || !(*connector)) {
+            return;
+        }
         receive_nodes_list(client, connector);
         connector->shutdown(SHUT_RDWR);
     }
@@ -27,24 +27,12 @@ namespace pokemon {
         packet_buffer.reserve(nodes.size());
 
         for (const auto& node : nodes) {
-            Node_Packet packet;
-
-            std::memset(&packet, 0, sizeof(Node_Packet));
-
-            std::strncpy(packet.id, node.get_id().data(), sizeof(packet.id) - 1);
-
-            std::strncpy(packet.name, node.get_name().data(), sizeof(packet.name) - 1);
-
-            std::strncpy(packet.ip, node.get_ip().data(), sizeof(packet.ip) - 1);
-
-            // Little Endian -> Big Endian
-            packet.port = htons(static_cast<uint16_t>(node.get_port()));
-
+            const Node_Packet packet = Node_Info::to_packet(node);
             packet_buffer.push_back(packet);
         }
 
         const size_t total_bytes = packet_buffer.size() * sizeof(Node_Packet);
-        std::string header = Utils::formatted_number(total_bytes);
+        const std::string header = Utils::formatted_number(total_bytes);
 
         socket->write(header.data(), header.size());
         socket->write(reinterpret_cast<const char*>(packet_buffer.data()), total_bytes);
@@ -52,27 +40,13 @@ namespace pokemon {
 
     void ip_command::receive_nodes_list(Client& client, std::shared_ptr<sockpp::tcp_connector> connector) {
 
-        char sizeHeader[FORMATTED_NUMBER_SIZE];
-
-        if (!Utils::read_exact(connector, sizeHeader, FORMATTED_NUMBER_SIZE)) {
-            connector->shutdown(SHUT_RDWR);
-            return;
-        }
-
-        size_t total_bytes = 0;
-        try {
-            total_bytes = std::stoul(std::string(sizeHeader, FORMATTED_NUMBER_SIZE));
-        } catch(...) {
-            connector->shutdown(SHUT_RDWR);
-            return;
-        }
+         size_t total_bytes = Utils::get_total_bytes_from_connector(connector);
 
         if (total_bytes == 0 || total_bytes % sizeof(Node_Packet) != 0) {
             if (total_bytes == 0) return;
             connector->shutdown(SHUT_RDWR);
             return;
         }
-
 
         size_t node_count = total_bytes / sizeof(Node_Packet);
         std::vector<Node_Packet> packet_buffer(node_count);

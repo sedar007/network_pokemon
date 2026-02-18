@@ -5,6 +5,7 @@
 #include "iostream"
 
 #include "models/export.hpp"
+#include "models/utils.hpp"
 #include "models/node_infos.hpp"
 #include "models/image.hpp"
 #include "models/image_cache.hpp"

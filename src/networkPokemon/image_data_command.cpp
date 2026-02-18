@@ -1,9 +1,6 @@
 #include "pch.h"
 
 namespace pokemon {
-    void image_data_command::read_and_save(Client& client, const std::string& payload) {
-
-    }
 
     void image_data_command::send_to_client(session& ss, PROTOCOL protocol, std::shared_ptr<sockpp::tcp_socket> socket) {
         if (!socket || !(*socket)) {
@@ -65,7 +62,7 @@ namespace pokemon {
         socket->shutdown(SHUT_RDWR);
     }
 
-    void image_data_command::receive_from_server(Client& client, PROTOCOL protocol, std::shared_ptr<sockpp::tcp_connector> connector) {
+    void image_data_command::receive_from_server(Client& client, std::shared_ptr<sockpp::tcp_connector> connector) {
        /* std::stringstream ss(payload.data());
         std::string hash;
         std::string data;

@@ -30,13 +30,6 @@ namespace pokemon {
         m_storage->load_nodes(peers_);
         m_storage->load_images(image_repository_);
 
-        /*std::string fileNameNode = path + nodeFile;
-        addNodesList(fileNameNode);*/
-        /*std::string fileNameImages = std::format("{}{}", path, "pokemons.txt");
-        addImagesList(fileNameImages);
-
-        resourceManager.addPicturePath(path.data());*/
-
         sockpp::initialize();
 
         m_server = std::make_unique<Server>(m_node_info->get_port(), m_node_info, peers_, image_repository_, m_storage);

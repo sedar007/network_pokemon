@@ -1,9 +1,6 @@
 #include "pch.h"
 
 namespace pokemon {
-    void pictures_command::read_and_save(Client& client, const std::string& payload) {
-
-    }
 
     std::string pictures_command::get_pictures_to_send(const std::vector<Image> images) const {
         std::string str;
@@ -25,7 +22,7 @@ namespace pokemon {
         socket->shutdown(SHUT_RDWR);
     }
 
-    void pictures_command::receive_from_server(Client& client, PROTOCOL protocol, std::shared_ptr<sockpp::tcp_connector> connector) {
+    void pictures_command::receive_from_server(Client& client, std::shared_ptr<sockpp::tcp_connector> connector) {
        /* std::stringstream ss(payload.data());
         std::string data;
 

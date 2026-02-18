@@ -236,68 +236,10 @@ namespace pokemon {
 
         m_dispatcher.dispatch_client_read(*this, protocol , connector);
 
-
-
-        // read
-
-
-      /*  // B. Lecture du protocole
-        size_t pSize = protocolSize();
-        // Utilisation d'un vector pour garantir la sécurité mémoire, ou buffer fixe si pSize est constant petite
-        std::vector<char> protocolBuf(pSize);
-        if (!read_exact(protocolBuf.data(), pSize)) {
-            getTrace().print(std::cerr, std::format(MSG_CLIENT_ERROR_READING_TCP_STREAM,
-                                        std::format(MSG_NODE_ID, getPort(), CLIENT), "Read Protocol Failed"));
-            connector->shutdown(SHUT_RDWR);
-            return 1;
-        }
-        std::string protocole(protocolBuf.begin(), protocolBuf.end());
-
-        // C. Conversion de la taille
-        size_t t = 0;
-        try {
-            // std::string(sizeMsg, len) est important car sizeMsg n'est pas forcément null-terminated
-            t = std::stoi(std::string(sizeMsg, FORMATTED_NUMBER_SIZE));
-        }
-        catch (const std::exception& e) {
-            getTrace().print(std::cerr, std::format(MSG_CLIENT_ERROR_CONVERTING_SIZE,
-                                        std::format(MSG_NODE_ID, getPort(), CLIENT), std::string(sizeMsg, FORMATTED_NUMBER_SIZE)));
-            connector->shutdown(SHUT_RDWR);
-            return 1;
-        }
-
-        // D. Lecture du corps du message
-        // Utilisation de vector au lieu de VLA (char msg_buf[t]) pour éviter Stack Overflow
-        std::vector<char> msg_buf(t);
-        if (!read_exact(msg_buf.data(), t)) {
-            getTrace().print(std::cerr, std::format(MSG_CLIENT_ERROR_READING_TCP_STREAM,
-                                        std::format(MSG_NODE_ID, getPort(), CLIENT), "Read Body Failed"));
-            connector->shutdown(SHUT_RDWR);
-            return 1;
-        }
-
-        std::string msg_str(msg_buf.begin(), msg_buf.end());
-
-
-        /*
-        if (protocole == protocolToString(PROTOCOL::GET_IPS)) {
-            addIps(msg_str);
-        }
-        else if (protocole == protocolToString(PROTOCOL::GET_PICS)) {
-            addPictures(msg_str);
-        }
-        else if (protocole == protocolToString(PROTOCOL::GET_PIC)) {
-            addPicture(msg_str);
-        }*/
-
-        //m_dispatcher.dispatch_read(*this, protocole, msg_str);
-
-        // Fermeture propre
         connector->shutdown(SHUT_RDWR);
         return 0;
 
     } catch (const std::exception& e) {
-        // Catch-all pour éviter que le thread ne fasse crasher l'appli entière
         getTrace().print(std::cerr, std::format("Exception in Client::start: {}", e.what()));
         return -1;
     }

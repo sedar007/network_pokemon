@@ -36,8 +36,6 @@ namespace pokemon {
             return *it;
         }
         throw std::runtime_error("No such node found");
-     }
-
-
+    }
 
 }

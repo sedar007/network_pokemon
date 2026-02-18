@@ -24,7 +24,7 @@ set(SRC
     "${SRCROOT}/command/ip_command.cpp"
     "${SRCROOT}/pictures_command.cpp"
     "${SRCROOT}/alive_command.cpp"
-    "${SRCROOT}/add_new_node_command.cpp"
+    "${SRCROOT}/command/add_new_node_command.cpp"
     "${SRCROOT}/image_data_command.cpp"
     "${SRCROOT}/utils.cpp"
 
