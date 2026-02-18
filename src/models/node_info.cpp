@@ -29,9 +29,9 @@ namespace pokemon {
     }
 
     Node_Info Node_Info::from_packet(const Node_Packet &packet) noexcept {
-        const std::string id = Utils_Models::safe_string(packet.id, sizeof(packet.id));
-        const std::string name = Utils_Models::safe_string(packet.name, sizeof(packet.name));
-        const std::string ip = Utils_Models::safe_string(packet.ip, sizeof(packet.ip));
+        const std::string id = safe_string(packet.id, sizeof(packet.id));
+        const std::string name = safe_string(packet.name, sizeof(packet.name));
+        const std::string ip = safe_string(packet.ip, sizeof(packet.ip));
         // Big Endian -> Little Endian
         const auto port = ntohs(packet.port);
 

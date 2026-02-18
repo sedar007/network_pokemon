@@ -3,6 +3,15 @@
 
 namespace pokemon {
 
+    struct Image_Packet {
+        char name[64];
+        char extension[8];
+        char hash[65];
+        char owner[37];
+        char size[16];
+        char size_unit[8];
+    };
+
     class NETWORK_POKEMON_MODELS_API Image {
         public:
             Image(std::string_view name, std::string_view extension, std::string_view hash,

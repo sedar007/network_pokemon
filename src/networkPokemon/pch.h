@@ -20,5 +20,8 @@
 #include "sockpp/tcp_socket.h"
 #include "sockpp/inet_address.h"
 
+#include "models.hpp"
+
+#include "network_helper.hpp"
 #include <networkPokemon.h>
 

@@ -8,6 +8,8 @@ namespace pokemon {
             void receive_from_server(Client &client, std::shared_ptr<sockpp::tcp_connector> connector) override;
 
 
+
+
     private:
         ResourceManager &resourceManager = ResourceManager::getInstance();
         std::string get_ip_to_send(const std::vector<Node_Info> nodes) const;

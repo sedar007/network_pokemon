@@ -9,7 +9,7 @@ namespace pokemon {
         uint16_t port;
     };
 
-    class NETWORK_POKEMON_MODELS_API Node_Info {
+    class NETWORK_POKEMON_MODELS_API Node_Info : public Model {
         public:
             Node_Info(std::string_view id, std::string_view nodeName, std::string_view ip, int port) noexcept;
             Node_Info() noexcept = default;

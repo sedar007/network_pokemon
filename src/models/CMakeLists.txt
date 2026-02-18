@@ -7,7 +7,7 @@ set(SRC
     "${SRCROOT}/node_info.cpp"
     "${SRCROOT}/image.cpp"
     "${SRCROOT}/image_cache.cpp"
-    "${SRCROOT}/utils.cpp"
+    "${SRCROOT}/model.cpp"
 
  )
 
