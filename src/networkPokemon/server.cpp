@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "sockpp/tcp_acceptor.hpp"
 
 namespace pokemon {
 
@@ -15,7 +16,23 @@ namespace pokemon {
     void Server::listening() {
         getTrace().print(std::clog, std::format(MSG_LISTENING_START, std::format(MSG_NODE_ID, getPort(), LISTEN)));
 
-        // Create acceptor
+
+#if 0
+        tcp::poke_net poke_net(getPort());
+        poke_net.listen([this](std::unique_ptr<tcp::IConnection> conn) {
+
+        std::shared_ptr<tcp::IConnection> sharedConn = std::move(conn);
+
+        auto runServerTask = [this, s = sharedConn]() {
+            session ss(getPort(), get_node_info(), get_peer_registry(), get_images_repository(), get_storage());
+            //ss.process(s);
+        };
+
+        enqueue_thread(std::move(runServerTask));
+    });
+
+#else
+
         sockpp::tcp_acceptor acc(getPort());
         if (!acc) {
             std::cerr << "listening:: error creating acceptor : " << getPort() <<std::endl;
@@ -28,6 +45,8 @@ namespace pokemon {
             std::cout << "listening:: listening... port: "<<getPort()<< std::endl;
         //    getTrace().print(std::cerr, std::format(MSG_LISTENING_AWAITING_CONNECTION, std::format(MSG_NODE_ID, getPort(), LISTEN), acc.last_error_str()));
             std::unique_ptr<sockpp::tcp_socket> sock = std::make_unique<sockpp::tcp_socket>(acc.accept()) ;
+
+            auto test = acc.accept();
 
             if (!sock) {
                 std::cerr << "listening:: failed to accept new connection : " << getPort() <<std::endl;
@@ -46,5 +65,8 @@ namespace pokemon {
                 enqueue_thread(std::move(runServerTask));
             }
         }
+#endif
+
     }
+
 }

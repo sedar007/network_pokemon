@@ -2,8 +2,8 @@
 
 namespace pokemon::tcp
 {
-    tcp_acceptor::tcp_acceptor(in_port_t port)
-        : m_pimpl(std::make_unique<impl>(port))
+    tcp_acceptor::tcp_acceptor(const int port)
+        : m_pimpl(std::make_unique<impl>(static_cast<in_port_t>(port)))
     {
     }
 
@@ -12,9 +12,6 @@ namespace pokemon::tcp
 
     }
 
-    void tcp_acceptor::test() {
-        m_pimpl->test();
-    }
 
     tcp_acceptor::tcp_acceptor(tcp_acceptor&&) noexcept = default;
     tcp_acceptor& tcp_acceptor::operator=(tcp_acceptor&&) noexcept = default;

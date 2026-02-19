@@ -2,7 +2,7 @@
 
 namespace pokemon::tcp
 {
-	class tcp_acceptor::impl
+	class poke_net::impl
 	{
 	public:
 
@@ -13,6 +13,7 @@ namespace pokemon::tcp
 		impl& operator=(const impl&) = delete;
 		impl(impl&&) noexcept = default;
 		impl& operator=(impl&&) noexcept = default;
+	    void listen(std::function<void(std::unique_ptr<IConnection>)> on_connect);
 
 	private:
 	    std::unique_ptr<sockpp::tcp_acceptor> m_acceptor;

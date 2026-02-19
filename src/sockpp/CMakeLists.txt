@@ -10,6 +10,8 @@ set(SRC
         "${SRCROOT}/pch.cpp"
         "${SRCROOT}/tcp_acceptor.cpp"
         "${SRCROOT}/tcp_acceptor.impl.cpp"
+        "${SRCROOT}/poke_net.cpp"
+        "${SRCROOT}/poke_net.impl.cpp"
 
 )
 

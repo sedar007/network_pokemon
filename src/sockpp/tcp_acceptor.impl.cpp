@@ -9,7 +9,4 @@ namespace pokemon::tcp{
     tcp_acceptor::impl::~impl(){
     }
 
-    void tcp_acceptor::impl::test() {
-        std::cout << "test" << std::endl;
-    }
 }
