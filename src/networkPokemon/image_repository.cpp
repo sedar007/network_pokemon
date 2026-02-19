@@ -89,7 +89,7 @@ namespace pokemon {
                     return image;
                 }
             }
-        } catch (const std::exception &e) {
+        } catch (const std::exception) {
             return nullptr;
         }
 
@@ -100,7 +100,7 @@ namespace pokemon {
              std::filesystem::path path(picturePath);
              return save_image(name,owner_id, path);
 
-         } catch (const std::exception &e) {
+         } catch (const std::exception) {
              //  trace.print(std::cerr, "Erreur lors de l'ajout de l'image depuis le chemin : " + picturePath + " - " + e.what());
              return nullptr;
          }

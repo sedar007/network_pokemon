@@ -220,7 +220,7 @@ namespace pokemon {
                                     std::format(MSG_NODE_ID, getPort(), CLIENT), neighbour_ip, neighbour_port));
 
 
-        if (auto res = connector->write(msg.data(), msg.size()); res != msg.size()) {
+        if (auto res = connector->write(msg.data(), msg.size()); static_cast<size_t>(res) != msg.size()) {
             getTrace().print(std::cerr, std::format(MSG_CLIENT_ERROR_WRITING_TCP_STREAM,
                                         std::format(MSG_NODE_ID, getPort(), CLIENT), connector->last_error_str()));
             connector->shutdown(SHUT_RDWR);
@@ -398,7 +398,7 @@ if (!read_exact(connector, msg_buf.data(), t)) {
             // ---------------------------------------------------------
 
             std::string msg = "Are you alive?";
-            if (auto res = connector.write(msg.data(), msg.size()); res != msg.size()) {
+            if (auto res = connector.write(msg.data(), msg.size()); static_cast<size_t>(res) != msg.size()) {
                 getTrace().print(std::cerr, std::format(MSG_CLIENT_ERROR_WRITING_TCP_STREAM,
                                             std::format(MSG_NODE_ID, getPort(), CLIENT), connector.last_error_str()));
                 connector.shutdown(SHUT_RDWR);
@@ -441,7 +441,7 @@ if (!read_exact(connector, msg_buf.data(), t)) {
                 // std::string(sizeMsg, len) est important car sizeMsg n'est pas forcément null-terminated
                 t = std::stoi(std::string(sizeMsg, FORMATTED_NUMBER_SIZE));
             }
-            catch (const std::exception& e) {
+            catch (const std::exception) {
                 getTrace().print(std::cerr, std::format(MSG_CLIENT_ERROR_CONVERTING_SIZE,
                                             std::format(MSG_NODE_ID, getPort(), CLIENT), std::string(sizeMsg, FORMATTED_NUMBER_SIZE)));
                 connector.shutdown(SHUT_RDWR);

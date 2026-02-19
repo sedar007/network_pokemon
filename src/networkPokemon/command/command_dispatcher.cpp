@@ -9,7 +9,7 @@ namespace pokemon {
     void command_dispatcher::dispatch_send_to_client(session& ss, PROTOCOL protocol, std::shared_ptr<sockpp::tcp_socket> socket) {
         auto it = m_commands.find(protocol);
         if (it != m_commands.end()) {
-            it->second->send_to_client(ss, protocol, std::move(socket));
+            it->second->send_to_client(ss, std::move(socket));
         }
     }
 
