@@ -6,7 +6,13 @@
 #include <iomanip>
 #include <sstream>
 #include <iomanip>
-#include <sys/_types/_in_port_t.h>
+
+#ifdef _WIN32
+    #include <winsock2.h>
+    typedef u_short in_port_t;
+#else
+#include <netinet/in.h>
+#endif
 
 #include "sockpp/tcp_connector.h"
 #include "sockpp/tcp_socket.h"
@@ -50,7 +56,6 @@
 #include "networkPokemon/client.hpp"
 #include "networkPokemon/session.hpp"
 #include "networkPokemon/server.hpp"
-#include "networkPokemon/test.hpp"
 
 
 #include "networkPokemon/node.hpp"

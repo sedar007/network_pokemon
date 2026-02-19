@@ -19,7 +19,7 @@ namespace pokemon {
         static constexpr std::string_view EN0_INTERFACE = "en0";
         static constexpr std::string_view LOCALHOST_IP = "127.0.0.1";
         static constexpr std::string_view Lo_0_INTERFACE = "lo0";
-        static constexpr int DEFAULT_PREFERRED_PORT = 49153;
+        static constexpr in_port_t DEFAULT_PREFERRED_PORT = 49153;
 
         void set_node_info(std::string_view node_name) noexcept;
 
@@ -27,8 +27,8 @@ namespace pokemon {
             return *m_node_info;
         }
 
-        void add_new_peer(std::string peer_name, std::string peer_port) noexcept;
-        void add_peer(std::string peer_name, std::string peer_ip, int port) noexcept;
+        void add_new_peer(std::string peer_port) noexcept;
+        void add_peer(std::string peer_ip, in_port_t port) noexcept;
 
         [[nodiscard]] std::vector<Image> get_image_list() const noexcept {
             return image_repository_.get_images();
@@ -113,7 +113,7 @@ namespace pokemon {
          *@return std::string
          */
         std::string get_network_ip() const;
-        int find_available_port(int preferred_port);
+        in_port_t find_available_port(in_port_t preferred_port);
         bool is_node_online(std::string_view ip) const noexcept;
     };
 

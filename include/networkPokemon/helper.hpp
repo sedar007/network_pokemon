@@ -60,24 +60,6 @@ namespace pokemon {
         PROTOCOL string_to_protocol(std::string_view s) const;
 
 
-
-        /**
-         * @brief Extrait l'adresse IP et le port d'une chaîne d'adresse au format "IP:port".
-         * @param str Chaîne d'adresse à analyser.
-         * @param ip Variable de sortie pour l'adresse IP extraite.
-         * @param port Variable de sortie pour le port extrait.
-         * @return 0 si tout s'est bien passé, -1 si il y a eu une erreur
-         */
-        int getPort_Ip(const std::string &str, std::string &ip, in_port_t &port);
-
-        /**
-         * @brief Concatène une adresse IP et un port pour former une chaîne d'adresse.
-         * @param ip Adresse IP.
-         * @param port Port.
-         * @return Chaîne d'adresse au format "IP:port".
-         */
-        std::string getAdress(const std::string &ip, const in_port_t port) const;
-
         /**
          * @brief Retourne le nombre de charactere de la taille des requetes.
          * @return Taille du charactere.

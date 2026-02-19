@@ -1,7 +1,6 @@
 #include "networkPokemon.h"
 
 int main(int argc, char* argv[]) {
-
     if(argc < 5){
         std::cerr << "Argument error, requires: <comm> -d <filePath> -l <nodeFile>" << std::endl;
         return -1;

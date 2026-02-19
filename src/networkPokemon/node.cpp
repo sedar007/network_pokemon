@@ -1,10 +1,16 @@
 #include "pch.h"
-#include <sys/types.h>
-#include <ifaddrs.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <cstring>
-#include <iostream>
+#ifdef _WIN32
+    #include <winsock2.h>
+    #include <ws2tcpip.h>
+    #include <iphlpapi.h>
+    #pragma comment(lib, "iphlpapi.lib")
+    #pragma comment(lib, "ws2_32.lib")
+#else
+    #include <sys/types.h>
+    #include <ifaddrs.h>
+    #include <netinet/in.h>
+    #include <arpa/inet.h>
+#endif
 
 using namespace std::chrono_literals;
 
@@ -67,10 +73,37 @@ namespace pokemon {
         }
     }
 
-    std::string Node::get_network_ip() const {
+  std::string Node::get_network_ip() const {
+        std::string ipAddress = LOCALHOST_IP.data();
+
+#ifdef _WIN32
+        ULONG outBufLen = 15000;
+        PIP_ADAPTER_ADDRESSES pAddresses = (IP_ADAPTER_ADDRESSES *)malloc(outBufLen);
+        if (pAddresses == nullptr) return ipAddress;
+
+        ULONG flags = GAA_FLAG_SKIP_ANYCAST | GAA_FLAG_SKIP_MULTICAST | GAA_FLAG_SKIP_DNS_SERVER;
+
+        if (GetAdaptersAddresses(AF_INET, flags, NULL, pAddresses, &outBufLen) == NO_ERROR) {
+            PIP_ADAPTER_ADDRESSES pCurrAddresses = pAddresses;
+            while (pCurrAddresses) {
+                if (pCurrAddresses->IfType != IF_TYPE_SOFTWARE_LOOPBACK && pCurrAddresses->FirstUnicastAddress != nullptr) {
+
+                    struct sockaddr_in* sockaddr_ipv4 = reinterpret_cast<struct sockaddr_in*>(pCurrAddresses->FirstUnicastAddress->Address.lpSockaddr);
+                    char addressBuffer[INET_ADDRSTRLEN];
+                    inet_ntop(AF_INET, &(sockaddr_ipv4->sin_addr), addressBuffer, INET_ADDRSTRLEN);
+
+                    ipAddress = addressBuffer;
+
+                    break;
+                }
+                pCurrAddresses = pCurrAddresses->Next;
+            }
+        }
+        free(pAddresses);
+
+#else
         struct ifaddrs *interfaces = nullptr;
         struct ifaddrs *temp_addr = nullptr;
-        std::string ipAddress = LOCALHOST_IP.data();
         int success = 0;
 
         success = getifaddrs(&interfaces);
@@ -78,7 +111,7 @@ namespace pokemon {
         if (success == 0) {
             temp_addr = interfaces;
             while (temp_addr != nullptr) {
-                if (temp_addr->ifa_addr->sa_family == AF_INET) {
+                if (temp_addr->ifa_addr != nullptr && temp_addr->ifa_addr->sa_family == AF_INET) {
                     std::string interfaceName = temp_addr->ifa_name;
                     if (interfaceName == EN0_INTERFACE || (interfaceName != Lo_0_INTERFACE && ipAddress == LOCALHOST_IP)) {
                         char addressBuffer[INET_ADDRSTRLEN];
@@ -93,11 +126,15 @@ namespace pokemon {
                 temp_addr = temp_addr->ifa_next;
             }
         }
-        freeifaddrs(interfaces);
+        if (interfaces) {
+            freeifaddrs(interfaces);
+        }
+#endif
+
         return ipAddress;
     }
 
-    int Node::find_available_port(int preferred_port) {
+    in_port_t Node::find_available_port(in_port_t preferred_port) {
        /* int sock = socket(AF_INET, SOCK_STREAM, 0);
         if (sock < 0) return 0;
 
@@ -123,12 +160,12 @@ namespace pokemon {
         return preferred_port;
     }
 
-    void Node::add_new_peer(std::string peer_name, std::string peer_ip) noexcept {
-       add_peer(peer_name, peer_ip, find_available_port(DEFAULT_PREFERRED_PORT));
+    void Node::add_new_peer(std::string peer_ip) noexcept {
+       add_peer( peer_ip, find_available_port(DEFAULT_PREFERRED_PORT));
     }
 
-    void Node::add_peer(std::string peer_name, std::string peer_ip, int port) noexcept {
-        client->add_new_node(peer_name, peer_ip, port);
+    void Node::add_peer(std::string peer_ip, in_port_t port) noexcept {
+        client->add_new_node(peer_ip, port);
     }
 
 
@@ -158,7 +195,7 @@ namespace pokemon {
         }
     }
 
-    void Node::remove_pokemon(std::string_view name, std::string_view picturePath) noexcept {
+    void Node::remove_pokemon([[maybe_unused]] std::string_view name, [[maybe_unused]] std::string_view picturePath) noexcept {
 
     }
 }

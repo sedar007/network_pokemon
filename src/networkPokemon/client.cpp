@@ -40,7 +40,7 @@ namespace pokemon {
     }*/
 
 
-    void Client::add_new_node(std::string peer_name, std::string peer_ip, int port) noexcept {
+    void Client::add_new_node(std::string peer_ip, in_port_t port) noexcept {
         auto get_id = std::thread([this, peer_ip, port] { get_client_id(peer_ip, port); });
         get_id.detach();
     }
@@ -135,7 +135,7 @@ namespace pokemon {
             std::string msg = std::format("{}{}{}", protocolToString(PROTOCOL::GET_PIC), generateFormattedNumber(hash.size()), hash);
 
             auto task = [this, ip = nodeInfo.get_ip(), port = nodeInfo.get_port(), msg]() {
-                this->start(ip, port, msg);
+                this->start(ip, static_cast<in_port_t>(port), msg);
             };
             std::thread t(task);
             t.join();
@@ -153,7 +153,7 @@ namespace pokemon {
                 std::string_view msg = protocolToString(PROTOCOL::GET_IPS);
 
                 auto task = [this, ip = node.get_ip(), port = node.get_port(), msg]() {
-                    this->start(ip, port, msg);
+                    this->start(ip, static_cast<in_port_t>(port), msg);
                 };
                 enqueue_thread(task);
                 std::this_thread::sleep_for(threadSleep_seconde(std::chrono::seconds(2), std::chrono::seconds(3)));
@@ -168,7 +168,7 @@ namespace pokemon {
                 std::string_view msg = protocolToString(PROTOCOL::GET_PICS);
 
                 auto task = [this, ip = node.get_ip(), port = node.get_port(), msg]() {
-                    this->start(ip, port, msg);
+                    this->start(ip, static_cast<in_port_t>(port), msg);
                 };
                 enqueue_thread(task);
                 std::this_thread::sleep_for(threadSleep_seconde(std::chrono::seconds(2), std::chrono::seconds(3)));
@@ -186,7 +186,7 @@ namespace pokemon {
                 get_peer_registry().set_node_alive(node.get_ip(), node.get_port(), false);
 
                 auto task = [this, ip = node.get_ip(), port = node.get_port(), msg]() {
-                    this->start(ip, port, msg);
+                    this->start(ip, static_cast<in_port_t>(port), msg);
                 };
                 enqueue_thread(task);
                 std::this_thread::sleep_for(threadSleep_seconde(std::chrono::seconds(2), std::chrono::seconds(3)));

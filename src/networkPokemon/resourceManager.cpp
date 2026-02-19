@@ -41,7 +41,7 @@ namespace pokemon {
             MyPic << pic_str;
             MyPic.close();
         }
-        catch (const std::exception &e){
+        catch (const std::exception){
             trace.print(std::cerr, "Error can't save < " + pic_str + " > " );
             return 1;
         }

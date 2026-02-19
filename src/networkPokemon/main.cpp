@@ -61,7 +61,7 @@ namespace pokemon {
             getline(std::cin, menu);
 
             if (menu == "1")
-                int a = 0;
+                std::cout << "Liste des nodes connus: " << std::endl;
                // resourceManager.printNodesList(std::cout);
             else if (menu == "2")
                 resourceManager.printPokemonPictures(std::cout);

@@ -16,7 +16,6 @@ set(SRC
     "${SRCROOT}/resourceManager.cpp"
     "${SRCROOT}/trace.cpp"
     "${SRCROOT}/server.cpp"
-    "${SRCROOT}/test.cpp"
     "${SRCROOT}/thread_pool.cpp"
     "${SRCROOT}/session.cpp"
     "${SRCROOT}/main.cpp"

@@ -31,7 +31,10 @@ namespace pokemon {
             first = seconds;
             seconds = tmp;
         }
-        std::uniform_real_distribution<double> duration_distrib(first.count(), seconds.count());
+        std::uniform_real_distribution<double> duration_distrib(
+            static_cast<double>(first.count()),
+            static_cast<double>(seconds.count())
+        );
         return std::chrono::seconds(static_cast<int>(duration_distrib(rng_)));
     }
 
@@ -71,7 +74,7 @@ namespace pokemon {
     bool Helper::read_exact(sockpp::tcp_connector& socket, char* buffer, size_t length) {
         size_t total_read = 0;
         while (total_read < length) {
-            ssize_t n = socket.read(buffer + total_read, length - total_read);
+            size_t n = socket.read(buffer + total_read, length - total_read);
 
             if (n <= 0) {
                 return false;
@@ -81,24 +84,6 @@ namespace pokemon {
         return true;
     }
 
-    int Helper::getPort_Ip(const std::string &str, std::string &ip, in_port_t &port) {
-        char separateur = ':';
-        std::string portString;
-        std::stringstream ss(str);
-        std::getline(ss, ip, separateur); // Lire l'adresse IP
-        std::getline(ss, portString, separateur); // Lire le port
-        try {
-            port = std::stoi(portString);
-            return 0;
-        }
-        catch (std::exception) {
-            return -1;
-        }
-    }
-
-    std::string Helper::getAdress(const std::string &ip, const in_port_t port) const {
-        return ip + ":" + std::to_string(port);
-    }
 
     size_t Helper::protocolSize() const {
         return protocol_size;
