@@ -39,8 +39,7 @@ namespace pokemon::tcp{
                 }
             }
         }
-
-
     }
+
 
 }

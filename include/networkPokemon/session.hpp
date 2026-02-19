@@ -1,7 +1,7 @@
 #pragma once
 
 namespace pokemon {
-
+    namespace tcp { class IConnection; }
     /**
      * @brief Représente une session pour gérer les connexions entrantes.
      */
@@ -19,7 +19,7 @@ namespace pokemon {
          * @param socket La socket connectée.
          * @return Un entier représentant le résultat du traitement.
          */
-        int process(std::shared_ptr<sockpp::tcp_socket> socket);
+        int process(std::shared_ptr<tcp::IConnection> socket);
 
     };
 

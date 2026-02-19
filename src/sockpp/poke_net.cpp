@@ -16,7 +16,6 @@ namespace pokemon::tcp
         m_pimpl->listen(std::move(on_connect));
     }
 
-
     poke_net::poke_net(poke_net&&) noexcept = default;
     poke_net& poke_net::operator=(poke_net&&) noexcept = default;
 

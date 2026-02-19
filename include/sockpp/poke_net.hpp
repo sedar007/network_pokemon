@@ -14,6 +14,7 @@ namespace pokemon::tcp {
 
             void listen(std::function<void(std::unique_ptr<IConnection>)> on_connect);
 
+
     private:
         class impl;
         std::unique_ptr<impl> m_pimpl;
