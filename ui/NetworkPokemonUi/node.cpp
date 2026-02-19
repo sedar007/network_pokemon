@@ -54,7 +54,7 @@ QVariantList Node::get_node_list() {
         nodeMap["name"] = QString::fromStdString(std::string(nodeInfo.get_name()));
         nodeMap["port"] = QString::number(nodeInfo.get_port());
         nodeMap["ip"] = QString::fromStdString(std::string(nodeInfo.get_ip()));
-        nodeMap["status"] = QString::number(nodeInfo.get_isConnected());
+        nodeMap["status"] = QString::number(false);
         result.append(nodeMap);
     }
 
@@ -71,7 +71,6 @@ void Node::add_peer(QString name, QString port)
 {
 
     m_node.add_new_peer(
-        name.toStdString(),
         port.toStdString()
     );
 

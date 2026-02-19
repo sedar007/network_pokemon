@@ -19,7 +19,6 @@ public:
     Q_INVOKABLE QVariantMap getConfig();
 
 private:
-    pokemon::Test m_pokemonEngine; // L'instance unique de ton moteur
 };
 
 #endif // BACKEND_H
