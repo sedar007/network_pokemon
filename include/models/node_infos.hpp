@@ -49,13 +49,6 @@ namespace pokemon {
                 return ip_s;
             }
 
-            [[nodiscard]] inline bool get_isConnected() const noexcept {
-                return isConnected_b;
-            }
-            inline void set_isConnected(bool isConnected) noexcept {
-                isConnected_b = isConnected;
-            }
-
             [[nodiscard]] static Node_Packet to_packet(const Node_Info &node_info) noexcept;
             [[nodiscard]] static Node_Info from_packet(const Node_Packet &packet) noexcept;
 
@@ -79,9 +72,6 @@ namespace pokemon {
         std::string nodeName_s;
         std::string ip_s;
         int port_i;
-        bool isConnected_b;
-
-        bool is_node_online(std::string_view ip) const noexcept;
 
     };
 }

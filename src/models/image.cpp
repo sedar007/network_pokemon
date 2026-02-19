@@ -1,10 +1,3 @@
-#include <unistd.h>
-#include <arpa/inet.h>
-#include <sys/socket.h>
-#include <fcntl.h>   // Nécessaire pour fcntl
-#include <string>
-#include <iostream>
-
 #include "pch.h"
 
 namespace pokemon {
