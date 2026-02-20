@@ -30,6 +30,7 @@
 #include <shared_mutex>
 
 #include <storage.hpp>
+#include <sockpp.hpp>
 
 #include "models.hpp"
 #include "networkPokemon/export.hpp"
@@ -60,6 +61,8 @@
 
 #include "networkPokemon/node.hpp"
 #include "networkPokemon/main.hpp"
+
+#include "networkPokemon/command/ip_test.hpp"
 /*
 
 #include "networkPokemon/trace.hpp"
@@ -68,6 +71,7 @@
 #include "networkPokemon/helper.hpp"
 #include "networkPokemon/server.hpp"
 #include "networkPokemon/listen.hpp"
+
 
 
 

@@ -64,7 +64,7 @@ namespace pokemon {
 
 
 
-    static const std::string NO_PICTURE_FOUND(const std::string & pictureName){
+    inline const std::string NO_PICTURE_FOUND(const std::string & pictureName){
         return "L'image <" + pictureName + "> n'a pas été trouvé.\n";
     }
 

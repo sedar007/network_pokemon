@@ -10,6 +10,9 @@ namespace pokemon {
 
 
     int session::process(std::shared_ptr<tcp::IConnection> socket) {
-       return tcp::ClientNetHelper::send_request(std::move(socket));
+        tcp::ClientNetHelper<session> helper;
+
+        helper.get_dispatcher().registerCommand(tcp::PROTOCOL::GET_IPS, std::make_unique<ip_test>());
+       return helper.send_request(*this, std::move(socket));
     }
 }

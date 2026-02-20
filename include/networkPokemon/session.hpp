@@ -5,7 +5,7 @@ namespace pokemon {
     /**
      * @brief Représente une session pour gérer les connexions entrantes.
      */
-    class NETWORK_POKEMON_API  session : public NetworkNode {
+    class NETWORK_POKEMON_API  session : public  NetworkNode {
     public:
         /**
          * @brief Constructeur pour initialiser le serveur avec le port spécifié.
