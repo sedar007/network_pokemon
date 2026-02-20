@@ -45,54 +45,55 @@ namespace pokemon {
     std::shared_ptr<Image> image_repository::save_image(std::string_view name, std::string_view owner_id, std::filesystem::path image_to_save_path) noexcept {
         try {
 
-            if (std::filesystem::exists(image_to_save_path) && std::filesystem::is_regular_file(image_to_save_path)) {
-                std::ifstream file(image_to_save_path, std::ios::binary | std::ios::ate);
+            if (!std::filesystem::exists(image_to_save_path) && !std::filesystem::is_regular_file(image_to_save_path))
+                    return nullptr;
 
-                if (!file.is_open()) {
-                //         trace.print(std::cerr, "Impossible de lire l'image : " + image_to_save_path.to);
+            std::ifstream file(image_to_save_path, std::ios::binary | std::ios::ate);
+
+            if (!file.is_open()) {
+            //         trace.print(std::cerr, "Impossible de lire l'image : " + image_to_save_path.to);
+                return nullptr;
+            }
+
+            std::string extension = image_to_save_path.extension().string();
+            auto bytes = std::filesystem::file_size(image_to_save_path);
+
+            double mb = static_cast<double>(bytes) / (1024.0 * 1024.0);
+
+
+            std::stringstream stream;
+            stream << std::fixed << std::setprecision(1) << mb;
+
+            std::string picture_size = stream.str();
+            std::string size_unit = "MB";
+
+            std::streamsize size = file.tellg();
+            file.seekg(0, std::ios::beg);
+
+            if (size <= 0) return nullptr ;
+
+            std::string buffer(size, '\0');
+            if (file.read(&buffer[0], size)) {
+                const std::string hash = calculate_sha256(buffer);
+                std::string saved_name = std::format("{}{}", storagePath_, hash);
+                std::filesystem::path pathr(saved_name);
+
+                std::ofstream image_saved(pathr, std::ios::binary);
+                if (!image_saved.is_open()) {
                     return nullptr;
                 }
+                image_saved.write(buffer.c_str(), buffer.size());
+                image_saved.close();
 
-                std::string extension = image_to_save_path.extension().string();
-                auto bytes = std::filesystem::file_size(image_to_save_path);
+                auto image = std::make_shared<Image>(name, extension, hash, owner_id, picture_size, size_unit);
 
-                double mb = static_cast<double>(bytes) / (1024.0 * 1024.0);
-
-
-                std::stringstream stream;
-                stream << std::fixed << std::setprecision(1) << mb;
-
-                std::string picture_size = stream.str();
-                std::string size_unit = "MB";
-
-                std::streamsize size = file.tellg();
-                file.seekg(0, std::ios::beg);
-
-                if (size <= 0) return nullptr ;
-
-                std::string buffer(size, '\0');
-                if (file.read(&buffer[0], size)) {
-                    const std::string hash = calculate_sha256(buffer);
-                    std::string saved_name = std::format("{}{}", storagePath_, hash);
-                    std::filesystem::path pathr(saved_name);
-
-                    std::ofstream image_saved(pathr, std::ios::binary);
-                    if (!image_saved.is_open()) {
-                        return nullptr;
-                    }
-                    image_saved.write(buffer.c_str(), buffer.size());
-                    image_saved.close();
-
-                    auto image = std::make_shared<Image>(name, extension, hash, owner_id, picture_size, size_unit);
-
-                    add_image(image);
-                    return image;
-                }
+                add_image(image);
+                return image;
             }
-        } catch (const std::exception) {
+        } catch (const std::exception&) {
             return nullptr;
         }
-
+        return nullptr;
     }
 
     std::shared_ptr<Image> image_repository::add_picture_from_path(std::string_view name, std::string_view owner_id, std::string_view picturePath) noexcept {
@@ -105,7 +106,7 @@ namespace pokemon {
              return nullptr;
          }
     }
-
+#if 0
     std::string image_repository::calculate_sha256(const std::string& data) {
          unsigned char hash[SHA256_DIGEST_LENGTH];
          SHA256_CTX sha256;
@@ -115,6 +116,28 @@ namespace pokemon {
 
          std::stringstream ss;
          for(int i = 0; i < SHA256_DIGEST_LENGTH; i++) {
+             ss << std::hex << std::setw(2) << std::setfill('0') << (int)hash[i];
+         }
+         return ss.str();
+    }
+#endif
+    std::string image_repository::calculate_sha256(const std::string& data) {
+         unsigned char hash[EVP_MAX_MD_SIZE];
+         unsigned int lengthOfHash = 0;
+
+
+         EVP_MD_CTX* context = EVP_MD_CTX_new();
+
+         if (context != nullptr) {
+             if (EVP_DigestInit_ex(context, EVP_sha256(), nullptr)) {
+                 EVP_DigestUpdate(context, data.c_str(), data.size());
+                 EVP_DigestFinal_ex(context, hash, &lengthOfHash);
+             }
+             EVP_MD_CTX_free(context);
+         }
+
+         std::stringstream ss;
+         for(unsigned int i = 0; i < lengthOfHash; i++) {
              ss << std::hex << std::setw(2) << std::setfill('0') << (int)hash[i];
          }
          return ss.str();

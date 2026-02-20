@@ -3,6 +3,7 @@
 #include "config.h"
 
 #include <memory>
+#include <functional>
 
 #include "sockpp/export.hpp"
 #include "sockpp/consts.hpp"

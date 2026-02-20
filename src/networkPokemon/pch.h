@@ -11,6 +11,7 @@
 #include "exception"
 #include <sstream>
 #include <openssl/sha.h>
+#include <openssl/evp.h>
 
 
 #include <nlohmann/json.hpp>
