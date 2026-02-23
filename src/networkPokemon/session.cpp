@@ -8,11 +8,10 @@ namespace pokemon {
         peer_registry& peers, image_repository& images_repository, std::shared_ptr<storage_manager> storage) noexcept
         : NetworkNode(port, node_info, peers, images_repository, storage){}
 
-
     int session::process(std::shared_ptr<tcp::IConnection> socket) {
-        tcp::ClientNetHelper<session> helper;
+        tcp::ClientNetHelper<NetworkNode> helper;
 
-        helper.get_dispatcher().registerCommand(tcp::PROTOCOL::GET_IPS, std::make_unique<ip_test>());
-       return helper.send_request(*this, std::move(socket));
+        auto& dispatcher = get_dispatcher();
+       return helper.server_send_response(*this, std::move(socket),  dispatcher);
     }
 }

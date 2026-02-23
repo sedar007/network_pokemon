@@ -2,25 +2,23 @@
 
 namespace pokemon {
 
-    void ip_command::send_to_client(session& ss, std::shared_ptr<sockpp::tcp_socket> socket) {
-        if (!socket || !(*socket)) {
+    void ip_command::send_to_client(NetworkNode& ss, std::shared_ptr<tcp::IConnection> socket) {
+        if (!socket) {
             return;
         }
-
         send_nodes_list(socket, ss.get_peer_registry().get_nodes());
-        socket->shutdown(SHUT_RDWR);
+        socket->shutdown();
     }
-
-    void ip_command::receive_from_server(Client& client, std::shared_ptr<sockpp::tcp_connector> connector) {
+    void ip_command::receive_from_server(NetworkNode& client, std::shared_ptr<tcp::tcp_connector> connector) {
         if (connector == nullptr || !(*connector)) {
             return;
         }
         receive_nodes_list(client, connector);
-        connector->shutdown(SHUT_RDWR);
+     //   connector->shutdown(SHUT_RDWR);
     }
 
 
-    void ip_command::send_nodes_list(std::shared_ptr<sockpp::tcp_socket> socket, const std::vector<Node_Info>& nodes) const noexcept{
+    void ip_command::send_nodes_list(std::shared_ptr<tcp::IConnection> socket, const std::vector<Node_Info>& nodes) const noexcept{
         if (nodes.empty()) return;
 
         std::vector<Node_Packet> packet_buffer;
@@ -38,7 +36,7 @@ namespace pokemon {
         socket->write(reinterpret_cast<const char*>(packet_buffer.data()), total_bytes);
     }
 
-    void ip_command::receive_nodes_list(Client& client, std::shared_ptr<sockpp::tcp_connector> connector) {
+    void ip_command::receive_nodes_list(Client& client, std::shared_ptr<tcp::tcp_connector> connector) {
 
          size_t total_bytes = Utils::get_total_bytes_from_connector(connector);
 

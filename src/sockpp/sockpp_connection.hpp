@@ -27,6 +27,13 @@ namespace pokemon::tcp {
                 return m_sock->write(buf, n);
             }
 
+            void shutdown() override {
+                m_sock->shutdown(SHUT_RDWR);
+            }
+
+
+
+
         private:
             std::unique_ptr<sockpp::tcp_socket> m_sock;
     };

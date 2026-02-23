@@ -1,4 +1,7 @@
 #pragma once
+#include "command_dispatcher.h"
+#include "image_repository.hpp"
+#include "command/ip_command.hpp"
 
 /**
  * @file NetworkNode.hpp
@@ -23,7 +26,7 @@ namespace pokemon {
          * @param port The network port number.
          */
         NetworkNode(const in_port_t port, const std::shared_ptr<Node_Info> node_info,
-            peer_registry& peers_registry, image_repository& images, std::shared_ptr<storage_manager> storage) noexcept;
+            peer_registry& peers_registry, pokemon::image_repository& images, std::shared_ptr<storage_manager> storage) noexcept;
 
         inline std::shared_ptr<Node_Info> get_node_info() const noexcept {
             return node_info_ptr;
@@ -64,12 +67,20 @@ namespace pokemon {
             thread_pool.enqueue(std::forward<F>(f));
         }
 
+
+        tcp::command_dispatcher<NetworkNode>& get_dispatcher() {
+            return m_dispatcherr;
+        }
+
         void initCommands() {
-            m_dispatcher.registerCommand(PROTOCOL::GET_IPS, std::make_unique<ip_command>());
-            m_dispatcher.registerCommand(PROTOCOL::GET_PICS, std::make_unique<pictures_command>());
+       //     m_dispatcher.registerCommand(PROTOCOL::GET_IPS, std::make_unique<ip_command>());
+          /*  m_dispatcher.registerCommand(PROTOCOL::GET_PICS, std::make_unique<pictures_command>());
              m_dispatcher.registerCommand(PROTOCOL::GET_PIC, std::make_unique<image_data_command>());
             m_dispatcher.registerCommand(PROTOCOL::GET_ALIVE, std::make_unique<alive_command>());
-            m_dispatcher.registerCommand(PROTOCOL::GET_ID, std::make_unique<add_new_node_command>());
+            m_dispatcher.registerCommand(PROTOCOL::GET_ID, std::make_unique<add_new_node_command>());*/
+
+
+            m_dispatcherr.registerCommand(tcp::PROTOCOL::GET_IPS, std::make_unique<pokemon::ip_command>());
         }
 
 
@@ -101,6 +112,7 @@ namespace pokemon {
         peer_registry& peers_registry_;
         image_repository& images_repository_;
         std::shared_ptr<storage_manager> storage_;
+        tcp::command_dispatcher<NetworkNode> m_dispatcherr;
 
 
     };

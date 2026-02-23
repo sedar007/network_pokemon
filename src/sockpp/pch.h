@@ -12,4 +12,5 @@
 
 #include "sockpp_connection.hpp"
 #include "tcp_acceptor.impl.hpp"
+#include "tcp_connector.impl.hpp"
 #include "poke_net.impl.hpp"

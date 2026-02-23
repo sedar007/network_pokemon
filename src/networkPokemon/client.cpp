@@ -112,7 +112,7 @@ namespace pokemon {
 
     void Client::get_client_id(std::string_view ip, in_port_t port) noexcept {
 
-        std::string_view msg = protocolToString(PROTOCOL::GET_ID);
+        const std::string msg = protocolToString(PROTOCOL::GET_ID);
 
         auto task = [this, ip = ip, port = port, msg]() {
             this->start(ip, port, msg);
@@ -150,7 +150,7 @@ namespace pokemon {
     void Client::get_client_ip() noexcept {
         while (true) {
             for (auto &node: get_peer_registry().get_nodes()) {
-                std::string_view msg = protocolToString(PROTOCOL::GET_IPS);
+                const std::string msg = protocolToString(PROTOCOL::GET_IPS);
 
                 auto task = [this, ip = node.get_ip(), port = node.get_port(), msg]() {
                     this->start(ip, static_cast<in_port_t>(port), msg);
@@ -182,7 +182,7 @@ namespace pokemon {
     void Client::check_connected_nodes() noexcept {
         while (true) {
             for (auto &node: get_peer_registry().get_nodes()) {
-                std::string_view msg = protocolToString(PROTOCOL::GET_ALIVE);
+                const std::string msg = protocolToString(PROTOCOL::GET_ALIVE);
                 get_peer_registry().set_node_alive(node.get_ip(), node.get_port(), false);
 
                 auto task = [this, ip = node.get_ip(), port = node.get_port(), msg]() {
@@ -200,7 +200,13 @@ namespace pokemon {
     }
 
     int Client::start(std::string_view neighbour_ip, in_port_t neighbour_port, std::string_view msg) noexcept {
-    try {
+
+        tcp::ClientNetHelper<NetworkNode> helper;
+
+       // auto& dispatcher = get_dispatcher();
+        return helper.client_ask_to_server(*this, nullptr, get_dispatcher(), neighbour_ip, neighbour_port, msg);
+#if 0
+        try {
 
         std::string knowPortStr = std::to_string(neighbour_port);
         std::string ip_str(neighbour_ip);
@@ -243,6 +249,8 @@ namespace pokemon {
         getTrace().print(std::cerr, std::format("Exception in Client::start: {}", e.what()));
         return -1;
     }
+#endif
+
 }
 #if 0
    /* int Client::start(std::string_view neighbour_ip, in_port_t neighbour_port, std::string_view msg) noexcept {

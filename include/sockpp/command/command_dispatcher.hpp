@@ -14,10 +14,17 @@ namespace pokemon::tcp {
             m_commands[protocol] = std::move(cmd);
         }
 
-        void dispatch_send_to_client([[maybe_unused]] T &context, PROTOCOL protocol, [[maybe_unused]] std::shared_ptr<tcp::IConnection> socket) {
+        void dispatch_send_to_client(T &context, PROTOCOL protocol, std::shared_ptr<tcp::IConnection> socket) {
             auto it = m_commands.find(protocol);
             if (it != m_commands.end()) {
                 it->second->send_to_client(context, std::move(socket));
+            }
+        }
+
+        void dispatch_client_read(T &context,PROTOCOL protocol, std::shared_ptr<tcp_connector> connector) {
+            auto it = m_commands.find(protocol);
+            if (it != m_commands.end()) {
+                it->second->receive_from_server(context, std::move(connector));
             }
         }
 /*
