@@ -7,7 +7,7 @@ namespace pokemon::tcp {
     static constexpr size_t PROTOCOL_SIZE = 8;
 
 
-    inline  std::string protocolToString(const PROTOCOL q) noexcept {
+    static inline std::string protocolToString(const PROTOCOL q) noexcept {
         switch (q) {
         case PROTOCOL::GET_IPS:
             return "GET_IPS_";
@@ -24,7 +24,7 @@ namespace pokemon::tcp {
         }
     }
 
-    inline PROTOCOL string_to_protocol(std::string_view s) noexcept {
+    static inline PROTOCOL string_to_protocol(std::string_view s) noexcept {
         if (s == "GET_IPS_")
             return PROTOCOL::GET_IPS;
         if (s == "GETALIVE")

@@ -114,7 +114,7 @@ namespace pokemon {
 
     void Client::get_client_id(std::string_view ip, in_port_t port) noexcept {
 
-        const std::string msg = protocolToString(PROTOCOL::GET_ID);
+        const std::string msg = pokemon::tcp::protocolToString(tcp::PROTOCOL::GET_ID);
 
         auto task = [this, ip = ip, port = port, msg]() {
             this->start(ip, port, msg);
@@ -134,7 +134,7 @@ namespace pokemon {
         try{
             auto nodeInfo = get_peer_registry().find_node_by_id(image.value().get_owner());
 
-            std::string msg = std::format("{}{}{}", protocolToString(PROTOCOL::GET_PIC), generateFormattedNumber(hash.size()), hash);
+            std::string msg = std::format("{}{}{}", tcp::protocolToString(tcp::PROTOCOL::GET_PIC), generateFormattedNumber(hash.size()), hash);
 
             auto task = [this, ip = nodeInfo.get_ip(), port = nodeInfo.get_port(), msg]() {
                 this->start(ip, static_cast<in_port_t>(port), msg);
@@ -152,7 +152,7 @@ namespace pokemon {
     void Client::get_client_ip() noexcept {
         while (true) {
             for (auto &node: get_peer_registry().get_nodes()) {
-                const std::string msg = protocolToString(PROTOCOL::GET_IPS);
+                const std::string msg = tcp::protocolToString(tcp::PROTOCOL::GET_IPS);
 
                 auto task = [this, ip = node.get_ip(), port = node.get_port(), msg]() {
                     this->start(ip, static_cast<in_port_t>(port), msg);
@@ -167,7 +167,7 @@ namespace pokemon {
     void Client::get_client_pictures() noexcept {
         while (true) {
             for (auto &node: get_peer_registry().get_nodes()) {
-                std::string_view msg = protocolToString(PROTOCOL::GET_PICS);
+                std::string_view msg = tcp::protocolToString(tcp::PROTOCOL::GET_PICS);
 
                 auto task = [this, ip = node.get_ip(), port = node.get_port(), msg]() {
                     this->start(ip, static_cast<in_port_t>(port), msg);
@@ -184,7 +184,7 @@ namespace pokemon {
     void Client::check_connected_nodes() noexcept {
         while (true) {
             for (auto &node: get_peer_registry().get_nodes()) {
-                const std::string msg = protocolToString(PROTOCOL::GET_ALIVE);
+                const std::string msg = tcp::protocolToString(tcp::PROTOCOL::GET_ALIVE);
                 get_peer_registry().set_node_alive(node.get_ip(), node.get_port(), false);
 
                 auto task = [this, ip = node.get_ip(), port = node.get_port(), msg]() {
@@ -473,13 +473,13 @@ if (!read_exact(connector, msg_buf.data(), t)) {
             // ---------------------------------------------------------
             // 4. Traitement
             // ---------------------------------------------------------
-            if (protocole == protocolToString(PROTOCOL::GET_IPS)) {
+            if (protocole == tcp::protocolToString(tcp::PROTOCOL::GET_IPS)) {
                 addIps(msg_str);
             }
-            else if (protocole == protocolToString(PROTOCOL::GET_PICS)) {
+            else if (protocole == tcp::protocolToString(tcp::PROTOCOL::GET_PICS)) {
 
             }
-            else if (protocole == protocolToString(PROTOCOL::GET_PIC)) {
+            else if (protocole == tcp::protocolToString(tcp::PROTOCOL::GET_PIC)) {
                 addPicture(msg_str);
             }
 
