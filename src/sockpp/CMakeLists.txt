@@ -15,12 +15,13 @@ set(SRC
         "${SRCROOT}/poke_net.cpp"
         "${SRCROOT}/poke_net.impl.cpp"
         "${SRCROOT}/client_net_helper.cpp"
+        "${SRCROOT}/command/command_dispatcher.cpp"
 
 
 )
 
 add_library(${PROJECT_NAME}-sockpp
-        STATIC
+        SHARED
         ${SRC}
 )
 

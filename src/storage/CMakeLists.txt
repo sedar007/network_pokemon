@@ -10,7 +10,7 @@ set(SRC
 )
 
 add_library(${PROJECT_NAME}-storage
-        STATIC
+        SHARED
         ${SRC}
 )
 
