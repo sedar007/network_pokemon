@@ -50,7 +50,6 @@
 #include "networkPokemon/pictures_command.hpp"
 #include "networkPokemon/image_data_command.hpp"
 
-#include "networkPokemon/command_dispatcher.h"
 #include "networkPokemon/peer_registry.hpp"
 #include "networkPokemon/image_repository.hpp"
 #include "networkPokemon/networkNode.hpp"

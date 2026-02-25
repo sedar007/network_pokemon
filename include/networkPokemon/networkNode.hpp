@@ -1,5 +1,4 @@
 #pragma once
-#include "command_dispatcher.h"
 #include "image_repository.hpp"
 #include "command/ip_command.hpp"
 
@@ -82,9 +81,6 @@ namespace pokemon {
 
             m_dispatcherr.registerCommand(tcp::PROTOCOL::GET_IPS, std::make_unique<pokemon::ip_command>());
         }
-
-
-        command_dispatcher m_dispatcher;
 
 
     private:
