@@ -31,8 +31,8 @@
 
 #include <storage.hpp>
 #include <sockpp.hpp>
+#include <models.hpp>
 
-#include "models.hpp"
 #include "networkPokemon/export.hpp"
 
 #include "networkPokemon/utils.hpp"
@@ -44,7 +44,7 @@
 #include "networkPokemon/resourceManager.hpp"
 
 #include "networkPokemon/command/ip_command.hpp"
-#include "networkPokemon/alive_command.hpp"
+#include "networkPokemon/command/alive_command.hpp"
 #include "networkPokemon/command/add_new_node_command.hpp"
 #include "networkPokemon/pictures_command.hpp"
 #include "networkPokemon/image_data_command.hpp"

@@ -31,6 +31,10 @@ namespace pokemon::tcp {
                 m_sock->shutdown(SHUT_RDWR);
             }
 
+            std::string address_to_string() const override {
+                return m_sock->address().to_string();
+            }
+
 
 
 

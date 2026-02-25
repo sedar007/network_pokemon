@@ -10,7 +10,7 @@ namespace pokemon::tcp {
             virtual ssize_t read(void* buf, size_t n) = 0;
             virtual ssize_t write(const void* buf, size_t n) = 0;
             virtual void shutdown() = 0;
-
+            virtual std::string address_to_string() const = 0;
     };
 }
 

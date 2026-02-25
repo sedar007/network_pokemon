@@ -21,7 +21,7 @@ set(SRC
 )
 
 add_library(${PROJECT_NAME}-sockpp
-        SHARED
+        STATIC
         ${SRC}
 )
 

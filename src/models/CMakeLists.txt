@@ -12,7 +12,7 @@ set(SRC
  )
 
 add_library(${PROJECT_NAME}-model
-		SHARED
+        STATIC
 	        ${SRC}
 )
 

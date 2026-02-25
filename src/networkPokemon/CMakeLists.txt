@@ -21,7 +21,7 @@ set(SRC
 	"${SRCROOT}/client.cpp"
     "${SRCROOT}/command/ip_command.cpp"
     "${SRCROOT}/pictures_command.cpp"
-    "${SRCROOT}/alive_command.cpp"
+    "${SRCROOT}/command/alive_command.cpp"
     "${SRCROOT}/command/add_new_node_command.cpp"
     "${SRCROOT}/image_data_command.cpp"
     "${SRCROOT}/utils.cpp"
@@ -30,7 +30,7 @@ set(SRC
  )
 
 add_library(${PROJECT_NAME}-network-pokemon
-		SHARED
+        STATIC
 	        ${SRC}
 )
 
