@@ -18,6 +18,8 @@
 #include "sockpp/poke_net.hpp"
 
 #include "sockpp/command/INetworkCommand.hpp"
+#include "sockpp/command/INetworkClientCommand.hpp"
 #include "sockpp/command/command_dispatcher.hpp"
+#include "sockpp/command/command_client_dispatcher.hpp"
 
 #include "sockpp/client_net_helper.hpp"

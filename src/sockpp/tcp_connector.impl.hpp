@@ -16,6 +16,8 @@ namespace pokemon::tcp
 	   [[nodiscard]] bool connect(std::string_view ip, int port) const noexcept;
 
 	    bool write(std::string_view data) const noexcept ;
+		bool read(char* buffer, size_t length) const noexcept ;
+		void shutdown() const noexcept;
 
 	private:
 	    std::unique_ptr<sockpp::tcp_connector> m_connector;

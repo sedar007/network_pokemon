@@ -2,22 +2,32 @@
 
 namespace pokemon {
 
-    void ip_command::send_to_client(NetworkNode& ss, std::shared_ptr<tcp::IConnection> socket) {
+    void ip_command::send_to_client([[maybe_unused]] NetworkNode& ss,[[maybe_unused]] std::shared_ptr<tcp::IConnection> socket) {
         if (!socket) {
             return;
         }
-        send_nodes_list(socket, ss.get_peer_registry().get_nodes());
+        //send_nodes_list(socket, ss.get_peer_registry().get_nodes());
         socket->shutdown();
     }
-    void ip_command::receive_from_server(NetworkNode& client, std::shared_ptr<tcp::tcp_connector> connector) {
+    void ip_command::receive_from_server([[maybe_unused]] NetworkNode& client,[[maybe_unused]] std::shared_ptr<tcp::tcp_connector> connector) {
         if (connector == nullptr || !(*connector)) {
             return;
         }
-        receive_nodes_list(client, connector);
+    //    receive_nodes_list(client, connector);
      //   connector->shutdown(SHUT_RDWR);
     }
 
 
+    void ip_command::receive_from_server_test([[maybe_unused]] Client& client,[[maybe_unused]] std::shared_ptr<tcp::tcp_connector> connector) {
+        if (connector == nullptr || !(*connector)) {
+            return;
+        }
+            receive_nodes_list(client, connector);
+        //   connector->shutdown(SHUT_RDWR);
+    }
+
+
+/*
     void ip_command::send_nodes_list(std::shared_ptr<tcp::IConnection> socket, const std::vector<Node_Info>& nodes) const noexcept{
         if (nodes.empty()) return;
 
@@ -35,14 +45,14 @@ namespace pokemon {
         socket->write(header.data(), header.size());
         socket->write(reinterpret_cast<const char*>(packet_buffer.data()), total_bytes);
     }
-
-    void ip_command::receive_nodes_list(Client& client, std::shared_ptr<tcp::tcp_connector> connector) {
+    */
+    void ip_command::receive_nodes_list([[maybe_unused]] Client& client, [[maybe_unused]] const std::shared_ptr<tcp::tcp_connector> &connector) {
 
          size_t total_bytes = Utils::get_total_bytes_from_connector(connector);
 
         if (total_bytes == 0 || total_bytes % sizeof(Node_Packet) != 0) {
             if (total_bytes == 0) return;
-            connector->shutdown(SHUT_RDWR);
+            connector->shutdown();
             return;
         }
 
@@ -52,7 +62,7 @@ namespace pokemon {
         char* raw_ptr = reinterpret_cast<char*>(packet_buffer.data());
 
         if (!Utils::read_exact(connector, raw_ptr, total_bytes)) {
-            connector->shutdown(SHUT_RDWR);
+            connector->shutdown();
             return;
         }
 

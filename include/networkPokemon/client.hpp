@@ -40,6 +40,10 @@ namespace pokemon {
 
         std::shared_ptr<Image> add_pokemon(std::string_view name, std::string_view picturePath) noexcept;
 
+        tcp::command_client_dispatcher<Client>& get_dispatcher() {
+            return m_dispatcher;
+        }
+
 
     private:
         /**
@@ -56,6 +60,7 @@ namespace pokemon {
         bool m_running = true;
         std::vector<std::thread> m_threads;
         std::mutex m_thread_mutex;
+        tcp::command_client_dispatcher<Client> m_dispatcher;
 
 
         /**
@@ -89,5 +94,10 @@ namespace pokemon {
         void get_client_ip() noexcept;
         void get_client_pictures() noexcept;
         void check_connected_nodes() noexcept;
+
+
+        void initCommands() {
+            m_dispatcher.registerCommand(tcp::PROTOCOL::GET_IPS, std::make_unique<pokemon::ip_command>());
+        }
     };
 }

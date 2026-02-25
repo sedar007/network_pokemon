@@ -11,7 +11,7 @@ namespace pokemon::tcp{
 
 
     bool tcp_connector::impl::connect(std::string_view ip, int port) const noexcept  {
-        return m_connector->connect(sockpp::inet_address(std::string(ip), port));
+        return m_connector->connect(sockpp::inet_address(std::string(ip), static_cast<in_port_t>(port)));
     }
 
     bool tcp_connector::impl::write(std::string_view data) const noexcept {
@@ -22,6 +22,27 @@ namespace pokemon::tcp{
         return res == static_cast<ssize_t>(data.size());
     }
 
+
+    bool tcp_connector::impl::read(char* buffer, size_t length) const noexcept {
+        if (!m_connector || !(*m_connector)) {
+            return false;
+        }
+
+        size_t total_read = 0;
+        while (total_read < length) {
+            ssize_t n = m_connector->read(buffer + total_read, length - total_read);
+            if (n <= 0) return false;
+            total_read += n;
+        }
+        return true;
+    }
+
+    void tcp_connector::impl::shutdown() const noexcept {
+        if (!m_connector || !(*m_connector)) {
+            return;
+        }
+        m_connector->shutdown(SHUT_RDWR);
+    }
 
 
 
