@@ -8,7 +8,7 @@ namespace pokemon {
         Utils() = default;
         [[nodiscard]] static std::string generate_uuid_v4() noexcept;
         [[nodiscard]] static std::string formatted_number(size_t number) noexcept;
-        [[nodiscard]] static bool read_exact(const std::shared_ptr<tcp::tcp_connector> connector, char* buffer, size_t length) noexcept;
+        [[nodiscard]] static bool read_exact(const std::shared_ptr<tcp::tcp_connector> connector, std::byte* buffer, size_t length) noexcept;
         [[nodiscard]] static size_t get_total_bytes_from_connector(const std::shared_ptr<tcp::tcp_connector> &connector);
         [[nodiscard]] static bool read_exact(const std::shared_ptr<sockpp::tcp_connector> connector, char* buffer, size_t length) noexcept;
         [[nodiscard]] static size_t get_total_bytes_from_connector(const std::shared_ptr<sockpp::tcp_connector> &connector);

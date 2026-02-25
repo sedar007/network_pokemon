@@ -6,25 +6,18 @@ namespace pokemon {
         peer_registry& peers, image_repository& images_repository, std::shared_ptr<storage_manager> storage) noexcept
             : NetworkNode(port, node_info, peers,images_repository, storage)
             ,  ip_s(ip) {
-      //  auto run = getIps();
-      //  run.detach();
-
         initCommands();
 
       /*  auto check_connected_thread = std::thread([this] { check_connected_nodes(); });
         check_connected_thread.detach();*/
 
-        auto get_ips_thread = std::thread([this] { get_client_ip(); });
+        auto get_ips_thread = std::jthread([this] { get_client_ip(); });
         get_ips_thread.detach();
 
       /*  auto get_pictures_thread = std::thread([this] { get_client_pictures(); });
         get_pictures_thread.detach();*/
 
-
     }
-
-
-
 
     Client::~Client() {
         m_running = false;
@@ -36,11 +29,6 @@ namespace pokemon {
             }
         }
     }
-
-   /* std::thread Client::run(std::string_view neighbour_ip, const in_port_t neighbour_port, const std::string &msg) noexcept {
-        return std::thread([this, neighbour_ip, neighbour_port, &msg] { start(neighbour_ip, neighbour_port, msg); });
-    }*/
-
 
     void Client::add_new_node(std::string peer_ip, in_port_t port) noexcept {
         auto get_id = std::thread([this, peer_ip, port] { get_client_id(peer_ip, port); });
@@ -113,9 +101,7 @@ namespace pokemon {
     }
 
     void Client::get_client_id(std::string_view ip, in_port_t port) noexcept {
-
         const std::string msg = pokemon::tcp::protocolToString(tcp::PROTOCOL::GET_ID);
-
         auto task = [this, ip = ip, port = port, msg]() {
             this->start(ip, port, msg);
         };
@@ -202,177 +188,10 @@ namespace pokemon {
     }
 
     int Client::start(std::string_view neighbour_ip, in_port_t neighbour_port, std::string_view msg) noexcept {
-
         tcp::client_net<Client> net;
-
-       // auto& dispatcher = get_dispatcher();
         return net.client_ask_to_server(*this, nullptr, get_dispatcher(), neighbour_ip, neighbour_port, msg);
-#if 0
-        try {
-
-        std::string knowPortStr = std::to_string(neighbour_port);
-        std::string ip_str(neighbour_ip);
-        auto connector = std::make_shared<sockpp::tcp_connector>();
-
-        getTrace().print(std::clog, std::format(MSG_CLIENT_TRYING_TO_CONNECT,
-                                    std::format(MSG_NODE_ID, getPort(), CLIENT), knowPortStr));
-
-
-        if (!connector->connect(sockpp::inet_address(ip_str, neighbour_port))) {
-            getTrace().print(std::cerr, std::format(MSG_CLIENT_ERROR_CONNECTING,
-                                        std::format(MSG_NODE_ID, getPort(), CLIENT), neighbour_ip, neighbour_port));
-            return -1;
-        }
-
-        getTrace().print(std::clog, std::format(MSG_CLIENT_CONNECTED,
-                                    std::format(MSG_NODE_ID, getPort(), CLIENT), neighbour_ip, neighbour_port));
-
-
-        if (auto res = connector->write(msg.data(), msg.size()); static_cast<size_t>(res) != msg.size()) {
-            getTrace().print(std::cerr, std::format(MSG_CLIENT_ERROR_WRITING_TCP_STREAM,
-                                        std::format(MSG_NODE_ID, getPort(), CLIENT), connector->last_error_str()));
-            connector->shutdown(SHUT_RDWR);
-            return 1;
-        }
-
-        PROTOCOL protocol = string_to_protocol(msg);
-
-        if (protocol == PROTOCOL::UNKNOWN) {
-            connector->shutdown(SHUT_RDWR);
-            return 1;
-        }
-
-        m_dispatcher.dispatch_client_read(*this, protocol , connector);
-
-        connector->shutdown(SHUT_RDWR);
-        return 0;
-
-    } catch (const std::exception& e) {
-        getTrace().print(std::cerr, std::format("Exception in Client::start: {}", e.what()));
-        return -1;
-    }
-#endif
-
-}
-#if 0
-   /* int Client::start(std::string_view neighbour_ip, in_port_t neighbour_port, std::string_view msg) noexcept {
-
-        try {
-
-
-        if (ip_s == neighbour_ip) {
-            return -1;
-        }
-
-        std::string ip_str(neighbour_ip);
-        std::string knowPortStr(std::to_string(neighbour_port));
-
-        sockpp::tcp_connector connector;
-
-        getTrace().print(std::clog, std::format(MSG_CLIENT_TRYING_TO_CONNECT, std::format(MSG_NODE_ID, getPort(), CLIENT), knowPortStr));
-
-        std::this_thread::sleep_for(threadSleep_s(1500, 3000));
-
-        getRessource().set_node_a_live(ip_str, neighbour_port, false);
-
-        if (!connector.connect(sockpp::inet_address(ip_str, neighbour_port))){
-            getTrace().print(std::cerr, std::format(MSG_CLIENT_ERROR_CONNECTING, std::format(MSG_NODE_ID, getPort(), CLIENT), neighbour_ip, neighbour_port));
-            connector.shutdown(SHUT_RDWR);
-        }
-
-        getTrace().print(std::clog, std::format(MSG_CLIENT_CONNECTED, std::format(MSG_NODE_ID, getPort(), CLIENT), neighbour_ip, neighbour_port));
-
-        getRessource().set_node_a_live(ip_str, neighbour_port, true);
-        // Send
-        if (auto res = connector.write(msg.data()); res != msg.size()) {
-            getTrace().print(std::cerr, std::format(MSG_CLIENT_ERROR_WRITING_TCP_STREAM, std::format(MSG_NODE_ID, getPort(), CLIENT), connector.last_error()));
-            connector.shutdown(SHUT_RDWR);
-            return 1;
-        }
-
-
-        // read
-        char sizeMsg[FORMATTED_NUMBER_SIZE]; // Recupere la taille du buffer
-       /* if (auto res = connector.read(sizeMsg, FORMATTED_NUMBER_SIZE); !res) {
-            getTrace().print(std::cerr, std::format(MSG_CLIENT_ERROR_READING_TCP_STREAM, std::format(MSG_NODE_ID, getPort(), CLIENT), connector.last_error()));
-            connector.shutdown(SHUT_RDWR);
-            return 1;
-        }*/
-            if (!read_exact(connector, sizeMsg, FORMATTED_NUMBER_SIZE)) {
-    getTrace().print(std::cerr, "Erreur lecture taille");
-    connector.shutdown(SHUT_RDWR);
-    return 1;
 }
 
-
-        // Le type de requete
-        char queryBuf[protocolSize()]; // Recupere le protocol
-       /* if (auto res = connector.read(queryBuf, protocolSize()); !res) {
-            getTrace().print(std::cerr, std::format(MSG_CLIENT_ERROR_READING_TCP_STREAM, std::format(MSG_NODE_ID, getPort(), CLIENT), connector.last_error()));
-            connector.shutdown(SHUT_RDWR);
-            return 1;
-        }*/
-
-            if (!read_exact(connector, queryBuf, protocolSize())) {
-                getTrace().print(std::cerr, "Erreur lecture protocole");
-                connector.shutdown(SHUT_RDWR);
-                return 1;
-            }
-
-        std::string protocole(queryBuf, protocolSize());
-        memset(queryBuf,0, protocolSize());
-
-        size_t t;
-        try {
-            t = std::stoi(sizeMsg); // Convert la taille du message
-        }
-        catch (const std::exception) {
-            getTrace().print(std::cerr, std::format(MSG_CLIENT_ERROR_CONVERTING_SIZE, std::format(MSG_NODE_ID, getPort(), CLIENT), sizeMsg));
-            connector.shutdown(SHUT_RDWR);
-            return 1;
-        }
-
-        /*char msg_buf[t];
-
-        if (auto res = connector.read(msg_buf, t); !res) { // Recupere le message envoyer
-            getTrace().print(std::cerr, std::format(MSG_CLIENT_ERROR_READING_TCP_STREAM, std::format(MSG_NODE_ID, getPort(), CLIENT), connector.last_error()));
-            connector.shutdown(SHUT_RDWR);
-            return 1;
-        }*/
-            std::vector<char> msg_buf(t);
-if (!read_exact(connector, msg_buf.data(), t)) {
-    getTrace().print(std::cerr, "Erreur lecture message");
-    connector.shutdown(SHUT_RDWR);
-    return 1;
-}
-
-        std::string msg_str(msg_buf, t);
-        memset(msg_buf,0, protocolSize());
-
-        if (protocole == protocolToString(PROTOCOL::GET_IPS)) {
-            addIps(msg_str);
-        }
-
-        else if (protocole == protocolToString(PROTOCOL::GET_PICS)) {
-            addPictures(msg_str);
-        }
-
-        else if (protocole == protocolToString(PROTOCOL::GET_PIC)) {
-            addPicture(msg_str);
-        }
-
-       // getTrace().print(std::clog, nodeIdStr + " - Connection Closed from " + std::to_string(neighbour_port));
-        connector.shutdown(SHUT_RDWR);
-        return (!connector) ? -1 : 0;
-
-        }
-        catch (std::exception) {
-            getTrace().print(std::cerr, std::format(MSG_CLIENT_ERROR_CONNECTING, std::format(MSG_NODE_ID, getPort(), CLIENT), neighbour_ip, neighbour_port));
-            return -1;
-        }
-
-    }*/
-#endif
 
     int Client::check_connected(std::string_view neighbour_ip, in_port_t neighbour_port) noexcept {
             try {
@@ -480,7 +299,7 @@ if (!read_exact(connector, msg_buf.data(), t)) {
 
             }
             else if (protocole == tcp::protocolToString(tcp::PROTOCOL::GET_PIC)) {
-                addPicture(msg_str);
+                //addPicture(msg_str);
             }
 
             // Fermeture propre
@@ -524,48 +343,6 @@ void Client::addIps(const std::string &ips_str) const noexcept {
 
     }
 }
-
-
-    void Client::addPicture(const std::string &str) const noexcept{
-
-        size_t pos = 0;
-
-        std::string name_size_buf(str, pos, FORMATTED_NUMBER_SIZE);
-
-        pos += FORMATTED_NUMBER_SIZE;
-        size_t t;
-
-        try {
-            t  = std::stoi(name_size_buf);
-        }
-        catch (const std::exception){
-              std::cout<<SAVE_PICTURE_FAIL<<std::endl;
-            getTrace().print(std::cerr, std::format(MSG_CLIENT_ERROR_CONVERTING_SIZE, std::format(MSG_NODE_ID, getPort(), CLIENT), name_size_buf));
-            return;
-        }
-
-        std::string picName(str, pos, t);
-        pos += t;
-        std::string extension_size(str, pos, FORMATTED_NUMBER_SIZE);
-        pos += FORMATTED_NUMBER_SIZE;
-        try {
-            t = std::stoi(extension_size);
-        }
-        catch (const std::exception){
-            std::cout<<SAVE_PICTURE_FAIL<<std::endl;
-            //getTrace().print(std::cerr, nodeIdStr + " - Error can't convert " + extension_size + " to a integer");
-        }
-
-        std::string extention(str, pos, t);
-        pos += t;
-        t = str.size() - pos;
-        std::string pic_str(str, pos, t);
-
-        if(getRessource().savedPictureToDisk(FOLDER_TO_SAVE , picName , extention, pic_str) == 0)
-            std::cout<< SAVE_PICTURE_SUCCESS<<std::endl;
-        else
-            std::cout<< SAVE_PICTURE_FAIL<<std::endl;
-    }
 
 
 

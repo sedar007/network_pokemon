@@ -14,7 +14,7 @@ namespace pokemon::tcp {
 
             [[nodiscard]] bool connect(std::string_view ip, int port) const noexcept;
             [[nodiscard]] bool write(std::string_view data) const noexcept;
-            [[nodiscard]] bool read(char* buffer, size_t length) const noexcept;
+            [[nodiscard]] bool read(std::byte* buffer, size_t length) const noexcept;
             void shutdown() const noexcept;
 
             explicit operator bool() const noexcept {

@@ -31,7 +31,7 @@ namespace pokemon {
     }
 
 
-    bool Utils::read_exact(const std::shared_ptr<tcp::tcp_connector> connector, char* buffer, size_t length) noexcept {
+    bool Utils::read_exact(const std::shared_ptr<tcp::tcp_connector> connector, std::byte* buffer, size_t length) noexcept {
         return connector->read(buffer, length);
     }
 
@@ -65,7 +65,7 @@ namespace pokemon {
     size_t Utils::get_total_bytes_from_connector(const std::shared_ptr<tcp::tcp_connector> &connector) {
         char sizeHeader[FORMATTED_NUMBER_SIZE];
 
-        if (!Utils::read_exact(connector, sizeHeader, FORMATTED_NUMBER_SIZE)) {
+        if (!Utils::read_exact(connector, reinterpret_cast<std::byte*> (sizeHeader), FORMATTED_NUMBER_SIZE)) {
             connector->shutdown();
             throw std::runtime_error("Failed to read size header");
         }

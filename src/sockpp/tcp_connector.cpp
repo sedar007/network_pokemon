@@ -27,7 +27,7 @@ namespace pokemon::tcp
         return m_pimpl->write(data);
     }
 
-    bool tcp_connector::read(char* buffer, size_t length) const noexcept {
+    bool tcp_connector::read(std::byte* buffer, size_t length) const noexcept {
         if (!m_pimpl) {
             return false;
         }

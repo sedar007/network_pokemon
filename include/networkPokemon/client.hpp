@@ -82,13 +82,6 @@ namespace pokemon {
         void addIps(const std::string &ips_str) const noexcept;
 
 
-        /**
-         * @brief Ajoute une image à la liste.
-         * @param str Chaîne d'image.
-         * @param nodeIdStr Identifiant du nœud.
-         */
-        void addPicture(const std::string &str) const noexcept;
-
         int check_connected(std::string_view neighbour_ip, in_port_t neighbour_port) noexcept;
 
         void get_client_ip() noexcept;

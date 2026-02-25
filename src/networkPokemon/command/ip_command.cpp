@@ -2,7 +2,7 @@
 
 namespace pokemon {
 
-    void ip_command::send_to_client([[maybe_unused]] session& ss,[[maybe_unused]] std::shared_ptr<tcp::IConnection> socket) {
+    void ip_command::send_to_client(session& ss, const std::shared_ptr<tcp::IConnection>& socket) {
         if (!socket) {
             return;
         }
@@ -11,7 +11,7 @@ namespace pokemon {
     }
 
 
-    void ip_command::receive_from_server([[maybe_unused]] Client& client,[[maybe_unused]] std::shared_ptr<tcp::tcp_connector> connector) {
+    void ip_command::receive_from_server(Client& client, std::shared_ptr<tcp::tcp_connector> connector) {
         if (connector == nullptr || !(*connector)) {
             return;
         }
@@ -21,7 +21,7 @@ namespace pokemon {
 
 
 
-    void ip_command::send_nodes_list(std::shared_ptr<tcp::IConnection> socket, const std::vector<Node_Info>& nodes) const noexcept{
+    void ip_command::send_nodes_list(const std::shared_ptr<tcp::IConnection>& socket, const std::vector<Node_Info>& nodes) noexcept{
         if (nodes.empty()) return;
 
         std::vector<Node_Packet> packet_buffer;
@@ -39,7 +39,7 @@ namespace pokemon {
         socket->write(reinterpret_cast<const char*>(packet_buffer.data()), total_bytes);
     }
 
-    void ip_command::receive_nodes_list([[maybe_unused]] Client& client, [[maybe_unused]] const std::shared_ptr<tcp::tcp_connector> &connector) {
+    void ip_command::receive_nodes_list(const Client& client, const std::shared_ptr<tcp::tcp_connector> &connector) {
 
          size_t total_bytes = Utils::get_total_bytes_from_connector(connector);
 
@@ -52,9 +52,7 @@ namespace pokemon {
         size_t node_count = total_bytes / sizeof(Node_Packet);
         std::vector<Node_Packet> packet_buffer(node_count);
 
-        char* raw_ptr = reinterpret_cast<char*>(packet_buffer.data());
-
-        if (!Utils::read_exact(connector, raw_ptr, total_bytes)) {
+        if (!Utils::read_exact(connector, reinterpret_cast<std::byte*>(packet_buffer.data()), total_bytes)) {
             connector->shutdown();
             return;
         }
@@ -71,7 +69,7 @@ namespace pokemon {
             std::string ip = safe_string(packet.ip, sizeof(packet.ip));
 
             // Big Endian -> Little Endian
-            uint16_t port = ntohs(packet.port);
+            const auto port = ntohs(packet.port);
 
             if (ip.empty() || port == 0) continue;
 

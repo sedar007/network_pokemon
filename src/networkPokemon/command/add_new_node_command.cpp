@@ -2,7 +2,7 @@
 
 namespace pokemon {
 
-    void add_new_node_command::send_to_client([[maybe_unused]] session& ss,[[maybe_unused]] std::shared_ptr<tcp::IConnection> socket) {
+    void add_new_node_command::send_to_client([[maybe_unused]] session& ss,[[maybe_unused]] const std::shared_ptr<tcp::IConnection>& socket) {
         /*if (!socket || !(*socket)) {
             return;
         }

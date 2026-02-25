@@ -8,7 +8,7 @@ namespace pokemon::tcp {
     class NETWORK_SOCKPP_POKEMON_API INetworkSessionCommand {
     public:
         virtual ~INetworkSessionCommand() = default;
-        virtual void send_to_client(T &context, std::shared_ptr<IConnection> socket) = 0;
+        virtual void send_to_client(T &context, const std::shared_ptr<IConnection>& socket) = 0;
     };
 }
 
