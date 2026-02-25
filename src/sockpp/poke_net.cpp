@@ -5,6 +5,7 @@ namespace pokemon::tcp
     poke_net::poke_net(const int port)
         : m_pimpl(std::make_unique<impl>(static_cast<in_port_t>(port)))
     {
+        sockpp::initialize();
     }
 
     poke_net::~poke_net()

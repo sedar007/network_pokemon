@@ -17,7 +17,7 @@ namespace pokemon::tcp {
                    //                              std::format(MSG_NODE_ID, getPort(), CLIENT), knowPortStr));
 
 
-                     if (!connector->connect(ip, port)) {
+                     if (!connector->connect(ip_str, port)) {
                      //    getTrace().print(std::cerr, std::format(MSG_CLIENT_ERROR_CONNECTING,
                        //                              std::format(MSG_NODE_ID, getPort(), CLIENT), neighbour_ip, neighbour_port));
                         return -1;
