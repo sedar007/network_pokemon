@@ -12,9 +12,7 @@ namespace pokemon {
 
 
     private:
-        ResourceManager &resourceManager = ResourceManager::getInstance();
-       // std::string get_ip_to_send(const std::vector<Node_Info> nodes) const;
-    //    void send_nodes_list(std::shared_ptr<tcp::IConnection> socket, const std::vector<Node_Info>& nodes) const noexcept;
+        void send_nodes_list(std::shared_ptr<tcp::IConnection> socket, const std::vector<Node_Info>& nodes) const noexcept;
         void receive_nodes_list(Client& client, const std::shared_ptr<tcp::tcp_connector> &connector);
 
     };

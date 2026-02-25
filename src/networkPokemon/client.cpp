@@ -203,10 +203,10 @@ namespace pokemon {
 
     int Client::start(std::string_view neighbour_ip, in_port_t neighbour_port, std::string_view msg) noexcept {
 
-        tcp::ClientNetHelper<Client> helper;
+        tcp::client_net<Client> net;
 
        // auto& dispatcher = get_dispatcher();
-        return helper.client_ask_to_server(*this, nullptr, get_dispatcher(), neighbour_ip, neighbour_port, msg);
+        return net.client_ask_to_server(*this, nullptr, get_dispatcher(), neighbour_ip, neighbour_port, msg);
 #if 0
         try {
 

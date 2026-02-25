@@ -17,7 +17,7 @@ namespace pokemon::tcp {
         void dispatch_client_read(T &context,PROTOCOL protocol, std::shared_ptr<tcp_connector> connector) {
             auto it = m_commands.find(protocol);
             if (it != m_commands.end()) {
-                it->second->receive_from_server_test(context, std::move(connector));
+                it->second->receive_from_server(context, std::move(connector));
             }
         }
 /*

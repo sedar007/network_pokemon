@@ -13,7 +13,7 @@ namespace pokemon {
         socket->shutdown(SHUT_RDWR);*/
     }
 
-    void alive_command::receive_from_server([[maybe_unused]] Client& client, [[maybe_unused]] std::shared_ptr<sockpp::tcp_connector> connector) {
+    void alive_command::receive_from_server([[maybe_unused]] Client& client, [[maybe_unused]] std::shared_ptr<tcp::tcp_connector> connector) {
        /* std::stringstream ss(payload.data());
         std::string alive;
         std::string ip;

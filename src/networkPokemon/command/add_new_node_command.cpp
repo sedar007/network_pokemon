@@ -2,8 +2,8 @@
 
 namespace pokemon {
 
-    void add_new_node_command::send_to_client(session& ss, std::shared_ptr<sockpp::tcp_socket> socket) {
-        if (!socket || !(*socket)) {
+    void add_new_node_command::send_to_client([[maybe_unused]] session& ss,[[maybe_unused]] std::shared_ptr<tcp::IConnection> socket) {
+        /*if (!socket || !(*socket)) {
             return;
         }
 
@@ -14,13 +14,13 @@ namespace pokemon {
 
         socket->write(header.data(), header.size());
         socket->write(reinterpret_cast<const char*>(&packet), total_bytes);
-        socket->shutdown(SHUT_RDWR);
+        socket->shutdown(SHUT_RDWR);*/
     }
 
 
-    void add_new_node_command::receive_from_server(Client& client, std::shared_ptr<sockpp::tcp_connector> connector) {
+    void add_new_node_command::receive_from_server([[maybe_unused]] Client& client, [[maybe_unused]] std::shared_ptr<tcp::tcp_connector> connector) {
 
-        size_t total_bytes = Utils::get_total_bytes_from_connector(connector);
+      /*  size_t total_bytes = Utils::get_total_bytes_from_connector(connector);
 
         if (total_bytes != sizeof(Node_Packet)) {
             connector->shutdown(SHUT_RDWR);
@@ -54,7 +54,7 @@ namespace pokemon {
          //   client.get_storage()->addNodeToSavedList(node);
         }
 
-         connector->shutdown(SHUT_RDWR);
+         connector->shutdown(SHUT_RDWR);*/
     }
 
 }

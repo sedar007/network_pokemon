@@ -22,4 +22,5 @@
 #include "sockpp/command/command_client_dispatcher.hpp"
 #include "sockpp/command/command_session_dispatcher.hpp"
 
-#include "sockpp/client_net_helper.hpp"
+#include "sockpp/client_net.hpp"
+#include "sockpp/session_net.hpp"
