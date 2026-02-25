@@ -32,7 +32,7 @@ namespace pokemon::tcp {
              }
 
 
-            [[nodiscard]] int client_ask_to_server(T& t, std::shared_ptr<tcp::IConnection> socket, command_dispatcher<T>& dispatcher, std::string_view ip, int port, std::string_view msg) {
+            [[nodiscard]] int client_ask_to_server(T& t, std::shared_ptr<tcp::IConnection> socket, command_client_dispatcher<T>& dispatcher, std::string_view ip, int port, std::string_view msg) {
 
                      std::string knowPortStr = std::to_string(port);
                      std::string ip_str(ip);
