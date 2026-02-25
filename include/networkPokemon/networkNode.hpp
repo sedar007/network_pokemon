@@ -66,23 +66,6 @@ namespace pokemon {
             thread_pool.enqueue(std::forward<F>(f));
         }
 
-
-        tcp::command_dispatcher<NetworkNode>& get_dispatcher() {
-            return m_dispatcherr;
-        }
-
-        void initCommands() {
-       //     m_dispatcher.registerCommand(PROTOCOL::GET_IPS, std::make_unique<ip_command>());
-          /*  m_dispatcher.registerCommand(PROTOCOL::GET_PICS, std::make_unique<pictures_command>());
-             m_dispatcher.registerCommand(PROTOCOL::GET_PIC, std::make_unique<image_data_command>());
-            m_dispatcher.registerCommand(PROTOCOL::GET_ALIVE, std::make_unique<alive_command>());
-            m_dispatcher.registerCommand(PROTOCOL::GET_ID, std::make_unique<add_new_node_command>());*/
-
-
-            m_dispatcherr.registerCommand(tcp::PROTOCOL::GET_IPS, std::make_unique<pokemon::ip_command>());
-        }
-
-
     private:
         /**
          * @brief The port number associated with this node.
@@ -108,7 +91,6 @@ namespace pokemon {
         peer_registry& peers_registry_;
         image_repository& images_repository_;
         std::shared_ptr<storage_manager> storage_;
-        tcp::command_dispatcher<NetworkNode> m_dispatcherr;
 
 
     };

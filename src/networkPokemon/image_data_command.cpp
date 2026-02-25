@@ -2,7 +2,7 @@
 
 namespace pokemon {
 
-    void image_data_command::send_to_client(session& ss, std::shared_ptr<sockpp::tcp_socket> socket) {
+    void image_data_command::send_to_client(session& ss, std::shared_ptr<tcp::IConnection> socket) {
         if (!socket || !(*socket)) {
             return;
         }

@@ -43,7 +43,6 @@
 #include "networkPokemon/trace.hpp"
 #include "networkPokemon/resourceManager.hpp"
 
-#include "networkPokemon/command/INetworkCommand.hpp"
 #include "networkPokemon/command/ip_command.hpp"
 #include "networkPokemon/alive_command.hpp"
 #include "networkPokemon/command/add_new_node_command.hpp"
@@ -61,7 +60,6 @@
 #include "networkPokemon/node.hpp"
 #include "networkPokemon/main.hpp"
 
-#include "networkPokemon/command/ip_test.hpp"
 /*
 
 #include "networkPokemon/trace.hpp"

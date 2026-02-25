@@ -2,23 +2,16 @@
 
 namespace pokemon {
 
-    void ip_command::send_to_client([[maybe_unused]] NetworkNode& ss,[[maybe_unused]] std::shared_ptr<tcp::IConnection> socket) {
+    void ip_command::send_to_client([[maybe_unused]] session& ss,[[maybe_unused]] std::shared_ptr<tcp::IConnection> socket) {
         if (!socket) {
             return;
         }
         //send_nodes_list(socket, ss.get_peer_registry().get_nodes());
         socket->shutdown();
     }
-    void ip_command::receive_from_server([[maybe_unused]] NetworkNode& client,[[maybe_unused]] std::shared_ptr<tcp::tcp_connector> connector) {
-        if (connector == nullptr || !(*connector)) {
-            return;
-        }
-    //    receive_nodes_list(client, connector);
-     //   connector->shutdown(SHUT_RDWR);
-    }
 
 
-    void ip_command::receive_from_server_test([[maybe_unused]] Client& client,[[maybe_unused]] std::shared_ptr<tcp::tcp_connector> connector) {
+    void ip_command::receive_from_server([[maybe_unused]] Client& client,[[maybe_unused]] std::shared_ptr<tcp::tcp_connector> connector) {
         if (connector == nullptr || !(*connector)) {
             return;
         }

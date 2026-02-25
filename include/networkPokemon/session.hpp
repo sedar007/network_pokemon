@@ -21,6 +21,21 @@ namespace pokemon {
          */
         int process(std::shared_ptr<tcp::IConnection> socket);
 
+
+        tcp::command_session_dispatcher<session>& get_dispatcher() {
+            return m_dispatcher;
+        }
+
+
+
+    private:
+        tcp::command_session_dispatcher<session> m_dispatcher;
+
+
+        void initCommands() {
+            m_dispatcher.registerCommand(tcp::PROTOCOL::GET_IPS, std::make_unique<pokemon::ip_command>());
+        }
+
     };
 
 }

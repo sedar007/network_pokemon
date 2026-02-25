@@ -8,7 +8,7 @@ namespace pokemon::tcp {
              ClientNetHelper() = default;
 
 
-             [[nodiscard]] int server_send_response(T& t, std::shared_ptr<tcp::IConnection> socket, command_dispatcher<T>& dispatcher) {
+             [[nodiscard]] int server_send_response(T& t, std::shared_ptr<tcp::IConnection> socket, command_session_dispatcher<T>& dispatcher) {
                  if (!socket || !socket->is_open()) {
                      return -1;
                  }

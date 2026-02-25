@@ -8,7 +8,7 @@ namespace pokemon::tcp {
     class NETWORK_SOCKPP_POKEMON_API INetworkClientCommand {
     public:
         virtual ~INetworkClientCommand() = default;
-        virtual void receive_from_server_test(T &context, std::shared_ptr<tcp_connector> connector) = 0;
+        virtual void receive_from_server(T &context, std::shared_ptr<tcp_connector> connector) = 0;
     };
 }
 
