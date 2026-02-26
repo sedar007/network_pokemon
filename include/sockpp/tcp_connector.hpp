@@ -12,7 +12,7 @@ namespace pokemon::tcp {
             tcp_connector& operator=(tcp_connector&&) noexcept;
 
 
-            [[nodiscard]] bool connect(std::string_view ip, int port) const noexcept;
+            [[nodiscard]] bool connect(const std::string& ip, int port) const noexcept;
             [[nodiscard]] bool write(std::string_view data) const noexcept;
             [[nodiscard]] bool read(std::byte* buffer, size_t length) const noexcept;
             void shutdown() const noexcept;

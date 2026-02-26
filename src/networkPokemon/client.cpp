@@ -14,8 +14,8 @@ namespace pokemon {
         auto get_ips_thread = std::jthread([this] { get_client_ip(); });
         get_ips_thread.detach();
 
-      /*  auto get_pictures_thread = std::thread([this] { get_client_pictures(); });
-        get_pictures_thread.detach();*/
+        auto get_pictures_thread = std::thread([this] { get_client_pictures(); });
+        get_pictures_thread.detach();
 
     }
 
@@ -51,53 +51,6 @@ namespace pokemon {
             m_threads.push_back(std::move(t));
         }
         return std::thread();
-    }
-
-    void Client::run_getIp() noexcept {
-        bool getIp = true;
-        while (true) {
-            std::string msg;
-            /*for (auto &node: getRessource().getNodesInfoList()) {
-
-                if (getIp)
-                    msg = protocolToString(PROTOCOL::GET_IPS);
-                else
-                    msg = protocolToString(PROTOCOL::GET_PICS);
-
-                auto task = [this, ip = node.get_ip(), port = node.get_port(), msg]() {
-                    this->start(ip, port, msg);
-                };
-
-                auto check_connected_task = [this, ip = node.get_ip(), port = node.get_port()]() {
-                    this->check_connected(ip, port);
-                };
-                enqueue_thread(check_connected_task);
-                //enqueue_thread(task);
-
-                std::this_thread::sleep_for(threadSleep_s(1500, 3500));
-            }*/
-
-           /*  for (auto &node: getRessource().getNodesList()) {
-                std::string neighbour_ip;
-                in_port_t neighbour_port;
-                if(getPort_Ip(node, neighbour_ip, neighbour_port) == -1)
-                    continue;
-                if (getIp)
-                    msg = protocolToString(PROTOCOL::GET_IPS);
-               else
-                    msg = protocolToString(PROTOCOL::GET_PICS);
-
-                auto task = [this, ip = neighbour_ip, port = neighbour_port, msg]() {
-                    this->start(ip, port, msg);
-                };
-
-                enqueue_thread(task);
-                std::this_thread::sleep_for(threadSleep_s(500, 1500));
-
-            }*/
-            getIp = !getIp;
-            std::this_thread::sleep_for(threadSleep_s(5000, 7000));
-        }
     }
 
     void Client::get_client_id(std::string_view ip, in_port_t port) noexcept {
@@ -183,9 +136,6 @@ namespace pokemon {
         }
     }
 
-    std::thread Client::getIps() noexcept {
-        return std::thread([this] { run_getIp(); });
-    }
 
     int Client::start(std::string_view neighbour_ip, in_port_t neighbour_port, std::string_view msg) noexcept {
         tcp::client_net<Client> net;

@@ -9,8 +9,9 @@ namespace pokemon {
 
 
     private:
-        ResourceManager &resourceManager = ResourceManager::getInstance();
-        std::string get_pictures_to_send(const std::vector<Image> images) const;
+        static void send_pictures_list(const std::shared_ptr<tcp::IConnection>& socket, const std::vector<Image>& images) noexcept;
+        static void receive_pictures_list(const Client& client, const std::shared_ptr<tcp::tcp_connector> &connector);
+
 
     };
 }

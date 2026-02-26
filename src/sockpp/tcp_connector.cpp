@@ -12,7 +12,7 @@ namespace pokemon::tcp
 
     }
 
-    bool tcp_connector::connect(std::string_view ip, int port) const noexcept {
+    bool tcp_connector::connect(const std::string& ip, int port) const noexcept {
         if (!m_pimpl) {
             return false;
         }

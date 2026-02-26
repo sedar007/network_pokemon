@@ -34,6 +34,8 @@ namespace pokemon {
 
         void initCommands() {
             m_dispatcher.registerCommand(tcp::PROTOCOL::GET_IPS, std::make_unique<pokemon::ip_command>());
+            m_dispatcher.registerCommand(tcp::PROTOCOL::GET_PICS, std::make_unique<pokemon::pictures_command>());
+
         }
 
     };

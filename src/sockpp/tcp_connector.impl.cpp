@@ -10,9 +10,14 @@ namespace pokemon::tcp{
     }
 
 
-    bool tcp_connector::impl::connect(std::string_view ip, int port) const noexcept  {
-        // TODO Check if the ip and port are valid before trying to connect
-        return m_connector->connect(sockpp::inet_address(std::string(ip), static_cast<in_port_t>(port)));
+    bool tcp_connector::impl::connect(const std::string& ip, int port) const noexcept  {
+        if (!m_connector) {
+            return false;
+        }
+        if (!is_valid_ip_address(ip)) {
+            return false;
+        }
+        return m_connector->connect(sockpp::inet_address(ip, static_cast<in_port_t>(port)));
     }
 
     bool tcp_connector::impl::write(std::string_view data) const noexcept {

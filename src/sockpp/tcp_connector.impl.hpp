@@ -13,7 +13,7 @@ namespace pokemon::tcp
 		impl(impl&&) noexcept = default;
 		impl& operator=(impl&&) noexcept = default;
 
-	   [[nodiscard]] bool connect(std::string_view ip, int port) const noexcept;
+	   [[nodiscard]] bool connect(const std::string& ip, int port) const noexcept;
 
 	    bool write(std::string_view data) const noexcept ;
 		bool read(std::byte* buffer, size_t length) const noexcept ;

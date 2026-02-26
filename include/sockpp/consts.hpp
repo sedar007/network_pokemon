@@ -38,4 +38,11 @@ namespace pokemon::tcp {
         return PROTOCOL::UNKNOWN;
     }
 
+
+    static bool is_valid_ip_address(const std::string& ip) noexcept {
+        struct sockaddr_in sa;
+        int result = inet_pton(AF_INET, ip.c_str(), &(sa.sin_addr));
+        return result == 1;
+    }
+
 }

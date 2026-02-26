@@ -10,7 +10,6 @@ namespace pokemon {
         socket->shutdown();
     }
 
-
     void ip_command::receive_from_server(Client& client, std::shared_ptr<tcp::tcp_connector> connector) {
         if (connector == nullptr || !(*connector)) {
             return;
@@ -19,54 +18,24 @@ namespace pokemon {
            connector->shutdown();
     }
 
-
-
     void ip_command::send_nodes_list(const std::shared_ptr<tcp::IConnection>& socket, const std::vector<Node_Info>& nodes) noexcept{
-        if (nodes.empty()) return;
-
-        std::vector<Node_Packet> packet_buffer;
-        packet_buffer.reserve(nodes.size());
-
-        for (const auto& node : nodes) {
-            const Node_Packet packet = Node_Info::to_packet(node);
-            packet_buffer.push_back(packet);
-        }
-
-        const size_t total_bytes = packet_buffer.size() * sizeof(Node_Packet);
-        const std::string header = Utils::formatted_number(total_bytes);
-
-        socket->write(header.data(), header.size());
-        socket->write(reinterpret_cast<const char*>(packet_buffer.data()), total_bytes);
+        command::send_list<Node_Info, Node_Packet>(socket, nodes);
     }
 
     void ip_command::receive_nodes_list(const Client& client, const std::shared_ptr<tcp::tcp_connector> &connector) {
 
-         size_t total_bytes = Utils::get_total_bytes_from_connector(connector);
-
-        if (total_bytes == 0 || total_bytes % sizeof(Node_Packet) != 0) {
-            if (total_bytes == 0) return;
-            connector->shutdown();
+        auto packet_buffer_opt = command::receive_list<Node_Packet>(connector);
+        if (!packet_buffer_opt.has_value()) {
             return;
         }
 
-        size_t node_count = total_bytes / sizeof(Node_Packet);
-        std::vector<Node_Packet> packet_buffer(node_count);
-
-        if (!Utils::read_exact(connector, reinterpret_cast<std::byte*>(packet_buffer.data()), total_bytes)) {
-            connector->shutdown();
-            return;
-        }
+        auto const& packet_buffer = packet_buffer_opt.value();
 
         for (const auto& packet : packet_buffer) {
-            auto safe_string = [](const char* data, size_t max_len) {
-                size_t len = 0;
-                while(len < max_len && data[len] != '\0') len++;
-                return std::string(data, len);
-            };
 
-            std::string id = safe_string(packet.id, sizeof(packet.id));
-            std::string name = safe_string(packet.name, sizeof(packet.name));
-            std::string ip = safe_string(packet.ip, sizeof(packet.ip));
+            std::string id = command::safe_string(packet.id, sizeof(packet.id));
+            std::string name = command::safe_string(packet.name, sizeof(packet.name));
+            std::string ip = command::safe_string(packet.ip, sizeof(packet.ip));
 
             // Big Endian -> Little Endian
             const auto port = ntohs(packet.port);
