@@ -3,7 +3,12 @@
 
 namespace pokemon {
 
-    class NETWORK_POKEMON_MODELS_API image_cache {
+    struct Image_Cache_Packet {
+        char hash[65];
+        char data[5096];
+    };
+
+    class NETWORK_POKEMON_MODELS_API image_cache : public Model {
         public:
             image_cache(std::string_view hash,
                 std::string_view data) noexcept;
@@ -27,6 +32,10 @@ namespace pokemon {
             inline void set_hash(std::string_view hash) noexcept {
                 hash_s = hash;
             }
+
+
+            [[nodiscard]] static Image_Cache_Packet to_packet(const image_cache &info) noexcept;
+            [[nodiscard]] static image_cache from_packet(const Image_Cache_Packet &packet) noexcept;
 
     private:
         std::string hash_s;

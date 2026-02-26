@@ -23,7 +23,7 @@ set(SRC
     "${SRCROOT}/command/pictures_command.cpp"
     "${SRCROOT}/command/alive_command.cpp"
     "${SRCROOT}/command/add_new_node_command.cpp"
-    "${SRCROOT}/image_data_command.cpp"
+    "${SRCROOT}/command/image_data_command.cpp"
     "${SRCROOT}/utils.cpp"
     "${SRCROOT}/peer_registry.cpp"
     "${SRCROOT}/image_repository.cpp"

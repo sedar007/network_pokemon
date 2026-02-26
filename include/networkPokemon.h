@@ -48,7 +48,7 @@
 #include "networkPokemon/command/alive_command.hpp"
 #include "networkPokemon/command/add_new_node_command.hpp"
 #include "networkPokemon/command/pictures_command.hpp"
-#include "networkPokemon/image_data_command.hpp"
+#include "networkPokemon/command/image_data_command.hpp"
 
 #include "networkPokemon/peer_registry.hpp"
 #include "networkPokemon/image_repository.hpp"
