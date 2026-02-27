@@ -73,7 +73,13 @@ namespace pokemon {
         try{
             auto nodeInfo = get_peer_registry().find_node_by_id(image.value().get_owner());
 
-            std::string msg = std::format("{}{}{}", tcp::protocolToString(tcp::PROTOCOL::GET_PIC), generateFormattedNumber(hash.size()), hash);
+            const Image_Packet packet = Image::to_packet(image.value());
+            const size_t total_bytes = sizeof(Image_Packet);
+
+            auto pk = reinterpret_cast<const char*>(&packet);
+
+            const std::string header = Utils::formatted_number(total_bytes);
+            std::string msg = std::format("{}{}{}", tcp::protocolToString(tcp::PROTOCOL::GET_PIC),header, std::string(pk, total_bytes));
 
             auto task = [this, ip = nodeInfo.get_ip(), port = nodeInfo.get_port(), msg]() {
                 this->start(ip, static_cast<in_port_t>(port), msg);
@@ -139,7 +145,7 @@ namespace pokemon {
 
     int Client::start(std::string_view neighbour_ip, in_port_t neighbour_port, std::string_view msg) noexcept {
         tcp::client_net<Client> net;
-        return net.client_ask_to_server(*this, nullptr, get_dispatcher(), neighbour_ip, neighbour_port, msg);
+        return net.client_ask_to_server(*this, get_dispatcher(), neighbour_ip, neighbour_port, msg);
 }
 
 

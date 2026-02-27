@@ -13,15 +13,18 @@ namespace pokemon::tcp {
                  }
 
                  char protocol_buf[PROTOCOL_SIZE];
+                 auto protocol_buf_ptr = reinterpret_cast<std::byte*>(protocol_buf);
 
                  // getTrace().print(std::clog, std::format(MSG_SERVER_RECEIVED_CONNECTION, std::format(MSG_NODE_ID, getPort(), SERVER),
                  //                                 socket->address(), getPort()));
 
-                 if (const auto res = socket->read(protocol_buf, sizeof(protocol_buf)); res <= 0) {
+
+                 if (!socket->read(protocol_buf_ptr, sizeof(protocol_buf))) {
                      return -1;
                  }
 
                  std::string protocol_str(protocol_buf, PROTOCOL_SIZE);
+
                  //  getTrace().print(std::clog, std::format(MSG_SERVER_RECEIVED_QUERY, std::format(MSG_NODE_ID, getPort(), SERVER),
                  //                                         protocol_str));
                 std::cout << "send request: " << protocol_str << std::endl;

@@ -73,18 +73,19 @@ namespace pokemon {
                 return packet_buffer;
             }
 
-            template <typename P>
-            static std::optional<P> receive_item(const std::shared_ptr<tcp::tcp_connector> &connector) {
-                size_t total_bytes = Utils::get_total_bytes_from_connector(connector);
+
+            template <typename P, typename T>
+            static std::optional<P> receive_item(const std::shared_ptr<T> &conn) {
+                size_t total_bytes = Utils::get_total_bytes_from_connector(conn);
 
                 if (total_bytes != sizeof(P)) {
-                    connector->shutdown();
+                    conn->shutdown();
                     return std::nullopt;
                 }
 
                 P packet;
-                if (!Utils::read_exact(connector, reinterpret_cast<std::byte*>(&packet), sizeof(P))) {
-                    connector->shutdown();
+                if (!Utils::read_exact(conn, reinterpret_cast<std::byte*>(&packet), sizeof(P))) {
+                    conn->shutdown();
                     return std::nullopt;
                 }
                 return packet;

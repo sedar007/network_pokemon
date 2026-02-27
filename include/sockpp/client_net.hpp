@@ -7,10 +7,14 @@ namespace pokemon::tcp {
         public:
              client_net() = default;
 
-            [[nodiscard]] int client_ask_to_server(T& t, std::shared_ptr<tcp::IConnection> socket, command_client_dispatcher<T>& dispatcher, std::string_view ip, int port, std::string_view msg) {
+            [[nodiscard]] int client_ask_to_server(T& t, command_client_dispatcher<T>& dispatcher, std::string_view ip, int port, std::string_view msg) {
 
                      std::string knowPortStr = std::to_string(port);
                      std::string ip_str(ip);
+
+                    if (ip_str.empty() || port == 0 || msg.empty() || !tcp::is_valid_ip_address(ip_str)) {
+                        return -1;
+                    }
                      auto connector = std::make_shared<tcp_connector>();
 
                  //    getTrace().print(std::clog, std::format(MSG_CLIENT_TRYING_TO_CONNECT,

@@ -30,56 +30,6 @@ namespace pokemon {
         return std::format("{:0{}}", number, FORMATTED_NUMBER_SIZE);
     }
 
-
-    bool Utils::read_exact(const std::shared_ptr<tcp::tcp_connector> connector, std::byte* buffer, size_t length) noexcept {
-        return connector->read(buffer, length);
-    }
-
-    bool Utils::read_exact(const std::shared_ptr<sockpp::tcp_connector> connector, char* buffer, size_t length) noexcept {
-        size_t total_read = 0;
-        while (total_read < length) {
-            ssize_t n = connector->read(buffer + total_read, length - total_read);
-            if (n <= 0) return false;
-            total_read += n;
-        }
-        return true;
-    }
-
-    size_t Utils::get_total_bytes_from_connector(const std::shared_ptr<sockpp::tcp_connector> &connector) {
-        char sizeHeader[FORMATTED_NUMBER_SIZE];
-
-        if (!Utils::read_exact(connector, sizeHeader, FORMATTED_NUMBER_SIZE)) {
-            connector->shutdown(SHUT_RDWR);
-            throw std::runtime_error("Failed to read size header");
-        }
-
-        try {
-            return  std::stoul(std::string(sizeHeader, FORMATTED_NUMBER_SIZE));
-
-        } catch(...) {
-            connector->shutdown(SHUT_RDWR);
-            throw std::runtime_error("Failed to convert size header to number");
-        }
-    }
-
-    size_t Utils::get_total_bytes_from_connector(const std::shared_ptr<tcp::tcp_connector> &connector) {
-        char sizeHeader[FORMATTED_NUMBER_SIZE];
-
-        if (!Utils::read_exact(connector, reinterpret_cast<std::byte*> (sizeHeader), FORMATTED_NUMBER_SIZE)) {
-            connector->shutdown();
-            throw std::runtime_error("Failed to read size header");
-        }
-
-        try {
-            return  std::stoul(std::string(sizeHeader, FORMATTED_NUMBER_SIZE));
-
-        } catch(...) {
-            connector->shutdown();
-            throw std::runtime_error("Failed to convert size header to number");
-        }
-    }
-
-
     std::string Utils::safe_string(const char* data, size_t max_len) noexcept {
         size_t len = 0;
         while(len < max_len && data[len] != '\0') len++;
