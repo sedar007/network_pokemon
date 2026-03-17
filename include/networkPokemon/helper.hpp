@@ -5,10 +5,6 @@
 #pragma once
 
 namespace pokemon {
-    enum class PROTOCOL {
-        GET_IPS, GET_PICS, GET_PIC, GET_ALIVE, GET_ID, UNKNOWN
-    };
-
     /**
      * @brief Classe utilitaire contenant des méthodes pour manipuler les protocoles et les adresses IP.
      */
@@ -50,15 +46,6 @@ namespace pokemon {
             oss << std::setw(FORMATTED_NUMBER_SIZE) << std::setfill('0') << number;
             return oss.str();
         }
-
-        /**
-         * @brief Retourne une chaîne de caractères représentant un protocole donné.
-         * @param q Le protocole à convertir en chaîne de caractères.
-         * @return Chaîne de caractères représentant le protocole.
-         */
-        std::string protocolToString(const PROTOCOL q) const;
-        PROTOCOL string_to_protocol(std::string_view s) const;
-
 
         /**
          * @brief Retourne le nombre de charactere de la taille des requetes.

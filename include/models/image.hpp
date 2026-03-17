@@ -12,7 +12,7 @@ namespace pokemon {
         char size_unit[8];
     };
 
-    class NETWORK_POKEMON_MODELS_API Image {
+    class NETWORK_POKEMON_MODELS_API Image : public Model  {
         public:
             Image(std::string_view name, std::string_view extension, std::string_view hash,
                 std::string_view owner, std::string_view size, std::string_view size_unit) noexcept;
@@ -72,6 +72,9 @@ namespace pokemon {
             return size_unit_s;
         }
 
+
+        [[nodiscard]] static Image_Packet to_packet(const Image &node_info) noexcept;
+        [[nodiscard]] static Image from_packet(const Image_Packet &packet) noexcept;
 
 
 

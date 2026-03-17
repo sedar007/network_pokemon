@@ -2,8 +2,8 @@
 
 namespace pokemon {
 
-    void image_data_command::send_to_client(session& ss, std::shared_ptr<sockpp::tcp_socket> socket) {
-        if (!socket || !(*socket)) {
+    void image_data_command::send_to_client([[maybe_unused]] session& ss,[[maybe_unused]] const std::shared_ptr<tcp::IConnection>& socket) {
+       /* if (!socket || !(*socket)) {
             return;
         }
 
@@ -59,10 +59,10 @@ namespace pokemon {
         const std::string std_send = std::format("{}{}{}", ss.generateFormattedNumber(msg.size()), ss.protocolToString(PROTOCOL::GET_PIC), msg);
         std::cout << std_send << std::endl;
         socket->write(&std_send[0], std_send.size());
-        socket->shutdown(SHUT_RDWR);
+        socket->shutdown(SHUT_RDWR);*/
     }
 
-    void image_data_command::receive_from_server( [[maybe_unused]] Client& client, [[maybe_unused]] std::shared_ptr<sockpp::tcp_connector> connector) {
+    void image_data_command::receive_from_server( [[maybe_unused]] Client& client, [[maybe_unused]] std::shared_ptr<tcp::tcp_connector> connector) {
        /* std::stringstream ss(payload.data());
         std::string hash;
         std::string data;

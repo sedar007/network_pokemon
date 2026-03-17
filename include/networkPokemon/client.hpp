@@ -40,6 +40,10 @@ namespace pokemon {
 
         std::shared_ptr<Image> add_pokemon(std::string_view name, std::string_view picturePath) noexcept;
 
+        tcp::command_client_dispatcher<Client>& get_dispatcher() {
+            return m_dispatcher;
+        }
+
 
     private:
         /**
@@ -56,6 +60,7 @@ namespace pokemon {
         bool m_running = true;
         std::vector<std::thread> m_threads;
         std::mutex m_thread_mutex;
+        tcp::command_client_dispatcher<Client> m_dispatcher;
 
 
         /**
@@ -77,17 +82,17 @@ namespace pokemon {
         void addIps(const std::string &ips_str) const noexcept;
 
 
-        /**
-         * @brief Ajoute une image à la liste.
-         * @param str Chaîne d'image.
-         * @param nodeIdStr Identifiant du nœud.
-         */
-        void addPicture(const std::string &str) const noexcept;
-
         int check_connected(std::string_view neighbour_ip, in_port_t neighbour_port) noexcept;
 
         void get_client_ip() noexcept;
         void get_client_pictures() noexcept;
         void check_connected_nodes() noexcept;
+
+
+        void initCommands() {
+            m_dispatcher.registerCommand(tcp::PROTOCOL::GET_IPS, std::make_unique<pokemon::ip_command>());
+            m_dispatcher.registerCommand(tcp::PROTOCOL::GET_PICS, std::make_unique<pokemon::pictures_command>());
+            m_dispatcher.registerCommand(tcp::PROTOCOL::GET_PIC, std::make_unique<pokemon::image_data_command>());
+        }
     };
 }

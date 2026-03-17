@@ -9,7 +9,6 @@ namespace pokemon {
     , peers_registry_(peers_registry)
     , images_repository_(images_repository)
     , storage_(storage) {
-        initCommands();
     }
 
 }

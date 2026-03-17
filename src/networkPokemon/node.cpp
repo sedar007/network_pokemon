@@ -36,7 +36,7 @@ namespace pokemon {
         m_storage->load_nodes(peers_);
         m_storage->load_images(image_repository_);
 
-        sockpp::initialize();
+      //  sockpp::initialize();
 
         m_server = std::make_unique<Server>(m_node_info->get_port(), m_node_info, peers_, image_repository_, m_storage);
         client = std::make_unique<Client>(m_node_info->get_ip(), m_node_info->get_port(), m_node_info, peers_, image_repository_, m_storage);

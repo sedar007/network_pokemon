@@ -19,17 +19,19 @@ namespace pokemon::tcp{
         }
 
         while (true) {
+            std::cout << "listening:: listening... port: "<< std::endl;
             //std::cout << "listening:: listening... port: "<<getPort()<< std::endl;
             //    getTrace().print(std::cerr, std::format(MSG_LISTENING_AWAITING_CONNECTION, std::format(MSG_NODE_ID, getPort(), LISTEN), acc.last_error_str()));
             std::unique_ptr<sockpp::tcp_socket> sock = std::make_unique<sockpp::tcp_socket>(m_acceptor->accept()) ;
 
 
             if (!sock) {
-              //  std::cerr << "listening:: failed to accept new connection : " << getPort() <<std::endl;
+               // std::cerr << "listening:: failed to accept new connection : " << getPort() <<std::endl;
                 //      getTrace().print(std::cerr, std::format(MSG_LISTENING_ERROR_ACCEPTING_ACCEPTOR, std::format(MSG_NODE_ID, getPort(), LISTEN), acc.last_error_str()));
                 //std::this_thread::sleep_for(threadSleep_s(LISTEN_ERROR_CONNECTION_SLEEP_RANGE_BEGIN, LISTEN_ERROR_CONNECTION_SLEEP_RANGE_END));
             }
             else {
+                std::cout << "listening:: accepted new connection : " << std::endl;
                 //  getTrace().print(std::clog, std::format(MSG_LISTENING_ACCEPTING_CONNECTION, std::format(MSG_NODE_ID, getPort(), LISTEN)));
 
                 std::unique_ptr<IConnection> session = std::make_unique<SockppConnection>(std::move(sock));

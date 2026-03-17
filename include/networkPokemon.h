@@ -30,8 +30,9 @@
 #include <shared_mutex>
 
 #include <storage.hpp>
+#include <sockpp.hpp>
+#include <models.hpp>
 
-#include "models.hpp"
 #include "networkPokemon/export.hpp"
 
 #include "networkPokemon/utils.hpp"
@@ -42,14 +43,13 @@
 #include "networkPokemon/trace.hpp"
 #include "networkPokemon/resourceManager.hpp"
 
-#include "networkPokemon/command/INetworkCommand.hpp"
+#include "networkPokemon/command/command.hpp"
 #include "networkPokemon/command/ip_command.hpp"
-#include "networkPokemon/alive_command.hpp"
+#include "networkPokemon/command/alive_command.hpp"
 #include "networkPokemon/command/add_new_node_command.hpp"
-#include "networkPokemon/pictures_command.hpp"
-#include "networkPokemon/image_data_command.hpp"
+#include "networkPokemon/command/pictures_command.hpp"
+#include "networkPokemon/command/image_data_command.hpp"
 
-#include "networkPokemon/command_dispatcher.h"
 #include "networkPokemon/peer_registry.hpp"
 #include "networkPokemon/image_repository.hpp"
 #include "networkPokemon/networkNode.hpp"
@@ -60,6 +60,7 @@
 
 #include "networkPokemon/node.hpp"
 #include "networkPokemon/main.hpp"
+
 /*
 
 #include "networkPokemon/trace.hpp"
@@ -68,6 +69,7 @@
 #include "networkPokemon/helper.hpp"
 #include "networkPokemon/server.hpp"
 #include "networkPokemon/listen.hpp"
+
 
 
 

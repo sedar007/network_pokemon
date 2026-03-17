@@ -5,7 +5,7 @@ namespace pokemon {
     /**
      * @brief Représente une session pour gérer les connexions entrantes.
      */
-    class NETWORK_POKEMON_API  session : public NetworkNode {
+    class NETWORK_POKEMON_API  session : public  NetworkNode {
     public:
         /**
          * @brief Constructeur pour initialiser le serveur avec le port spécifié.
@@ -20,6 +20,25 @@ namespace pokemon {
          * @return Un entier représentant le résultat du traitement.
          */
         int process(std::shared_ptr<tcp::IConnection> socket);
+
+
+        tcp::command_session_dispatcher<session>& get_dispatcher() {
+            return m_dispatcher;
+        }
+
+
+
+    private:
+        tcp::command_session_dispatcher<session> m_dispatcher;
+
+
+        void initCommands() {
+            m_dispatcher.registerCommand(tcp::PROTOCOL::GET_IPS, std::make_unique<pokemon::ip_command>());
+            m_dispatcher.registerCommand(tcp::PROTOCOL::GET_PICS, std::make_unique<pokemon::pictures_command>());
+            m_dispatcher.registerCommand(tcp::PROTOCOL::GET_PIC, std::make_unique<pokemon::image_data_command>());
+
+
+        }
 
     };
 

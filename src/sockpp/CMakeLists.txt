@@ -8,11 +8,12 @@ set(SRCROOT "${PROJECT_SOURCE_DIR}/src/sockpp")
 set(SRC
         "${SRCROOT}/pch.h"
         "${SRCROOT}/pch.cpp"
-        "${SRCROOT}/tcp_acceptor.cpp"
-        "${SRCROOT}/tcp_acceptor.impl.cpp"
+        "${SRCROOT}/tcp_connector.cpp"
+        "${SRCROOT}/tcp_connector.impl.cpp"
         "${SRCROOT}/poke_net.cpp"
         "${SRCROOT}/poke_net.impl.cpp"
         "${SRCROOT}/client_net_helper.cpp"
+        "${SRCROOT}/command/command_dispatcher.cpp"
 
 
 )
