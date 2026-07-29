@@ -24,7 +24,8 @@ namespace pokemon {
     }
 
     void image_data_command::receive_from_server(Client& client, std::shared_ptr<tcp::tcp_connector> connector) {
-        if (connector == nullptr || !(*connector)) {
+        if (!(*connector) || connector == nullptr ) {
+            std::cout << " Connector is null, can't get pictures from the server ... " << std::endl;
             return;
         }
         receive_image(client, connector);

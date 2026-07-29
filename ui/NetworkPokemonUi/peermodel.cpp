@@ -37,12 +37,12 @@ QVariant PeerModel::data(const QModelIndex &index, int role) const
 QHash<int, QByteArray> PeerModel::roleNames() const
 {
     QHash<int, QByteArray> roles;
-    roles[NameRole] = "name";
-    roles[IpRole] = "ip";
-    roles[StatusRole] = "status";
-    roles[CountRole] = "count";
-    roles[PingRole] = "ping";
-    roles[LastSeenRole] = "lastSeen";
+    roles[NameRole] = NAME_MODEL.data();
+    roles[IpRole] = IP_ROLE.data();
+    roles[StatusRole] = STATUS_ROLE.data();
+    roles[CountRole] = COUNT_ROLE.data();
+    roles[PingRole] = PING_ROLE.data();
+    roles[LastSeenRole] = LastSeen_ROLE.data();
     return roles;
 }
 
@@ -53,22 +53,21 @@ void PeerModel::refreshPeers()
     beginResetModel();
     m_peers.clear();
 
-    // 1. Récupérer la liste brute depuis Node
-    // Node retourne une QVariantList, chaque élément est supposé être une QVariantMap
+    // TODO add cache..... call the api after x seconds
+    // refresh time 5 seconds ???
+
     QVariantList rawList = m_node->get_node_list();
 
-    // 2. Convertir les données
+
     for (const QVariant &item : rawList) {
         QVariantMap map = item.toMap();
 
-        // On crée un objet Peer en extrayant les clés de la map
-        // (Assurez-vous que les clés correspondent à ce que Node::get_node_list renvoie)
         Peer newPeer;
-        newPeer.name = map.value("name", "Inconnu").toString();
-        newPeer.ip = map.value("ip", "0.0.0.0").toString();
-        newPeer.status = map.value("status").toInt() == 1 ? "online" : "Hors ligne";
-        newPeer.count = map.value("count", "0 Pokémon").toString();
-        newPeer.ping = map.value("ping", "-").toString();
+        newPeer.name = map.value(NAME_MODEL.data(), "Inconnu").toString();
+        newPeer.ip = map.value(IP_ROLE.data(), "0.0.0.0").toString();
+        newPeer.status = map.value(STATUS_ROLE.data()).toInt() == 1 ? "online" : "Hors ligne";
+        newPeer.count = map.value(COUNT_ROLE.data(), "0 Pokémon").toString();
+        newPeer.ping = map.value(PING_ROLE.data(), "-").toString();
         newPeer.lastSeen = "À l'instant";
 
         m_peers.append(newPeer);

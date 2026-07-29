@@ -3,58 +3,56 @@
 namespace pokemon {
 
     void add_new_node_command::send_to_client([[maybe_unused]] session& ss,[[maybe_unused]] const std::shared_ptr<tcp::IConnection>& socket) {
-        /*if (!socket || !(*socket)) {
+        if (!socket) {
             return;
         }
-
-        const Node_Packet packet = Node_Info::to_packet(*ss.get_node_info());
-
-        const size_t total_bytes = sizeof(Node_Packet);
-        const std::string header = Utils::formatted_number(total_bytes);
-
-        socket->write(header.data(), header.size());
-        socket->write(reinterpret_cast<const char*>(&packet), total_bytes);
-        socket->shutdown(SHUT_RDWR);*/
+        send_node(socket, *ss.get_node_info());
+        socket->shutdown();
     }
 
+    void add_new_node_command::send_node(const std::shared_ptr<tcp::IConnection>& socket, const Node_Info item) noexcept{
+        command::send_item<Node_Info, Node_Packet>(socket, item);
+    }
 
     void add_new_node_command::receive_from_server([[maybe_unused]] Client& client, [[maybe_unused]] std::shared_ptr<tcp::tcp_connector> connector) {
+        if (connector == nullptr || !(*connector)) {
+            return;
+        }
+        receive_node(client, connector);
+        connector->shutdown();
+    }
 
-      /*  size_t total_bytes = Utils::get_total_bytes_from_connector(connector);
+    void add_new_node_command::receive_node(const Client& client, const std::shared_ptr<tcp::tcp_connector> &connector) {
 
-        if (total_bytes != sizeof(Node_Packet)) {
-            connector->shutdown(SHUT_RDWR);
+        auto packet_buffer_opt = command::receive_item<Node_Packet>(connector);
+        if (!packet_buffer_opt.has_value()) {
             return;
         }
 
-        Node_Packet packet {};
-        if (!Utils::read_exact(connector, reinterpret_cast<char*>(&packet), sizeof(Node_Packet))) {
-            connector->shutdown(SHUT_RDWR);
-            return;
-        }
+        auto const& packet_buffer = packet_buffer_opt.value();
 
-        auto safe_string = [](const char* data, size_t max_len) {
-            size_t len = 0;
-            while(len < max_len && data[len] != '\0') len++;
-            return std::string(data, len);
-        };
+      /*  auto const& packet_buffer = packet_buffer_opt.value();
 
-        std::string id = safe_string(packet.id, sizeof(packet.id));
-        std::string name = safe_string(packet.name, sizeof(packet.name));
-        std::string ip = safe_string(packet.ip, sizeof(packet.ip));
-        // Big Endian -> Little Endian
-        uint16_t port = ntohs(packet.port);
+        std::string hash = command::safe_string(packet_buffer.hash, sizeof(packet_buffer.hash));
+        std::string data = command::safe_string(packet_buffer.data, sizeof(packet_buffer.data));*/
+        /*
+                for (const auto& packet : packet_buffer) {
 
+                    std::string id = command::safe_string(packet.id, sizeof(packet.id));
+                    std::string name = command::safe_string(packet.name, sizeof(packet.name));
+                    std::string ip = command::safe_string(packet.ip, sizeof(packet.ip));
 
-        const Node_Info node_info = Node_Info::from_packet(packet);
+                    // Big Endian -> Little Endian
+                    const auto port = ntohs(packet.port);
 
-        if (!ip.empty() && port != 0) {
-            Node_Info node(id, name, ip, port);
-            client.get_peer_registry().add_node(node);
-         //   client.get_storage()->addNodeToSavedList(node);
-        }
+                    if (ip.empty() || port == 0) continue;
 
-         connector->shutdown(SHUT_RDWR);*/
+                    Node_Info node(id, name, ip, port);
+                    client.get_peer_registry().add_node(node);
+                    client.get_storage()->addNodeToSavedList(node);
+                }*/
     }
 
 }
+
+

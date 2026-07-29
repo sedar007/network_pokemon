@@ -76,19 +76,27 @@ namespace pokemon {
 
             template <typename P, typename T>
             static std::optional<P> receive_item(const std::shared_ptr<T> &conn) {
-                size_t total_bytes = Utils::get_total_bytes_from_connector(conn);
+                try {
+                    size_t total_bytes = Utils::get_total_bytes_from_connector(conn);
+                    if (total_bytes != sizeof(P)) {
+                        conn->shutdown();
+                        return std::nullopt;
+                    }
 
-                if (total_bytes != sizeof(P)) {
+                    P packet;
+                    if (!Utils::read_exact(conn, reinterpret_cast<std::byte*>(&packet), sizeof(P))) {
+                        conn->shutdown();
+                        return std::nullopt;
+                    }
+                    return packet;
+                }
+                catch (...) {
+                    std::cout << "Error when reading item from connector" << std::endl;
                     conn->shutdown();
                     return std::nullopt;
                 }
 
-                P packet;
-                if (!Utils::read_exact(conn, reinterpret_cast<std::byte*>(&packet), sizeof(P))) {
-                    conn->shutdown();
-                    return std::nullopt;
-                }
-                return packet;
+
             }
 
             static std::string safe_string(const char* data, const size_t max_len) noexcept {

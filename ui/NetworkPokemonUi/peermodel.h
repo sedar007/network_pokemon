@@ -40,6 +40,14 @@ public:
 private:
     QList<Peer> m_peers;
     Node* m_node;
+
+
+    static constexpr std::string_view NAME_MODEL = "name";
+    static constexpr std::string_view IP_ROLE = "ip";
+    static constexpr std::string_view STATUS_ROLE = "status";
+    static constexpr std::string_view COUNT_ROLE = "count";
+    static constexpr std::string_view PING_ROLE = "ping";
+    static constexpr std::string_view LastSeen_ROLE = "lastSeen";
 };
 
 #endif // PEERMODEL_H

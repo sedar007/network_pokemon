@@ -9,8 +9,8 @@ namespace pokemon {
 
 
     private:
-       // std::string getIpsToSend() const;
-        ResourceManager &resourceManager = ResourceManager::getInstance();
+        static void send_node(const std::shared_ptr<tcp::IConnection>& socket, const Node_Info item) noexcept;
+        static void receive_node(const Client& client, const std::shared_ptr<tcp::tcp_connector> &connector);
 
     };
 }

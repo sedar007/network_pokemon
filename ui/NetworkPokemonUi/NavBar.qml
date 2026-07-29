@@ -6,7 +6,6 @@ TabBar {
     height: 70
     background: Rectangle { color: "white" }
 
-    // Composant interne pour éviter de répéter le code du bouton
     component NavButton: TabButton {
         property string iconText
         property string labelText

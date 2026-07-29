@@ -45,8 +45,9 @@ namespace pokemon {
     std::shared_ptr<Image> image_repository::save_image(std::string_view name, std::string_view owner_id, std::filesystem::path image_to_save_path) noexcept {
         try {
 
-            if (!std::filesystem::exists(image_to_save_path) && !std::filesystem::is_regular_file(image_to_save_path))
-                    return nullptr;
+            if (!std::filesystem::exists(image_to_save_path) && !std::filesystem::is_regular_file(image_to_save_path)) {
+                return nullptr;
+            }
 
             std::ifstream file(image_to_save_path, std::ios::binary | std::ios::ate);
 
@@ -76,9 +77,9 @@ namespace pokemon {
             if (file.read(&buffer[0], size)) {
                 const std::string hash = calculate_sha256(buffer);
                 std::string saved_name = std::format("{}{}", storagePath_, hash);
-                std::filesystem::path pathr(saved_name);
+                std::filesystem::path path(saved_name);
 
-                std::ofstream image_saved(pathr, std::ios::binary);
+                std::ofstream image_saved(path, std::ios::binary);
                 if (!image_saved.is_open()) {
                     return nullptr;
                 }
