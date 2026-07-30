@@ -10,7 +10,6 @@
 #include "sockpp/consts.hpp"
 
 #include "sockpp/i_connection.hpp"
-#include "sockpp/i_networkContext.hpp"
 #include "sockpp/tcp_connector.hpp"
 
 

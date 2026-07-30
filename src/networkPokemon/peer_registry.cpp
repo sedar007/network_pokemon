@@ -23,8 +23,7 @@ namespace pokemon {
             [&](const Node_Info& n) { return n.get_ip() == ip && n.get_port() == port; });
 
         if (it != nodes_.end()) {
-            status = false;
-            //it->set_isConnected(status);
+            it->set_connected(status);
         }
     }
 

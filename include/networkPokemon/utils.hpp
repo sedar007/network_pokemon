@@ -22,12 +22,21 @@ namespace pokemon {
                 throw std::runtime_error("Failed to read size header");
             }
 
+            size_t total_bytes = 0;
             try {
-                return std::stoul(std::string(sizeHeader, FORMATTED_NUMBER_SIZE));
+                total_bytes = static_cast<size_t>(std::stoull(std::string(sizeHeader, FORMATTED_NUMBER_SIZE)));
             } catch (...) {
                 conn->shutdown();
                 throw std::runtime_error("Failed to convert size header to number");
             }
+
+
+            if (total_bytes > MAX_MESSAGE_BYTES) {
+                conn->shutdown();
+                throw std::runtime_error("Announced message size exceeds the allowed maximum");
+            }
+
+            return total_bytes;
         }
 
         template<typename T>

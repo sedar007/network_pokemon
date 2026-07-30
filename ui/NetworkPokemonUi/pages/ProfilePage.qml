@@ -14,13 +14,32 @@ Item {
 
 
     property var currentConfig: { "nodeName": "Chargement...", "port": "..." }
+    property string activePeersLabel: "0/0"
 
     function refreshConfig() {
         var data = networkNode.get_node_infos();
         if (data && Object.keys(data).length > 0) root.currentConfig = data;
     }
 
-    Component.onCompleted: refreshConfig()
+    function refreshPeerStats() {
+        if (myPeerModel) {
+            root.activePeersLabel = myPeerModel.online_peers_count() + "/" + myPeerModel.peers_count();
+        }
+    }
+
+    Component.onCompleted: {
+        refreshConfig();
+        refreshPeerStats();
+    }
+
+    // myPeerModel se rafraîchit déjà en tâche de fond (timer dans PeersPage, qui
+    // reste instanciée par le StackLayout même hors écran) ; ce timer ne fait que
+    // relire le compte à jour pour le badge "Peers Actifs".
+    Timer {
+        interval: 3000
+        running: true; repeat: true
+        onTriggered: root.refreshPeerStats()
+    }
 
     // --- INTERFACE ---
     ScrollView {
@@ -29,7 +48,10 @@ Item {
         clip: true
 
         ColumnLayout {
-            width: parent.width
+            // Plafonné et centré sur grand écran (macOS) : un formulaire étiré
+            // sur toute la largeur d'une fenêtre agrandie est difficile à lire.
+            width: Math.min(parent.width, 640)
+            anchors.horizontalCenter: parent.horizontalCenter
             spacing: 24
             Layout.margins: 24
             Layout.bottomMargin: 50
@@ -79,8 +101,8 @@ Item {
             GridLayout {
                 columns: 2; columnSpacing: 16
                 Layout.fillWidth: true
-                StatCard { label: "Total Pokémon"; value: "152"; icon: "📦" }
-                StatCard { label: "Peers Actifs"; value: "3/8"; icon: "🔗" }
+                StatCard { label: "Total Pokémon"; value: myPokemonModel ? myPokemonModel.rowCount().toString() : "0"; icon: "📦" }
+                StatCard { label: "Peers Actifs"; value: root.activePeersLabel; icon: "🔗" }
             }
 
             // Actions
@@ -112,8 +134,8 @@ Item {
     Popup {
         id: addPeerPopup
         anchors.centerIn: parent
-        width: parent.width - 48
-        height: 320
+        width: Math.min(parent.width - 48, 420)
+        height: 380
         modal: true
         focus: true
         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
@@ -185,6 +207,23 @@ Item {
                 }
             }
 
+            ColumnLayout {
+                Layout.fillWidth: true; spacing: 5
+                Text {
+                    text: "Port (Optionnel, 49153 par défaut)"; font.bold: true; font.pixelSize: 14
+                }
+                TextField {
+                    id: peerPortInput
+                    placeholderText: "Ex: 49153"
+                    Layout.fillWidth: true; Layout.preferredHeight: 50
+                    font.pixelSize: 16; color: "black"
+                    validator: IntValidator { bottom: 1; top: 65535 }
+                    background: Rectangle {
+                        color: "#F8F9FA"; radius: 12
+                    }
+                }
+            }
+
             Item {
                 Layout.fillHeight: true
             }
@@ -211,9 +250,9 @@ Item {
                         text: "Connecter"; color: "white"; font.bold: true; horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter
                     }
                     onClicked: {
-                        console.log("Connexion à : " + peerNameInput.text + " [" + peerIpInput.text + "]")
+                        console.log("Connexion à : " + peerNameInput.text + " [" + peerIpInput.text + ":" + peerPortInput.text + "]")
 
-                        networkNode.add_peer(peerNameInput.text, peerIpInput.text)
+                        networkNode.add_peer(peerNameInput.text, peerIpInput.text, peerPortInput.text)
 
                         addPeerPopup.close()
                     }

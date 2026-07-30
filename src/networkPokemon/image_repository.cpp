@@ -22,6 +22,22 @@ namespace pokemon {
          images_.push_back(*image);
      }
 
+    void image_repository::remove_image(std::string_view hash) noexcept {
+        {
+            std::unique_lock lock(mutex_);
+            auto it = std::find_if(images_.begin(), images_.end(),
+                [&](const Image& img){ return img.get_hash() == hash; });
+            if (it == images_.end()) {
+                return;
+            }
+            images_.erase(it);
+        }
+
+        const std::string path = std::format("{}{}", storagePath_, hash);
+        std::error_code ec;
+        std::filesystem::remove(path, ec);
+    }
+
     std::optional<Image> image_repository::find_image(std::string_view hash) const noexcept {
         std::shared_lock lock(mutex_);
         auto it = std::find_if(images_.begin(), images_.end(),
@@ -42,10 +58,29 @@ namespace pokemon {
         }
     }
 
+    bool image_repository::is_allowed_image_extension(std::string_view extension) noexcept {
+        std::string lowered(extension);
+        std::transform(lowered.begin(), lowered.end(), lowered.begin(),
+            [](unsigned char c) { return static_cast<char>(std::tolower(c)); });
+
+        return std::find(ALLOWED_IMAGE_EXTENSIONS.begin(), ALLOWED_IMAGE_EXTENSIONS.end(), lowered)
+            != ALLOWED_IMAGE_EXTENSIONS.end();
+    }
+
     std::shared_ptr<Image> image_repository::save_image(std::string_view name, std::string_view owner_id, std::filesystem::path image_to_save_path) noexcept {
         try {
 
             if (!std::filesystem::exists(image_to_save_path) && !std::filesystem::is_regular_file(image_to_save_path)) {
+                return nullptr;
+            }
+
+            std::string extension = image_to_save_path.extension().string();
+            if (!is_allowed_image_extension(extension)) {
+                return nullptr;
+            }
+
+            const auto bytes = std::filesystem::file_size(image_to_save_path);
+            if (bytes == 0 || bytes > MAX_IMAGE_BYTES) {
                 return nullptr;
             }
 
@@ -55,9 +90,6 @@ namespace pokemon {
             //         trace.print(std::cerr, "Impossible de lire l'image : " + image_to_save_path.to);
                 return nullptr;
             }
-
-            std::string extension = image_to_save_path.extension().string();
-            auto bytes = std::filesystem::file_size(image_to_save_path);
 
             double mb = static_cast<double>(bytes) / (1024.0 * 1024.0);
 
@@ -190,6 +222,44 @@ namespace pokemon {
          if (valb > -6) out.push_back(BASE64_CHARS[((val << 8) >> (valb + 8)) & 0x3F]);
          while (out.size() % 4) out.push_back('=');
          return out;
+     }
+
+    std::string image_repository::base64_decode(std::string_view in) noexcept {
+         std::array<int, 256> lookup{};
+         lookup.fill(-1);
+         for (size_t i = 0; i < BASE64_CHARS.size(); ++i) {
+             lookup[static_cast<unsigned char>(BASE64_CHARS[i])] = static_cast<int>(i);
+         }
+
+         std::string out;
+         out.reserve(in.size() / 4 * 3);
+
+         int val = 0, valb = -8;
+         for (unsigned char c : in) {
+             if (lookup[c] == -1) break;
+             val = (val << 6) + lookup[c];
+             valb += 6;
+             if (valb >= 0) {
+                 out.push_back(static_cast<char>((val >> valb) & 0xFF));
+                 valb -= 8;
+             }
+         }
+         return out;
+     }
+
+    bool image_repository::verify_base64_sha256(std::string_view hash, std::string_view base64_data) noexcept {
+         try {
+             std::string_view payload = base64_data;
+             const auto comma_pos = payload.find(',');
+             if (comma_pos != std::string_view::npos) {
+                 payload = payload.substr(comma_pos + 1);
+             }
+
+             const std::string raw = base64_decode(payload);
+             return !raw.empty() && calculate_sha256(raw) == hash;
+         } catch (...) {
+             return false;
+         }
      }
 
 }

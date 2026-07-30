@@ -82,3 +82,14 @@ int PeerModel::peers_count()
     if (!m_node) return 0;
     return m_peers.size();
 }
+
+int PeerModel::online_peers_count()
+{
+    int count = 0;
+    for (const auto& peer : m_peers) {
+        if (peer.status == "online") {
+            ++count;
+        }
+    }
+    return count;
+}

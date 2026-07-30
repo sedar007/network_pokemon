@@ -12,6 +12,11 @@ int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
 
+    // Sans ça, pokemon::Trace::print() ne fait rien : les échecs réseau
+    // (pair introuvable, connexion refusée, hash invalide...) restaient
+    // invisibles y compris en debug.
+    pokemon::Trace::getInstance().On();
+
     QString writablePath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
 
     QDir dir(writablePath);

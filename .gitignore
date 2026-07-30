@@ -32,7 +32,14 @@
 *.app
 
 build/*
+build-*/*
 exemple/build/*
-
+install/*
 
 .idea/*
+
+# macOS
+.DS_Store
+
+# Local/private files (not project config)
+.env

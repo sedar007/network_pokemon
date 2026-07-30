@@ -3,40 +3,68 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import "components" // Si tes composants sont dans un sous-dossier
 import "pages"
-import "Data"
 
 ApplicationWindow {
+    id: window
     visible: true
-    width: 375
-    height: 812
+    width: 420
+    height: 840
+    minimumWidth: 340
+    minimumHeight: 480
     title: "Network Pokémon"
     color: "#F6F8FA"
 
-    // On instancie la barre de navigation ici pour y accéder via son ID
-    NavBar {
-        id: navBar
-    }
+    // Seuil de bascule entre navigation mobile (barre du bas, iPhone/fenêtre
+    // étroite) et navigation desktop (barre latérale, macOS/fenêtre large).
+    // window.currentIndex est la source de vérité unique : les deux barres de
+    // navigation ne sont jamais instanciées en même temps (Loader), donc l'état
+    // ne peut pas vivre dans l'une ou l'autre.
+    readonly property bool isWide: width >= 720
+    property int currentIndex: 0
 
     header: AppHeader {
-        currentIndex: navBar.currentIndex
+        currentIndex: window.currentIndex
     }
 
-    footer: navBar
+    footer: Loader {
+        active: !window.isWide
+        height: item ? item.height : 0
+        sourceComponent: NavBar {
+            currentIndex: window.currentIndex
+            onCurrentIndexChanged: window.currentIndex = currentIndex
+        }
+    }
 
-    StackLayout {
+    RowLayout {
         anchors.fill: parent
-        currentIndex: navBar.currentIndex
+        spacing: 0
 
-        // Page 1
-        GalleryPage {}
+        Loader {
+            active: window.isWide
+            Layout.fillHeight: true
+            Layout.preferredWidth: item ? item.implicitWidth : 0
+            sourceComponent: SideNavBar {
+                currentIndex: window.currentIndex
+                onCurrentIndexChanged: window.currentIndex = currentIndex
+            }
+        }
 
-        // Page 2 (Placeholder)
-        PeersPage {}
+        StackLayout {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            currentIndex: window.currentIndex
 
-        // Page 3 (Placeholder)
-        Item { Text { text: "Page Recherche"; anchors.centerIn: parent } }
+            // Page 1
+            GalleryPage {}
 
-        // Page 4
-        ProfilePage {}
+            // Page 2
+            PeersPage {}
+
+            // Page 3
+            SearchPage {}
+
+            // Page 4
+            ProfilePage {}
+        }
     }
 }

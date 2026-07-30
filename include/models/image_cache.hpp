@@ -1,11 +1,17 @@
 #pragma once
 #include <string_view>
+#include <vector>
+#include <optional>
+#include <cstdint>
 
 namespace pokemon {
 
     struct Image_Cache_Packet {
         char hash[65];
-        char data[5096];
+        uint32_t chunk_index;
+        uint32_t chunk_count;
+        uint32_t chunk_size;
+        char data[8192];
     };
 
     class NETWORK_POKEMON_MODELS_API image_cache : public Model {
@@ -16,6 +22,7 @@ namespace pokemon {
 
             static constexpr std::string_view IMAGE_CACHE_HASH_KEY = "hash";
             static constexpr std::string_view IMAGE_CACHE_DATA_KEY = "data";
+            static constexpr size_t CHUNK_PAYLOAD_SIZE = sizeof(Image_Cache_Packet::data);
 
             [[nodiscard]] inline std::string_view get_data() const noexcept {
                 return data_s;
@@ -33,9 +40,8 @@ namespace pokemon {
                 hash_s = hash;
             }
 
-
-            [[nodiscard]] static Image_Cache_Packet to_packet(const image_cache &info) noexcept;
-            [[nodiscard]] static image_cache from_packet(const Image_Cache_Packet &packet) noexcept;
+            [[nodiscard]] static std::vector<Image_Cache_Packet> to_packets(const image_cache &info) noexcept;
+            [[nodiscard]] static std::optional<image_cache> from_packets(const std::vector<Image_Cache_Packet> &packets) noexcept;
 
     private:
         std::string hash_s;

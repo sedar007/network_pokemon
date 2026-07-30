@@ -12,8 +12,12 @@ Item {
     property string sizeUnit;
     property string imgUrl
 
-    width: GridView.view.cellWidth - 10
-    height: GridView.view.cellHeight - 10
+    // Ce composant est toujours utilisé imbriqué dans un Item délégué
+    // (GalleryPage/SearchPage) avec anchors.fill: parent, qui prime de toute
+    // façon sur width/height : les lire ici via GridView.view échouait
+    // (attached property absente sur un enfant imbriqué, pas sur la racine du
+    // délégué), sans jamais réellement affecter le rendu, juste polluer la
+    // console à chaque instanciation.
 
     Rectangle {
         anchors.fill: parent; color: "white"; radius: 12

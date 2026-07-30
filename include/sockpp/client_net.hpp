@@ -22,8 +22,7 @@ namespace pokemon::tcp {
 
 
                      if (!connector->connect(ip_str, port)) {
-                     //    getTrace().print(std::cerr, std::format(MSG_CLIENT_ERROR_CONNECTING,
-                       //                              std::format(MSG_NODE_ID, getPort(), CLIENT), neighbour_ip, neighbour_port));
+                         std::cout << "[client_net] echec de connexion a " << ip_str << ":" << knowPortStr << std::endl;
                         return -1;
                     }
 
@@ -38,7 +37,9 @@ namespace pokemon::tcp {
                              return 1;
                          }
 
-                         PROTOCOL protocol = string_to_protocol(msg);
+                         const size_t prefix_len = msg.size() < PROTOCOL_SIZE ? msg.size() : PROTOCOL_SIZE;
+                         const std::string_view protocol_prefix = msg.substr(0, prefix_len);
+                         PROTOCOL protocol = string_to_protocol(protocol_prefix);
 
                          if (protocol == PROTOCOL::UNKNOWN) {
                   //           connector->shutdown(SHUT_RDWR);

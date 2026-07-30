@@ -18,6 +18,7 @@ qt_add_qml_module(${PROJECT_NAME}-ui
         Main.qml
         AppHeader.qml
         NavBar.qml
+        SideNavBar.qml
         pages/GalleryPage.qml
         pages/ProfilePage.qml
         pages/PeersPage.qml
@@ -28,9 +29,7 @@ qt_add_qml_module(${PROJECT_NAME}-ui
         components/ConfigInput.qml
         components/ConfigSwitch.qml
         components/SettingsPopup.qml
-        Data/PokemonModel.qml
         SOURCES
-        Backend.h Backend.cpp
         node.h node.cpp
         peermodel.h peermodel.cpp
         pokemonmodel.h pokemonmodel.cpp

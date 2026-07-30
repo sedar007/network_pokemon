@@ -36,7 +36,6 @@ namespace pokemon {
 
     private:
         std::unique_ptr<Node> node_uptr; ///< Pointeur unique vers le nœud.
-        ResourceManager &resourceManager = ResourceManager::getInstance(); ///< Gestionnaire de ressources.
         Trace &trace = Trace::getInstance(); ///< Traceur.
 
         /**

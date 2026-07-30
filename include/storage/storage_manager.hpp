@@ -1,4 +1,5 @@
 #pragma once
+#include <mutex>
 
 namespace pokemon {
     class peer_registry;
@@ -28,6 +29,7 @@ namespace pokemon {
             std::vector<Image> loadImageList() const;
             void saveImageList(const std::vector<Image>& images) const;
             void addImageToSavedList(const Image& image);
+            void removeImageFromSavedList(std::string_view hash);
 
             template <class I>
             void load_images(I& image_repository) noexcept {
@@ -41,12 +43,18 @@ namespace pokemon {
             std::vector<image_cache> loadImageCacheList() const;
             void saveImageCacheList(const std::vector<image_cache>& images) const;
             void addImageCacheToSavedList(const image_cache& image);
+            void removeImageCacheEntry(std::string_view hash);
             std::string get_image_cache_data(std::string_view hash) const;
 
 
 
     private:
-        std::string_view m_rootPath;
+
+        std::string m_rootPath;
+
+        mutable std::mutex m_nodeListMutex;
+        mutable std::mutex m_imageListMutex;
+        mutable std::mutex m_imageCacheMutex;
 
         static constexpr std::string_view FILE_NODE_INFO = "node_infos.json";
         static constexpr std::string_view FILE_NODE_LIST = "node_list.json";

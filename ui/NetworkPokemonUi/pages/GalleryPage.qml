@@ -18,8 +18,8 @@ Item {
         id: deleteConfirmDialog
         title: "Confirmation de suppression"
         text: (root.currentPokemon && root.currentPokemon.isMine)
-            ? "⚠️ ATTENTION : Vous êtes le propriétaire.\n\nSupprimer cette image l'effacera DU RÉSEAU pour tout le monde.\n\nÊtes-vous sûr ?"
-            : "Voulez-vous supprimer cette image de votre vue locale ?"
+            ? "⚠️ Vous êtes le propriétaire.\n\nCeci supprime le fichier de votre appareil. Les pairs qui ont déjà cette image la conservent (il n'y a pas de suppression réseau).\n\nÊtes-vous sûr ?"
+            : "Voulez-vous supprimer cette image de votre vue locale ? (Elle pourra réapparaître si un pair la repartage.)"
 
         buttons: MessageDialog.Yes | MessageDialog.No
 
@@ -221,7 +221,11 @@ Item {
             Layout.fillWidth: true; Layout.fillHeight: true
             Layout.leftMargin: 15; Layout.rightMargin: 15
             clip: true
-            cellWidth: width / 2; cellHeight: 280
+            // Nombre de colonnes calculé à partir de la largeur disponible
+            // (plutôt que fixé à 2) pour rester lisible aussi bien sur un
+            // écran d'iPhone que dans une fenêtre macOS agrandie.
+            readonly property int columns: Math.max(2, Math.floor(width / 190))
+            cellWidth: width / columns; cellHeight: 280
 
             model: myPokemonModel
 

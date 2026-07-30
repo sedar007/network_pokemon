@@ -21,13 +21,13 @@ namespace pokemon {
         static constexpr std::string_view Lo_0_INTERFACE = "lo0";
         static constexpr in_port_t DEFAULT_PREFERRED_PORT = 49153;
 
-        void set_node_info(std::string_view node_name) noexcept;
+        void set_node_info(std::string_view node_name, int port, int max_connections, bool auto_share, bool auto_download) noexcept;
 
         [[nodiscard]] inline  Node_Info get_node_info() const noexcept {
             return *m_node_info;
         }
 
-        void add_new_peer(std::string peer_port) noexcept;
+        void add_new_peer(std::string peer_ip) noexcept;
         void add_peer(std::string peer_ip, in_port_t port) noexcept;
 
         [[nodiscard]] std::vector<Image> get_image_list() const noexcept {
@@ -35,7 +35,7 @@ namespace pokemon {
         }
 
         void add_pokemon(std::string_view name, std::string_view picturePath) noexcept;
-        void remove_pokemon(std::string_view name, std::string_view picturePath) noexcept;
+        void remove_pokemon(std::string_view hash) noexcept;
 
 
         std::string get_picture(const Image image);
@@ -81,8 +81,6 @@ namespace pokemon {
 
 
     private:
-        in_port_t port_s; ///< Port du nœud.
-        std::string ip_s; ///< Adresse IP du nœud.
         std::shared_ptr<Node_Info> m_node_info;
         ResourceManager &resourceManager = ResourceManager::getInstance(); ///< Gestionnaire de ressources.
         Trace &trace = Trace::getInstance(); ///< Traceur.

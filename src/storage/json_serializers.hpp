@@ -8,7 +8,10 @@ namespace pokemon {
                 {Node_Info::NODE_ID_KEY, n.get_id()},
                 {Node_Info::NODE_NAME_KEY, n.get_name()},
                 {Node_Info::NODE_PORT_KEY, n.get_port()},
-                {Node_Info::NODE_IP_KEY, n.get_ip()}
+                {Node_Info::NODE_IP_KEY, n.get_ip()},
+                {Node_Info::NODE_MAX_CONNECTIONS_KEY, n.get_max_connections()},
+                {Node_Info::NODE_AUTO_SHARE_KEY, n.get_auto_share()},
+                {Node_Info::NODE_AUTO_DOWNLOAD_KEY, n.get_auto_download()}
         };
     }
 
@@ -17,6 +20,11 @@ namespace pokemon {
         n.set_name(j.at(Node_Info::NODE_NAME_KEY).get<std::string>());
         n.set_port(j.at(Node_Info::NODE_PORT_KEY).get<int>());
         n.set_ip(j.at(Node_Info::NODE_IP_KEY).get<std::string>());
+        // value() avec valeur par défaut : reste compatible avec un node_infos.json
+        // sauvegardé avant l'ajout de ces réglages.
+        n.set_max_connections(j.value(Node_Info::NODE_MAX_CONNECTIONS_KEY, Node_Info::DEFAULT_MAX_CONNECTIONS));
+        n.set_auto_share(j.value(Node_Info::NODE_AUTO_SHARE_KEY, true));
+        n.set_auto_download(j.value(Node_Info::NODE_AUTO_DOWNLOAD_KEY, true));
     }
 
     // --- Image Serialization ---

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <mutex>
+#include <array>
 #include "sstream"
 #include <fstream>
 #include <iostream>

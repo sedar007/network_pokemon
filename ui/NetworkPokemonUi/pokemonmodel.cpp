@@ -1,4 +1,7 @@
 #include "pokemonmodel.h"
+#include <QFile>
+#include <QUrl>
+#include <QDebug>
 
 PokemonModel::PokemonModel(Node* node, QObject *parent)
     : QAbstractListModel(parent), m_node(node)
@@ -27,6 +30,7 @@ QVariant PokemonModel::data(const QModelIndex &index, int role) const
     case SizeRole:   return item.size;
     case SizeUnitRole: return item.sizeUnit;
     case ImgUrlRole: return item.imgUrl;
+    case HashRole: return item.hash;
     case IsMineRole: return item.isMine;
     default:         return QVariant();
     }
@@ -41,6 +45,7 @@ QHash<int, QByteArray> PokemonModel::roleNames() const
     roles[SizeRole] = "size";
     roles[SizeUnitRole] = "sizeUnit";
     roles[ImgUrlRole] = "imgUrl";
+    roles[HashRole] = "hash";
     roles[IsMineRole] = "isMine";
     return roles;
 }
@@ -54,7 +59,6 @@ void PokemonModel::refreshPokemons()
 
     QVariantList rawList = m_node->get_pokemon_list();
 
-    int i = 0;
     for (const QVariant &var : rawList) {
         QVariantMap map = var.toMap();
 
@@ -65,16 +69,31 @@ void PokemonModel::refreshPokemons()
         item.size = map.value("size", "0").toString();
         item.sizeUnit = map.value("sizeUnit", "MB").toString();
         item.imgUrl = map.value("imgUrl", "").toString();
-
-        if (i++ % 2 == 0) {
-            item.isMine = map.value("isMine", false).toBool();
-        } else {
-            item.isMine = map.value("isMine", true).toBool();
-        }
+        item.hash = map.value("hash", "").toString();
+        item.isMine = map.value("isMine", false).toBool();
         m_pokemons.append(item);
     }
 
     endResetModel();
+}
+
+QVariantMap PokemonModel::get(int index) const
+{
+    QVariantMap map;
+    if (index < 0 || index >= m_pokemons.size()) {
+        return map;
+    }
+
+    const PokemonItem &item = m_pokemons[index];
+    map["name"] = item.name;
+    map["pNumber"] = item.pNumber;
+    map["type"] = item.type;
+    map["size"] = item.size;
+    map["sizeUnit"] = item.sizeUnit;
+    map["imgUrl"] = item.imgUrl;
+    map["hash"] = item.hash;
+    map["isMine"] = item.isMine;
+    return map;
 }
 
 void PokemonModel::addPokemon(const QString &name, const QString &filePath)
@@ -96,28 +115,30 @@ void PokemonModel::removePokemon(int index)
     if (index < 0 || index >= m_pokemons.size())
         return;
 
+    if (m_node) {
+        m_node->remove_pokemon(m_pokemons[index].hash);
+    }
+
     // Indispensable pour que le QML sache qu'une ligne va disparaître
     beginRemoveRows(QModelIndex(), index, index);
-
-    // 1. Supprimer de la liste en mémoire
-    // (Optionnel : Supprimer aussi le fichier physique sur le disque ici via std::filesystem::remove)
     m_pokemons.removeAt(index);
-
     endRemoveRows();
 }
 
 void PokemonModel::savePokemon(int index, const QString &destinationPath)
 {
-  /*  if (index < 0 || index >= m_pokemons.size()) return;
+    if (index < 0 || index >= m_pokemons.size()) return;
 
     QString cleanPath = QUrl(destinationPath).toLocalFile();
     if (cleanPath.isEmpty()) cleanPath = destinationPath;
 
     QString base64Data = m_pokemons[index].imgUrl;
-
+    if (base64Data.isEmpty()) {
+        qDebug() << "Aucune donnée d'image disponible pour :" << m_pokemons[index].name;
+        return;
+    }
 
     if (base64Data.startsWith("data:image")) {
-
         int commaIndex = base64Data.indexOf(",");
         if (commaIndex != -1) {
             base64Data = base64Data.mid(commaIndex + 1);
@@ -129,8 +150,10 @@ void PokemonModel::savePokemon(int index, const QString &destinationPath)
             file.write(data);
             file.close();
             qDebug() << "Image téléchargée avec succès :" << cleanPath;
+        } else {
+            qDebug() << "Impossible d'ouvrir le fichier de destination :" << cleanPath;
         }
     } else {
         QFile::copy(base64Data, cleanPath);
-    }*/
+    }
 }

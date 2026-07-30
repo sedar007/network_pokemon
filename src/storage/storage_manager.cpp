@@ -23,6 +23,8 @@ namespace pokemon {
     }
 
     void storage_manager::addNodeToSavedList(const Node_Info& node_info) {
+        std::lock_guard<std::mutex> lock(m_nodeListMutex);
+
         auto currentList = loadNodeList();
 
         auto it = std::find_if(currentList.begin(), currentList.end(),
@@ -46,6 +48,8 @@ namespace pokemon {
     }
 
     void storage_manager::addImageToSavedList(const Image& image) {
+        std::lock_guard<std::mutex> lock(m_imageListMutex);
+
         auto currentList = loadImageList();
 
         auto it = std::find_if(currentList.begin(), currentList.end(),
@@ -56,6 +60,21 @@ namespace pokemon {
         }
 
         currentList.push_back(image);
+        saveImageList(currentList);
+    }
+
+    void storage_manager::removeImageFromSavedList(std::string_view hash) {
+        std::lock_guard<std::mutex> lock(m_imageListMutex);
+
+        auto currentList = loadImageList();
+        auto it = std::find_if(currentList.begin(), currentList.end(),
+            [&](const Image& img){ return img.get_hash() == hash; });
+
+        if (it == currentList.end()) {
+            return;
+        }
+
+        currentList.erase(it);
         saveImageList(currentList);
     }
 
@@ -72,6 +91,8 @@ namespace pokemon {
     }
 
     void storage_manager::addImageCacheToSavedList(const image_cache& image) {
+        std::lock_guard<std::mutex> lock(m_imageCacheMutex);
+
         auto currentList = loadImageCacheList();
 
         auto it = std::find_if(currentList.begin(), currentList.end(),
@@ -82,6 +103,21 @@ namespace pokemon {
         }
 
         currentList.push_back(image);
+        saveImageCacheList(currentList);
+    }
+
+    void storage_manager::removeImageCacheEntry(std::string_view hash) {
+        std::lock_guard<std::mutex> lock(m_imageCacheMutex);
+
+        auto currentList = loadImageCacheList();
+        auto it = std::find_if(currentList.begin(), currentList.end(),
+            [&](const image_cache& img){ return img.get_hash() == hash; });
+
+        if (it == currentList.end()) {
+            return;
+        }
+
+        currentList.erase(it);
         saveImageCacheList(currentList);
     }
 

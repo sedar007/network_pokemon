@@ -36,6 +36,7 @@ public:
 
     Q_INVOKABLE void refreshPeers();
     Q_INVOKABLE int peers_count();
+    Q_INVOKABLE int online_peers_count();
 
 private:
     QList<Peer> m_peers;

@@ -11,6 +11,7 @@ struct PokemonItem {
     QString size;
     QString sizeUnit;
     QString imgUrl;
+    QString hash;
     bool isMine;
 };
 
@@ -28,6 +29,7 @@ public:
         SizeRole,
         SizeUnitRole,
         ImgUrlRole,
+        HashRole,
         IsMineRole
     };
 
@@ -40,6 +42,7 @@ public:
     Q_INVOKABLE void addPokemon(const QString &name, const QString &filePath);
     Q_INVOKABLE void removePokemon(int index);
     Q_INVOKABLE void savePokemon(int index, const QString &destinationPath);
+    Q_INVOKABLE QVariantMap get(int index) const;
 
 
 

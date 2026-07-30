@@ -61,6 +61,8 @@ namespace pokemon {
         std::vector<std::thread> m_threads;
         std::mutex m_thread_mutex;
         tcp::command_client_dispatcher<Client> m_dispatcher;
+        std::mutex m_pendingPicturesMutex;
+        std::set<std::string> m_pendingPictures;
 
 
         /**
@@ -82,8 +84,6 @@ namespace pokemon {
         void addIps(const std::string &ips_str) const noexcept;
 
 
-        int check_connected(std::string_view neighbour_ip, in_port_t neighbour_port) noexcept;
-
         void get_client_ip() noexcept;
         void get_client_pictures() noexcept;
         void check_connected_nodes() noexcept;
@@ -94,6 +94,7 @@ namespace pokemon {
             m_dispatcher.registerCommand(tcp::PROTOCOL::GET_PICS, std::make_unique<pokemon::pictures_command>());
             m_dispatcher.registerCommand(tcp::PROTOCOL::GET_PIC, std::make_unique<pokemon::image_data_command>());
             m_dispatcher.registerCommand(tcp::PROTOCOL::GET_ID, std::make_unique<pokemon::add_new_node_command>());
+            m_dispatcher.registerCommand(tcp::PROTOCOL::GET_ALIVE, std::make_unique<pokemon::alive_command>());
         }
     };
 }

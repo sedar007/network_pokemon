@@ -7,12 +7,49 @@
     #pragma comment(lib, "ws2_32.lib")
 #else
     #include <sys/types.h>
+    #include <sys/socket.h>
     #include <ifaddrs.h>
     #include <netinet/in.h>
     #include <arpa/inet.h>
+    #include <unistd.h>
 #endif
 
 using namespace std::chrono_literals;
+
+namespace {
+#ifdef _WIN32
+    using socket_handle_t = SOCKET;
+    constexpr socket_handle_t k_invalid_socket = INVALID_SOCKET;
+    inline void close_socket_handle(socket_handle_t s) noexcept { closesocket(s); }
+#else
+    using socket_handle_t = int;
+    constexpr socket_handle_t k_invalid_socket = -1;
+    inline void close_socket_handle(socket_handle_t s) noexcept { close(s); }
+#endif
+
+    // Owns a raw probing socket and guarantees it is closed on every exit path
+    // (including exceptions), so find_available_port never leaks a descriptor.
+    class raw_socket_guard {
+    public:
+        explicit raw_socket_guard(socket_handle_t handle) noexcept : handle_(handle) {}
+        raw_socket_guard(const raw_socket_guard&) = delete;
+        raw_socket_guard& operator=(const raw_socket_guard&) = delete;
+        raw_socket_guard(raw_socket_guard&&) = delete;
+        raw_socket_guard& operator=(raw_socket_guard&&) = delete;
+
+        ~raw_socket_guard() {
+            if (handle_ != k_invalid_socket) {
+                close_socket_handle(handle_);
+            }
+        }
+
+        [[nodiscard]] bool valid() const noexcept { return handle_ != k_invalid_socket; }
+        [[nodiscard]] socket_handle_t get() const noexcept { return handle_; }
+
+    private:
+        socket_handle_t handle_;
+    };
+}
 
 namespace pokemon {
     Node::Node(peer_registry& peers, image_repository& image_repository) noexcept
@@ -63,11 +100,20 @@ namespace pokemon {
     }
 
 
-     void Node::set_node_info(std::string_view node_name) noexcept {
+     void Node::set_node_info(std::string_view node_name, int port, int max_connections, bool auto_share, bool auto_download) noexcept {
         if (m_node_info == nullptr)
-            m_node_info =  std::make_unique<Node_Info>();
+            m_node_info =  std::make_shared<Node_Info>();
 
         m_node_info->set_name(node_name);
+        if (port > 0) {
+            // Le serveur déjà lancé écoute toujours sur l'ancien port : ce
+            // changement ne prend effet qu'au prochain démarrage du nœud.
+            m_node_info->set_port(port);
+        }
+        m_node_info->set_max_connections(max_connections);
+        m_node_info->set_auto_share(auto_share);
+        m_node_info->set_auto_download(auto_download);
+
         if (m_storage) {
             m_storage->saveNodeInfo(*m_node_info);
         }
@@ -135,33 +181,38 @@ namespace pokemon {
     }
 
     in_port_t Node::find_available_port(in_port_t preferred_port) {
-       /* int sock = socket(AF_INET, SOCK_STREAM, 0);
-        if (sock < 0) return 0;
+        const socket_handle_t sock = socket(AF_INET, SOCK_STREAM, 0);
+        raw_socket_guard guard(sock);
+        if (!guard.valid()) {
+            return preferred_port;
+        }
 
-        struct sockaddr_in sin;
-        std::memset(&sin, 0, sizeof(sin));
+        struct sockaddr_in sin{};
         sin.sin_family = AF_INET;
         sin.sin_addr.s_addr = INADDR_ANY;
         sin.sin_port = htons(preferred_port);
 
-        if (bind(sock, (struct sockaddr *)&sin, sizeof(sin)) == 0) {
-            socklen_t len = sizeof(sin);
-            if (getsockname(sock, (struct sockaddr *)&sin, &len) == 0) {
-                preferred_port = ntohs(sin.sin_port);
-            }
-            close(sock);
+        if (bind(guard.get(), reinterpret_cast<struct sockaddr*>(&sin), sizeof(sin)) == 0) {
             return preferred_port;
         }
-        close(sock);
-        if (preferred_port != 0) {
-            return find_available_port(0);
+
+        // Le port préféré est occupé : laisse l'OS en choisir un libre.
+        sin.sin_port = 0;
+        if (bind(guard.get(), reinterpret_cast<struct sockaddr*>(&sin), sizeof(sin)) != 0) {
+            return preferred_port;
         }
-        return 0;*/
-        return preferred_port;
+
+        socklen_t len = sizeof(sin);
+        if (getsockname(guard.get(), reinterpret_cast<struct sockaddr*>(&sin), &len) != 0) {
+            return preferred_port;
+        }
+
+        return ntohs(sin.sin_port);
     }
 
     void Node::add_new_peer(std::string peer_ip) noexcept {
-       add_peer( peer_ip, find_available_port(DEFAULT_PREFERRED_PORT));
+
+        add_peer(peer_ip, DEFAULT_PREFERRED_PORT);
     }
 
     void Node::add_peer(std::string peer_ip, in_port_t port) noexcept {
@@ -170,7 +221,7 @@ namespace pokemon {
 
 
     std::ostream &operator<<(std::ostream &os, const Node &node) {
-        os << "[ Node " << " ] : " << "Ip: " << node.ip_s << " port: " << node.port_s << std::endl;
+        os << "[ Node " << " ] : " << "Ip: " << node.m_node_info->get_ip() << " port: " << node.m_node_info->get_port() << std::endl;
         auto nodesList = node.peers_.get_nodes();
         if (!node.resourceManager.empty(nodesList))
             os << "Liste Nodes connus: " << std::endl;
@@ -195,7 +246,11 @@ namespace pokemon {
         }
     }
 
-    void Node::remove_pokemon([[maybe_unused]] std::string_view name, [[maybe_unused]] std::string_view picturePath) noexcept {
-
+    void Node::remove_pokemon(std::string_view hash) noexcept {
+        image_repository_.remove_image(hash);
+        if (m_storage) {
+            m_storage->removeImageFromSavedList(hash);
+            m_storage->removeImageCacheEntry(hash);
+        }
     }
 }

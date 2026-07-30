@@ -37,6 +37,7 @@ namespace pokemon {
             m_dispatcher.registerCommand(tcp::PROTOCOL::GET_PICS, std::make_unique<pokemon::pictures_command>());
             m_dispatcher.registerCommand(tcp::PROTOCOL::GET_PIC, std::make_unique<pokemon::image_data_command>());
             m_dispatcher.registerCommand(tcp::PROTOCOL::GET_ID, std::make_unique<pokemon::add_new_node_command>());
+            m_dispatcher.registerCommand(tcp::PROTOCOL::GET_ALIVE, std::make_unique<pokemon::alive_command>());
         }
 
     };

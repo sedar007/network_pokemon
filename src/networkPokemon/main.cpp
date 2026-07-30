@@ -60,16 +60,39 @@ namespace pokemon {
 
             getline(std::cin, menu);
 
-            if (menu == "1")
-                std::cout << "Liste des nodes connus: " << std::endl;
-               // resourceManager.printNodesList(std::cout);
-            else if (menu == "2")
-                resourceManager.printPokemonPictures(std::cout);
+            if (menu == "1") {
+                std::cout << std::endl << " -- Liste des nodes connus -- " << std::endl;
+                auto nodes = node_uptr->get_node_list();
+                for (const auto& node : nodes) {
+                    std::cout << node.get_name() << " (" << node.get_ip() << ":" << node.get_port() << ")"
+                              << " - " << (node.is_connected() ? "en ligne" : "hors ligne") << std::endl;
+                }
+                std::cout << "Total: " << nodes.size() << std::endl << std::endl;
+            }
+            else if (menu == "2") {
+                std::cout << std::endl << " -- Liste des images -- " << std::endl;
+                auto images = node_uptr->get_image_list();
+                for (const auto& image : images) {
+                    std::cout << image.get_name() << " : " << image.get_hash() << std::endl;
+                }
+                std::cout << "Total: " << images.size() << std::endl << std::endl;
+            }
             else if (menu == "3") {
                 std::cout << ENTER_PICTURE_NAME;
                 std::string picName;
                 getline(std::cin, picName);
-                //node_uptr->getPic(toLower(trim(picName)));
+                const std::string hash = toLower(trim(picName));
+
+                auto images = node_uptr->get_image_list();
+                auto it = std::find_if(images.begin(), images.end(),
+                    [&](const Image& img) { return img.get_hash() == hash; });
+
+                if (it == images.end()) {
+                    std::cout << NO_PICTURE_FOUND(hash);
+                } else {
+                    const std::string data = node_uptr->get_picture(*it);
+                    std::cout << (data.empty() ? SAVE_PICTURE_FAIL : SAVE_PICTURE_SUCCESS) << std::endl;
+                }
             }
             else if(menu == "4" || toLower(trim(menu)) == EXIT){
                 std::cout << GOODBYE_MESSAGE<< std::endl;
