@@ -29,28 +29,13 @@ namespace pokemon {
             return;
         }
 
-        auto const& packet_buffer = packet_buffer_opt.value();
+        const Node_Info node = Node_Info::from_packet(packet_buffer_opt.value());
+        if (node.get_ip().empty() || node.get_port() == 0) {
+            return;
+        }
 
-      /*  auto const& packet_buffer = packet_buffer_opt.value();
-
-        std::string hash = command::safe_string(packet_buffer.hash, sizeof(packet_buffer.hash));
-        std::string data = command::safe_string(packet_buffer.data, sizeof(packet_buffer.data));*/
-        /*
-                for (const auto& packet : packet_buffer) {
-
-                    std::string id = command::safe_string(packet.id, sizeof(packet.id));
-                    std::string name = command::safe_string(packet.name, sizeof(packet.name));
-                    std::string ip = command::safe_string(packet.ip, sizeof(packet.ip));
-
-                    // Big Endian -> Little Endian
-                    const auto port = ntohs(packet.port);
-
-                    if (ip.empty() || port == 0) continue;
-
-                    Node_Info node(id, name, ip, port);
-                    client.get_peer_registry().add_node(node);
-                    client.get_storage()->addNodeToSavedList(node);
-                }*/
+        client.get_peer_registry().add_node(node);
+        client.get_storage()->addNodeToSavedList(node);
     }
 
 }

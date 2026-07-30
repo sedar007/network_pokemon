@@ -42,6 +42,17 @@ namespace pokemon {
                 socket->write(reinterpret_cast<const char*>(packet_buffer.data()), total_bytes);
             }
 
+            template <typename P>
+            static void send_packets(const std::shared_ptr<tcp::IConnection>& socket, const std::vector<P>& packets) noexcept {
+                if (packets.empty()) return;
+
+                const size_t total_bytes = packets.size() * sizeof(P);
+                const std::string header = Utils::formatted_number(total_bytes);
+
+                socket->write(header.data(), header.size());
+                socket->write(reinterpret_cast<const char*>(packets.data()), total_bytes);
+            }
+
             template <typename T, typename P>
             static void send_item(const std::shared_ptr<tcp::IConnection>& socket, const T& item) noexcept {
                 const P packet = T::to_packet(item);
@@ -55,7 +66,14 @@ namespace pokemon {
             template<typename P>
             static std::optional<std::vector<P>> receive_list(const std::shared_ptr<tcp::tcp_connector> &connector) {
 
-                size_t total_bytes = Utils::get_total_bytes_from_connector(connector);
+                size_t total_bytes = 0;
+                try {
+                    total_bytes = Utils::get_total_bytes_from_connector(connector);
+                }
+                catch (...) {
+                    std::cout << "Error when reading list from connector" << std::endl;
+                    return std::nullopt;
+                }
 
                 if (total_bytes == 0 || total_bytes % sizeof(P) != 0) {
                     if (total_bytes == 0) return std::nullopt;
@@ -95,8 +113,6 @@ namespace pokemon {
                     conn->shutdown();
                     return std::nullopt;
                 }
-
-
             }
 
             static std::string safe_string(const char* data, const size_t max_len) noexcept {

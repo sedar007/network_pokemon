@@ -2,32 +2,40 @@
 
 namespace pokemon {
 
-    void alive_command::send_to_client([[maybe_unused]] session& ss,[[maybe_unused]] const std::shared_ptr<tcp::IConnection>& socket) {
-      /*  if (!socket || !(*socket)) {
+    void alive_command::send_to_client(session& ss, const std::shared_ptr<tcp::IConnection>& socket) {
+        if (!socket) {
             return;
         }
-        std::string msg = std::format("{};{}", "ALIVE", socket->address().to_string());
-        const std::string std_send = std::format("{}{}{}", ss.generateFormattedNumber(msg.size()), ss.protocolToString(PROTOCOL::GET_ALIVE), msg);
-           std::cout << std_send << std::endl;
-        socket->write(&std_send[0], std_send.size());
-        socket->shutdown(SHUT_RDWR);*/
+        send_alive_ack(socket, *ss.get_node_info());
+        socket->shutdown();
     }
 
-    void alive_command::receive_from_server([[maybe_unused]] Client& client, [[maybe_unused]] std::shared_ptr<tcp::tcp_connector> connector) {
-       /* std::stringstream ss(payload.data());
-        std::string alive;
-        std::string ip;
-        std::string port_str;
+    void alive_command::send_alive_ack(const std::shared_ptr<tcp::IConnection>& socket, const Node_Info item) noexcept {
+        command::send_item<Node_Info, Node_Packet>(socket, item);
+    }
 
-        std::getline(ss, alive, ';');
-        std::getline(ss, ip, ':');
-        std::getline(ss, port_str);
+    void alive_command::receive_from_server(Client& client, std::shared_ptr<tcp::tcp_connector> connector) {
+        if (connector == nullptr || !(*connector)) {
+            return;
+        }
+        receive_alive_ack(client, connector);
+        connector->shutdown();
+    }
 
-        int port = std::atoi(port_str.c_str());
-        if (alive == "ALIVE") {
-            client.get_peer_registry().set_node_alive(ip, port, true);
-            client.getTrace().print(std::cout, std::format("{}:{} is up", ip ,port_str));
-        }*/
+    void alive_command::receive_alive_ack(const Client& client, const std::shared_ptr<tcp::tcp_connector> &connector) {
+
+        auto packet_opt = command::receive_item<Node_Packet>(connector);
+        if (!packet_opt.has_value()) {
+            return;
+        }
+
+        const Node_Info node = Node_Info::from_packet(packet_opt.value());
+        if (node.get_ip().empty() || node.get_port() == 0) {
+            return;
+        }
+
+        client.get_peer_registry().set_node_alive(node.get_ip(), node.get_port(), true);
+        client.getTrace().print(std::clog, std::format("{}:{} is up", node.get_ip(), node.get_port()));
     }
 
 

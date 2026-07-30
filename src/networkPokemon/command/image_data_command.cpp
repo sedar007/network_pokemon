@@ -10,13 +10,18 @@ namespace pokemon {
 
         auto packet_opt = command::receive_item<Image_Packet>(socket);
         if (!packet_opt.has_value()) {
+            std::cout << "[GET_PIC][serveur] requete illisible (en-tete/paquet invalide)" << std::endl;
             socket->shutdown();
             return;
         }
 
         auto image = Image::from_packet(packet_opt.value());
+        std::cout << "[GET_PIC][serveur] requete pour hash=" << image.get_hash() << std::endl;
 
         const std::string data = ss.get_images_repository().get_picture_base64(image);
+        std::cout << "[GET_PIC][serveur] taille des donnees renvoyees=" << data.size()
+                   << (data.empty() ? " (VIDE : fichier introuvable sur le disque du proprietaire)" : "") << std::endl;
+
         const image_cache cache(image.get_hash(), data);
         send_image(socket, cache);
         socket->shutdown();
@@ -32,36 +37,37 @@ namespace pokemon {
         connector->shutdown();
     }
     void image_data_command::send_image(const std::shared_ptr<tcp::IConnection>& socket, const image_cache item) noexcept{
-        command::send_item<image_cache, Image_Cache_Packet>(socket, item);
+        const auto packets = image_cache::to_packets(item);
+        command::send_packets<Image_Cache_Packet>(socket, packets);
     }
 
     void image_data_command::receive_image(const Client& client, const std::shared_ptr<tcp::tcp_connector> &connector) {
 
-        auto packet_buffer_opt = command::receive_item<Image_Cache_Packet>(connector);
-        if (!packet_buffer_opt.has_value()) {
+        auto packets_opt = command::receive_list<Image_Cache_Packet>(connector);
+        if (!packets_opt.has_value()) {
+            std::cout << "[GET_PIC][client] aucun paquet recu (echec de lecture reseau)" << std::endl;
+            return;
+        }
+        std::cout << "[GET_PIC][client] " << packets_opt->size() << " paquet(s) recu(s)" << std::endl;
+
+        auto cache_opt = image_cache::from_packets(packets_opt.value());
+        if (!cache_opt.has_value()) {
+            std::cout << "[GET_PIC][client] image recue incomplete ou corrompue (chunks manquants/invalides)" << std::endl;
             return;
         }
 
-        auto const& packet_buffer = packet_buffer_opt.value();
+        const image_cache& cache = cache_opt.value();
+        std::cout << "[GET_PIC][client] reassemblee : hash=" << cache.get_hash()
+                   << " taille=" << cache.get_data().size() << " octets" << std::endl;
 
-        std::string hash = command::safe_string(packet_buffer.hash, sizeof(packet_buffer.hash));
-        std::string data = command::safe_string(packet_buffer.data, sizeof(packet_buffer.data));
-/*
-        for (const auto& packet : packet_buffer) {
+        if (!image_repository::verify_base64_sha256(cache.get_hash(), cache.get_data())) {
+            std::cout << "[GET_PIC][client] REJETEE : le hash SHA-256 ne correspond pas aux donnees (hash="
+                       << cache.get_hash() << ")" << std::endl;
+            return;
+        }
 
-            std::string id = command::safe_string(packet.id, sizeof(packet.id));
-            std::string name = command::safe_string(packet.name, sizeof(packet.name));
-            std::string ip = command::safe_string(packet.ip, sizeof(packet.ip));
-
-            // Big Endian -> Little Endian
-            const auto port = ntohs(packet.port);
-
-            if (ip.empty() || port == 0) continue;
-
-            Node_Info node(id, name, ip, port);
-            client.get_peer_registry().add_node(node);
-            client.get_storage()->addNodeToSavedList(node);
-        }*/
+        std::cout << "[GET_PIC][client] hash verifie OK, mise en cache (hash=" << cache.get_hash() << ")" << std::endl;
+        client.get_storage()->addImageCacheToSavedList(cache);
     }
 
 
